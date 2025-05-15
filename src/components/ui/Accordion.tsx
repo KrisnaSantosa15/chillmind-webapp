@@ -54,14 +54,16 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
-      </button>
-      <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+      </button>      <div
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+          isOpen ? 'opacity-100' : 'opacity-0 max-h-0'
         }`}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
+        style={{ 
+          transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          maxHeight: isOpen ? '80vh' : '0' // Limit to 80% of viewport height
+        }}
       >
-        <div className="p-6 pt-0 text-muted-foreground">{children}</div>
+        <div className="p-6 pt-0 text-muted-foreground max-h-[80vh] overflow-y-auto">{children}</div>
       </div>
     </div>
   );

@@ -10,29 +10,37 @@ const ThemeToggle: React.FC = () => {
 
   // Initialize theme from localStorage on component mount
   useEffect(() => {
-    // Get the initial theme directly from document element class
-    // This ensures we respect any theme already applied
-    const documentTheme = 
-      document.documentElement.classList.contains('dark-theme') 
-        ? 'dark' 
-        : 'light';
+    // Get the initial theme from localStorage or system preference
+    const storedTheme = localStorage.getItem('theme') as Theme | null;
+    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     
-    setTheme(documentTheme);
+    const initialTheme = storedTheme || systemPreference;
+    
+    // Apply theme
+    applyTheme(initialTheme);
+    setTheme(initialTheme);
     setMounted(true);
   }, []);
+
+  // Apply theme to document
+  const applyTheme = (newTheme: Theme) => {
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.classList.remove('light-theme');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark-theme');
+      document.documentElement.classList.add('light-theme');
+    }
+    
+    localStorage.setItem('theme', newTheme);
+  };
 
   // Toggle theme 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
-    
-    // Apply theme class directly to document
-    document.documentElement.classList.remove('light-theme', 'dark-theme');
-    document.documentElement.classList.add(`${newTheme}-theme`);
-    
-    // Store in localStorage
-    localStorage.setItem('theme', newTheme);
-    
-    // Update component state
+    applyTheme(newTheme);
     setTheme(newTheme);
   };
 

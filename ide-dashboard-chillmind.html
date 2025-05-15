@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChillMind | Mental Health Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f8fafc;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      }
+
+      .mood-option:hover {
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+      }
+
+      .journal-entry {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+      }
+
+      .journal-entry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      .chat-message {
+        max-width: 80%;
+        border-radius: 1rem;
+      }
+
+      .user-message {
+        background-color: #6366f1;
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 0.25rem;
+      }
+
+      .ai-message {
+        background-color: #e2e8f0;
+        color: #1e293b;
+        margin-right: auto;
+        border-bottom-left-radius: 0.25rem;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+        }
+      }
+
+      .breathing-circle {
+        animation: breathe 6s infinite ease-in-out;
+        transform-origin: center;
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: scale(0.9);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .progress-ring__circle {
+        transition: stroke-dashoffset 0.5s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+
+      .habit-tracker-day {
+        transition: all 0.3s ease;
+      }
+
+      .habit-tracker-day:hover {
+        transform: scale(1.1);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+      <!-- Sidebar -->
+      <div class="hidden md:flex md:flex-shrink-0">
+        <div class="flex flex-col w-64 bg-white border-r border-gray-200">
+          <div class="flex items-center justify-center h-16 px-4 gradient-bg">
+            <div class="flex items-center">
+              <i class="fas fa-brain text-white text-2xl mr-2"></i>
+              <span class="text-white font-semibold text-xl">ChillMind</span>
+            </div>
+          </div>
+          <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+            <div class="space-y-1">
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md bg-indigo-50 text-indigo-700"
+              >
+                <i class="fas fa-home mr-3 text-indigo-500"></i>
+                Dashboard
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-book mr-3 text-gray-400"></i>
+                Journal
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-chart-line mr-3 text-gray-400"></i>
+                Progress
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-robot mr-3 text-gray-400"></i>
+                AI Assistant
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-user-md mr-3 text-gray-400"></i>
+                Ask Psychologist
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-spa mr-3 text-gray-400"></i>
+                Mindfulness
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-users mr-3 text-gray-400"></i>
+                Community
+              </a>
+              <a
+                href="#"
+                class="flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <i class="fas fa-bookmark mr-3 text-gray-400"></i>
+                Resources
+              </a>
+            </div>
+            <div class="mt-auto mb-4">
+              <div class="p-4 bg-indigo-50 rounded-lg">
+                <h3 class="text-sm font-medium text-indigo-700">
+                  Need urgent help?
+                </h3>
+                <p class="mt-1 text-xs text-indigo-600">
+                  Contact a mental health professional immediately.
+                </p>
+                <button
+                  class="mt-2 w-full px-3 py-2 text-xs font-medium text-center text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                >
+                  Emergency Contact
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex flex-col flex-1 overflow-hidden">
+        <!-- Top navigation -->
+        <div
+          class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200"
+        >
+          <div class="flex items-center">
+            <button class="md:hidden text-gray-500 focus:outline-none">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="ml-4 text-lg font-medium text-gray-900">Dashboard</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button
+                onclick="toggleNotifPanel()"
+                class="p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none relative"
+              >
+                <i class="fas fa-bell"></i>
+                <span
+                  class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+              <div
+                id="notifPanel"
+                class="hidden absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg py-1 z-10"
+              >
+                <div class="px-4 py-2 border-b border-gray-100">
+                  <h3 class="text-sm font-medium text-gray-800">
+                    Notifications
+                  </h3>
+                </div>
+                <div class="max-h-60 overflow-y-auto">
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <div class="flex items-start">
+                      <div class="flex-shrink-0 mt-1">
+                        <div
+                          class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600"
+                        >
+                          <i class="fas fa-check text-xs"></i>
+                        </div>
+                      </div>
+                      <div class="ml-2">
+                        <p>Your daily check-in is ready</p>
+                        <p class="text-xs text-gray-500">2 minutes ago</p>
+                      </div>
+                    </div>
+                  </a>
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <div class="flex items-start">
+                      <div class="flex-shrink-0 mt-1">
+                        <div
+                          class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
+                        >
+                          <i class="fas fa-book text-xs"></i>
+                        </div>
+                      </div>
+                      <div class="ml-2">
+                        <p>New mindfulness exercise available</p>
+                        <p class="text-xs text-gray-500">1 hour ago</p>
+                      </div>
+                    </div>
+                  </a>
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <div class="flex items-start">
+                      <div class="flex-shrink-0 mt-1">
+                        <div
+                          class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"
+                        >
+                          <i class="fas fa-users text-xs"></i>
+                        </div>
+                      </div>
+                      <div class="ml-2">
+                        <p>New message in your support group</p>
+                        <p class="text-xs text-gray-500">3 hours ago</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="px-4 py-2 border-t border-gray-100">
+                  <a
+                    href="#"
+                    class="text-xs font-medium text-indigo-600 hover:text-indigo-500"
+                    >View all notifications</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="relative">
+              <button
+                onclick="toggleProfilePanel()"
+                class="flex items-center focus:outline-none"
+              >
+                <img
+                  class="w-8 h-8 rounded-full"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt="User profile"
+                />
+                <span class="ml-2 text-sm font-medium text-gray-700"
+                  >Krisna</span
+                >
+              </button>
+              <div
+                id="profilePanel"
+                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10"
+              >
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Your Profile</a
+                >
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Settings</a
+                >
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Achievements</a
+                >
+                <div class="border-t border-gray-100"></div>
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Sign out</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="flex-1 overflow-auto p-4 bg-gray-50">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Welcome card and mood tracker -->
+            <div class="md:col-span-2 space-y-6">
+              <!-- Welcome card -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h2 class="text-xl font-semibold text-gray-800">
+                      Good morning, Krisna!
+                    </h2>
+                    <p class="text-gray-500 mt-1">How are you feeling today?</p>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-500 mr-2">Day 14</span>
+                    <div
+                      class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white"
+                    >
+                      <i class="fas fa-fire"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Daily check-in -->
+                <div class="mt-6">
+                  <h3
+                    class="text-sm font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Daily Check-in
+                  </h3>
+                  <div class="mt-4 grid grid-cols-2 gap-4">
+                    <!-- Mood tracker -->
+                    <div class="col-span-2">
+                      <h4 class="text-xs font-medium text-gray-500 mb-2">
+                        How are you feeling?
+                      </h4>
+                      <div class="grid grid-cols-5 gap-2">
+                        <button
+                          class="mood-option flex flex-col items-center justify-center p-3 rounded-lg bg-red-50 text-red-600"
+                        >
+                          <i class="fas fa-angry text-2xl"></i>
+                          <span class="mt-2 text-xs font-medium">Angry</span>
+                        </button>
+                        <button
+                          class="mood-option flex flex-col items-center justify-center p-3 rounded-lg bg-yellow-50 text-yellow-600"
+                        >
+                          <i class="fas fa-frown text-2xl"></i>
+                          <span class="mt-2 text-xs font-medium">Sad</span>
+                        </button>
+                        <button
+                          class="mood-option flex flex-col items-center justify-center p-3 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-meh text-2xl"></i>
+                          <span class="mt-2 text-xs font-medium">Neutral</span>
+                        </button>
+                        <button
+                          class="mood-option flex flex-col items-center justify-center p-3 rounded-lg bg-blue-50 text-blue-600"
+                        >
+                          <i class="fas fa-smile text-2xl"></i>
+                          <span class="mt-2 text-xs font-medium">Happy</span>
+                        </button>
+                        <button
+                          class="mood-option flex flex-col items-center justify-center p-3 rounded-lg bg-green-50 text-green-600"
+                        >
+                          <i class="fas fa-laugh text-2xl"></i>
+                          <span class="mt-2 text-xs font-medium">Excited</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Energy level -->
+                    <div>
+                      <h4 class="text-xs font-medium text-gray-500 mb-2">
+                        Energy Level
+                      </h4>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button
+                          class="energy-level flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-battery-quarter text-xl"></i>
+                          <span class="mt-1 text-xs">Low</span>
+                        </button>
+                        <button
+                          class="energy-level flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-battery-half text-xl"></i>
+                          <span class="mt-1 text-xs">Medium</span>
+                        </button>
+                        <button
+                          class="energy-level flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-battery-full text-xl"></i>
+                          <span class="mt-1 text-xs">High</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Sleep quality -->
+                    <div>
+                      <h4 class="text-xs font-medium text-gray-500 mb-2">
+                        Sleep Quality
+                      </h4>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button
+                          class="sleep-quality flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-moon text-xl"></i>
+                          <span class="mt-1 text-xs">Poor</span>
+                        </button>
+                        <button
+                          class="sleep-quality flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-bed text-xl"></i>
+                          <span class="mt-1 text-xs">Okay</span>
+                        </button>
+                        <button
+                          class="sleep-quality flex flex-col items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-600"
+                        >
+                          <i class="fas fa-sun text-xl"></i>
+                          <span class="mt-1 text-xs">Great</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    class="mt-4 w-full px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700"
+                  >
+                    Complete Check-in
+                  </button>
+                </div>
+              </div>
+
+              <!-- Journal section -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-800">
+                    Today's Journal
+                  </h2>
+                  <div class="flex items-center space-x-2">
+                    <button
+                      class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      Prompts
+                    </button>
+                    <button
+                      class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      View all
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <div class="flex space-x-2 mb-2 overflow-x-auto pb-2">
+                    <button
+                      class="flex-shrink-0 px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full"
+                    >
+                      Today's Highlights
+                    </button>
+                    <button
+                      class="flex-shrink-0 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
+                    >
+                      Gratitude
+                    </button>
+                    <button
+                      class="flex-shrink-0 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
+                    >
+                      Challenges
+                    </button>
+                    <button
+                      class="flex-shrink-0 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
+                    >
+                      Self-reflection
+                    </button>
+                  </div>
+                  <textarea
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    rows="4"
+                    placeholder="How was your day? What are you grateful for?"
+                  ></textarea>
+                  <div class="flex justify-between mt-3">
+                    <div class="flex space-x-2">
+                      <button
+                        class="p-2 text-gray-400 hover:text-gray-500 rounded-full"
+                      >
+                        <i class="fas fa-image"></i>
+                      </button>
+                      <button
+                        class="p-2 text-gray-400 hover:text-gray-500 rounded-full"
+                      >
+                        <i class="fas fa-microphone"></i>
+                      </button>
+                      <button
+                        class="p-2 text-gray-400 hover:text-gray-500 rounded-full"
+                      >
+                        <i class="fas fa-palette"></i>
+                      </button>
+                    </div>
+                    <button
+                      class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700"
+                    >
+                      Save Entry
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <h3
+                    class="text-sm font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Recent Entries
+                  </h3>
+                  <div class="mt-3 space-y-3">
+                    <div class="journal-entry p-4 bg-gray-50 rounded-lg">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                          <div
+                            class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
+                          >
+                            <i class="fas fa-smile"></i>
+                          </div>
+                          <span class="ml-2 text-sm font-medium text-gray-700"
+                            >Happy</span
+                          >
+                        </div>
+                        <span class="text-xs text-gray-400">Yesterday</span>
+                      </div>
+                      <p class="mt-2 text-sm text-gray-600 line-clamp-2">
+                        Had a great day at work today! Finished my project ahead
+                        of schedule and got positive feedback from my manager.
+                        Also went for a walk in the park which was very
+                        refreshing.
+                      </p>
+                      <div class="mt-2 flex space-x-2">
+                        <span
+                          class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full"
+                          >#work</span
+                        >
+                        <span
+                          class="px-2 py-1 text-xs bg-green-50 text-green-600 rounded-full"
+                          >#nature</span
+                        >
+                      </div>
+                    </div>
+                    <div class="journal-entry p-4 bg-gray-50 rounded-lg">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                          <div
+                            class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600"
+                          >
+                            <i class="fas fa-meh"></i>
+                          </div>
+                          <span class="ml-2 text-sm font-medium text-gray-700"
+                            >Neutral</span
+                          >
+                        </div>
+                        <span class="text-xs text-gray-400">2 days ago</span>
+                      </div>
+                      <p class="mt-2 text-sm text-gray-600 line-clamp-2">
+                        Not much happened today. Felt a bit tired but managed to
+                        complete all my tasks. Need to work on getting better
+                        sleep.
+                      </p>
+                      <div class="mt-2 flex space-x-2">
+                        <span
+                          class="px-2 py-1 text-xs bg-purple-50 text-purple-600 rounded-full"
+                          >#sleep</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right sidebar -->
+            <div class="space-y-6">
+              <!-- Mood graph -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-800">
+                    Mood This Week
+                  </h2>
+                  <div class="flex space-x-2">
+                    <button
+                      class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      Week
+                    </button>
+                    <button
+                      class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                    >
+                      Month
+                    </button>
+                    <button
+                      class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                    >
+                      Year
+                    </button>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <canvas id="moodChart" height="200"></canvas>
+                </div>
+              </div>
+
+              <!-- Mental health status -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-800">
+                  Your Mental Health Status
+                </h2>
+                <div class="mt-4 space-y-4">
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Stress Level</span
+                      >
+                      <span class="text-xs font-medium text-indigo-600"
+                        >Moderate</span
+                      >
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-yellow-500 h-2 rounded-full"
+                        style="width: 60%"
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Anxiety</span
+                      >
+                      <span class="text-xs font-medium text-indigo-600"
+                        >Low</span
+                      >
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-green-500 h-2 rounded-full"
+                        style="width: 30%"
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Depression Level</span
+                      >
+                      <span class="text-xs font-medium text-indigo-600"
+                        >Moderate</span
+                      >
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-blue-500 h-2 rounded-full"
+                        style="width: 70%"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="mt-4 w-full px-4 py-2 text-sm font-medium text-center text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100"
+                >
+                  Take Assessment Again
+                </button>
+              </div>
+
+              <!-- Habit Tracker -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-800">
+                    Habit Tracker
+                  </h2>
+                  <button
+                    class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                    Manage
+                  </button>
+                </div>
+                <p class="mt-1 text-sm text-gray-500">
+                  Track your daily wellness habits
+                </p>
+
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div
+                        class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3"
+                      >
+                        <i class="fas fa-walking text-sm"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700"
+                        >Exercise</span
+                      >
+                    </div>
+                    <div class="flex space-x-1">
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div
+                        class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3"
+                      >
+                        <i class="fas fa-spa text-sm"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700"
+                        >Meditation</span
+                      >
+                    </div>
+                    <div class="flex space-x-1">
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div
+                        class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 mr-3"
+                      >
+                        <i class="fas fa-moon text-sm"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700"
+                        >8h Sleep</span
+                      >
+                    </div>
+                    <div class="flex space-x-1">
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                      <button
+                        class="habit-tracker-day w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="mt-4 w-full px-4 py-2 text-sm font-medium text-center text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100"
+                >
+                  Add New Habit
+                </button>
+              </div>
+
+              <!-- Recommendations -->
+              <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-800">
+                    Recommendations
+                  </h2>
+                  <button
+                    class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                    See all
+                  </button>
+                </div>
+                <div class="mt-4 space-y-3">
+                  <div class="p-3 bg-indigo-50 rounded-lg flex items-start">
+                    <div class="flex-shrink-0 mt-1">
+                      <div
+                        class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"
+                      >
+                        <i class="fas fa-headphones"></i>
+                      </div>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-gray-800">
+                        Guided Meditation
+                      </h3>
+                      <p class="mt-1 text-xs text-gray-600">
+                        10 min session to reduce stress
+                      </p>
+                    </div>
+                  </div>
+                  <div class="p-3 bg-green-50 rounded-lg flex items-start">
+                    <div class="flex-shrink-0 mt-1">
+                      <div
+                        class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600"
+                      >
+                        <i class="fas fa-walking"></i>
+                      </div>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-gray-800">
+                        Outdoor Walk
+                      </h3>
+                      <p class="mt-1 text-xs text-gray-600">
+                        20 min in nature to boost mood
+                      </p>
+                    </div>
+                  </div>
+                  <div class="p-3 bg-blue-50 rounded-lg flex items-start">
+                    <div class="flex-shrink-0 mt-1">
+                      <div
+                        class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
+                      >
+                        <i class="fas fa-book"></i>
+                      </div>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-gray-800">Reading</h3>
+                      <p class="mt-1 text-xs text-gray-600">
+                        Article on improving sleep habits
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Assistant and Ask Psychologist -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <!-- AI Assistant Chat -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-800">
+                  AI Mental Health Assistant
+                </h2>
+                <div class="flex items-center">
+                  <span class="h-2 w-2 rounded-full bg-green-500 mr-1"></span>
+                  <span class="text-xs text-gray-500">Online</span>
+                </div>
+              </div>
+
+              <div
+                class="mt-4 h-64 overflow-y-auto space-y-3"
+                id="chatContainer"
+              >
+                <div class="chat-message ai-message p-3 fade-in">
+                  <p class="text-sm">
+                    Hello Krisna! I'm your AI mental health assistant. How can I
+                    help you today?
+                  </p>
+                </div>
+                <div class="chat-message ai-message p-3 fade-in">
+                  <p class="text-sm">
+                    I notice you've been tracking your mood. Would you like to
+                    talk about anything specific?
+                  </p>
+                </div>
+              </div>
+
+              <div class="mt-4 flex">
+                <input
+                  type="text"
+                  id="chatInput"
+                  class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Type your message..."
+                />
+                <button
+                  onclick="sendMessage()"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700"
+                >
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+
+              <div class="mt-3">
+                <h3
+                  class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Quick Suggestions
+                </h3>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <button
+                    onclick="quickMessage('I\'m feeling anxious today')"
+                    class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200"
+                  >
+                    I'm feeling anxious
+                  </button>
+                  <button
+                    onclick="quickMessage('How can I improve my sleep?')"
+                    class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200"
+                  >
+                    Sleep tips
+                  </button>
+                  <button
+                    onclick="quickMessage('Suggest a mindfulness exercise')"
+                    class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200"
+                  >
+                    Mindfulness
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ask Psychologist -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-800">
+                  Ask a Psychologist
+                </h2>
+                <div class="flex items-center">
+                  <span class="h-2 w-2 rounded-full bg-green-500 mr-1"></span>
+                  <span class="text-xs text-gray-500">3 online</span>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <div class="p-4 bg-indigo-50 rounded-lg">
+                  <div class="flex items-center">
+                    <img
+                      class="w-10 h-10 rounded-full"
+                      src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt="Dr. Sarah"
+                    />
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-gray-800">
+                        Dr. Sarah Johnson
+                      </h3>
+                      <p class="text-xs text-gray-600">Clinical Psychologist</p>
+                    </div>
+                  </div>
+                  <p class="mt-3 text-sm text-gray-600">
+                    Available now for a 15-minute consultation about stress
+                    management techniques.
+                  </p>
+                  <button
+                    class="mt-3 w-full px-3 py-2 text-sm font-medium text-center text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                  >
+                    Book Session
+                  </button>
+                </div>
+
+                <div class="mt-3 p-4 bg-gray-50 rounded-lg">
+                  <div class="flex items-center">
+                    <img
+                      class="w-10 h-10 rounded-full"
+                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt="Dr. Mark"
+                    />
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-gray-800">
+                        Dr. Mark Williams
+                      </h3>
+                      <p class="text-xs text-gray-600">
+                        Cognitive Behavioral Therapist
+                      </p>
+                    </div>
+                  </div>
+                  <p class="mt-3 text-sm text-gray-600">
+                    Specializes in anxiety disorders. Next available tomorrow at
+                    2pm.
+                  </p>
+                  <button
+                    class="mt-3 w-full px-3 py-2 text-sm font-medium text-center text-indigo-600 bg-white border border-indigo-600 rounded-md hover:bg-indigo-50"
+                  >
+                    Schedule Later
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Community Support -->
+          <div class="mt-6 bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">
+                Community Support
+              </h2>
+              <button
+                class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                View All Groups
+              </button>
+            </div>
+            <p class="mt-1 text-sm text-gray-500">
+              Connect with others who understand
+            </p>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 bg-purple-50 rounded-lg">
+                <div class="flex items-center">
+                  <div
+                    class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3"
+                  >
+                    <i class="fas fa-hands-helping"></i>
+                  </div>
+                  <h3 class="text-sm font-medium text-gray-800">
+                    Anxiety Support
+                  </h3>
+                </div>
+                <p class="mt-2 text-xs text-gray-600">
+                  1.2k members • 12 new posts today
+                </p>
+                <button
+                  class="mt-3 w-full px-3 py-1 text-xs font-medium text-center text-purple-600 bg-white border border-purple-600 rounded-md hover:bg-purple-100"
+                >
+                  Join Group
+                </button>
+              </div>
+              <div class="p-4 bg-blue-50 rounded-lg">
+                <div class="flex items-center">
+                  <div
+                    class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3"
+                  >
+                    <i class="fas fa-moon"></i>
+                  </div>
+                  <h3 class="text-sm font-medium text-gray-800">
+                    Sleep Wellness
+                  </h3>
+                </div>
+                <p class="mt-2 text-xs text-gray-600">
+                  850 members • 5 new posts today
+                </p>
+                <button
+                  class="mt-3 w-full px-3 py-1 text-xs font-medium text-center text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-100"
+                >
+                  Join Group
+                </button>
+              </div>
+              <div class="p-4 bg-green-50 rounded-lg">
+                <div class="flex items-center">
+                  <div
+                    class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3"
+                  >
+                    <i class="fas fa-heart"></i>
+                  </div>
+                  <h3 class="text-sm font-medium text-gray-800">
+                    Self-Care Circle
+                  </h3>
+                </div>
+                <p class="mt-2 text-xs text-gray-600">
+                  2.3k members • 20 new posts today
+                </p>
+                <button
+                  class="mt-3 w-full px-3 py-1 text-xs font-medium text-center text-green-600 bg-white border border-green-600 rounded-md hover:bg-green-100"
+                >
+                  Join Group
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Mood chart
+      const ctx = document.getElementById("moodChart").getContext("2d");
+      const moodChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          datasets: [
+            {
+              label: "Mood Score",
+              data: [3, 2, 4, 3, 5, 4, 3],
+              backgroundColor: "rgba(99, 102, 241, 0.1)",
+              borderColor: "rgba(99, 102, 241, 1)",
+              borderWidth: 2,
+              tension: 0.3,
+              pointBackgroundColor: "rgba(99, 102, 241, 1)",
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 6,
+              ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                  const moods = [
+                    "",
+                    "Sadness",
+                    "Anger",
+                    "Fear",
+                    "Surprise",
+                    "Love",
+                    "Joy",
+                  ];
+                  return moods[value];
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Mood selection
+      document.querySelectorAll(".mood-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          document.querySelectorAll(".mood-option").forEach((opt) => {
+            opt.classList.remove("ring-2", "ring-indigo-500");
+          });
+          this.classList.add("ring-2", "ring-indigo-500");
+
+          // Show notification
+          showNotification("Mood recorded successfully!", "indigo");
+        });
+      });
+
+      // Energy level selection
+      document.querySelectorAll(".energy-level").forEach((option) => {
+        option.addEventListener("click", function () {
+          document.querySelectorAll(".energy-level").forEach((opt) => {
+            opt.classList.remove("ring-2", "ring-indigo-500");
+          });
+          this.classList.add("ring-2", "ring-indigo-500");
+        });
+      });
+
+      // Sleep quality selection
+      document.querySelectorAll(".sleep-quality").forEach((option) => {
+        option.addEventListener("click", function () {
+          document.querySelectorAll(".sleep-quality").forEach((opt) => {
+            opt.classList.remove("ring-2", "ring-indigo-500");
+          });
+          this.classList.add("ring-2", "ring-indigo-500");
+        });
+      });
+
+      // Habit tracker day selection
+      document.querySelectorAll(".habit-tracker-day").forEach((day) => {
+        day.addEventListener("click", function () {
+          if (this.classList.contains("bg-gray-100")) {
+            this.classList.remove("bg-gray-100", "text-gray-400");
+            this.classList.add("bg-green-100", "text-green-600");
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            showNotification("Habit marked as completed!", "green");
+          } else {
+            this.classList.remove("bg-green-100", "text-green-600");
+            this.classList.add("bg-gray-100", "text-gray-400");
+            this.innerHTML = '<i class="fas fa-times"></i>';
+          }
+        });
+      });
+
+      // AI Chat functionality
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+
+        if (message) {
+          // Add user message
+          const userMessage = document.createElement("div");
+          userMessage.className = "chat-message user-message p-3 fade-in";
+          userMessage.innerHTML = `<p class="text-sm">${message}</p>`;
+          document.getElementById("chatContainer").appendChild(userMessage);
+
+          // Clear input
+          input.value = "";
+
+          // Scroll to bottom
+          document.getElementById("chatContainer").scrollTop =
+            document.getElementById("chatContainer").scrollHeight;
+
+          // Simulate AI response after delay
+          setTimeout(() => {
+            const responses = [
+              "I understand how you're feeling. Have you tried any relaxation techniques today?",
+              "That's an important observation. Would you like to explore this feeling more?",
+              "I hear you. Remember that it's okay to feel this way sometimes.",
+              "Thank you for sharing. Self-awareness is a great first step in mental health care.",
+              "Let me suggest a quick breathing exercise to help with that...",
+              "Based on your mood tracking, I notice some patterns. Would you like to discuss them?",
+              "Have you considered journaling about this? It can often provide clarity.",
+              "Would you like me to recommend some resources that might help?",
+            ];
+
+            const randomResponse =
+              responses[Math.floor(Math.random() * responses.length)];
+
+            const aiMessage = document.createElement("div");
+            aiMessage.className = "chat-message ai-message p-3 fade-in";
+            aiMessage.innerHTML = `<p class="text-sm">${randomResponse}</p>`;
+            document.getElementById("chatContainer").appendChild(aiMessage);
+
+            // Scroll to bottom
+            document.getElementById("chatContainer").scrollTop =
+              document.getElementById("chatContainer").scrollHeight;
+          }, 1000);
+        }
+      }
+
+      function quickMessage(message) {
+        document.getElementById("chatInput").value = message;
+        sendMessage();
+      }
+
+      // Allow pressing Enter to send message
+      document
+        .getElementById("chatInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+      // Notification panel toggle
+      function toggleNotifPanel() {
+        document.getElementById("notifPanel").classList.toggle("hidden");
+        document.getElementById("profilePanel").classList.add("hidden");
+      }
+
+      // Profile panel toggle
+      function toggleProfilePanel() {
+        document.getElementById("profilePanel").classList.toggle("hidden");
+        document.getElementById("notifPanel").classList.add("hidden");
+      }
+
+      // Close panels when clicking outside
+      document.addEventListener("click", function (event) {
+        if (
+          !event.target.closest("#notifPanel") &&
+          !event.target.closest(".fa-bell")
+        ) {
+          document.getElementById("notifPanel").classList.add("hidden");
+        }
+        if (
+          !event.target.closest("#profilePanel") &&
+          !event.target.closest('button[onclick="toggleProfilePanel()"]')
+        ) {
+          document.getElementById("profilePanel").classList.add("hidden");
+        }
+      });
+
+      // Show notification
+      function showNotification(message, color) {
+        const notification = document.createElement("div");
+        notification.className = `fixed bottom-4 right-4 px-4 py-2 bg-${color}-600 text-white rounded-md shadow-lg fade-in flex items-center`;
+        notification.innerHTML = `<i class="fas fa-check mr-2"></i> ${message}`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.classList.remove("fade-in");
+          notification.classList.add("fade-out");
+          setTimeout(() => notification.remove(), 500);
+        }, 3000);
+      }
+
+      // Pulse animation for important elements
+      setInterval(() => {
+        const elements = document.querySelectorAll(".pulse");
+        elements.forEach((el) => {
+          el.classList.toggle("pulse");
+          setTimeout(() => el.classList.toggle("pulse"), 100);
+        });
+      }, 4000);
+    </script>
+  </body>
+</html>
