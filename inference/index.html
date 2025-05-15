@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assessment Form</title>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #3498db;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .question-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .option input {
+            width: auto;
+            margin-right: 5px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            color: #D8000C;
+            background-color: #FFBABA;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #2084dc;
+            border-radius: 5px;
+            border-left: 4px solid #2ecc71;
+        }
+        .results h3 {
+            margin-top: 0;
+            color: #2ecc71;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .hidden {
+            display: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+        }
+        .normal {
+            background-color: #2ecc71;
+        }
+        .mild {
+            background-color: #f1c40f;
+        }
+        .moderate {
+            background-color: #e67e22;
+        }
+        .severe {
+            background-color: #e74c3c;
+        }
+        .form-progress {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mental Health Assessment</h1>
+        
+        <div class="form-progress">
+            <span id="progress-text">Section 1/4: Personal Details</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <button type="button" id="load-data-btn">Load Sample Data</button>
+
+        <form id="mental-health-form">
+
+            <!-- Section 1: Personal Information -->
+            <div class="section" id="section-1">
+                <h2>Personal Details</h2>
+                
+                <label for="age">Age Group:</label>
+                <select id="age" name="age" required>
+                    <option value="">Select your age group</option>
+                    <option value="Below 18">Below 18</option>
+                    <option value="18-22">18-22</option>
+                    <option value="23-26">23-26</option>
+                    <option value="27-30">27-30</option>
+                    <option value="Above 30">Above 30</option>
+                </select>
+                
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select your gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+                
+                <label for="academic_year">Academic Year:</label>
+                <select id="academic_year" name="academic_year" required>
+                    <option value="">Select your academic year</option>
+                    <option value="First Year or Equivalent">First Year or Equivalent</option>
+                    <option value="Second Year or Equivalent">Second Year or Equivalent</option>
+                    <option value="Third Year or Equivalent">Third Year or Equivalent</option>
+                    <option value="Fourth Year or Equivalent">Fourth Year or Equivalent</option>
+                    <option value="Other">Other</option>
+
+                </select>
+                
+                <label for="cgpa">CGPA Range:</label>
+                <select id="cgpa" name="cgpa" required>
+                    <option value="">Select your CGPA range</option>
+                    <option value="Below 2.00">Below 2.00</option>
+                    <option value="2.00 - 2.49">2.00 - 2.49</option>
+                    <option value="2.50 - 2.99">2.50 - 2.99</option>
+                    <option value="3.00 - 3.39">3.00 - 3.39</option>
+                    <option value="3.40 - 3.79">3.40 - 3.79</option>
+                    <option value="3.80 - 4.00">3.80 - 4.00</option>
+                    <option value="Other">Other</option>
+                </select>
+                
+                <label for="got_scholarship">Do you have a scholarship?</label>
+                <select id="got_scholarship" name="got_scholarship" required>
+                    <option value="">Select an option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <button type="button" id="next-btn-1">Next</button>
+
+            </div>
+
+            <!-- Section 2: Anxiety Assessment -->
+            <div class="section hidden" id="section-2">
+                <h2>Anxiety Assessment</h2>
+                <p>For each question, please select how often you've been bothered by the following over the past 2 weeks.</p>
+                
+                <div class="question">
+                    <div class="question-title">1. Feeling nervous, anxious, or on edge</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q1" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q1" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q1" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q1" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">2. Not being able to stop or control worrying</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q2" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q2" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q2" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q2" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">3. Worrying too much about different things</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q3" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q3" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q3" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q3" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">4. Trouble relaxing</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q4" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q4" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q4" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q4" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">5. Being so restless that it's hard to sit still</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q5" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q5" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q5" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q5" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">6. Becoming easily annoyed or irritable</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q6" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q6" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q6" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q6" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">7. Feeling afraid as if something awful might happen</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="anxiety_q7" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="anxiety_q7" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="anxiety_q7" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="anxiety_q7" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+
+                <button type="button" id="prev-btn-2">Previous</button>
+                <button type="button" id="next-btn-2">Next</button>
+            </div>
+
+            <!-- Section 3: Stress Assessment -->
+            <div class="section hidden" id="section-3">
+                <h2>Stress Assessment</h2>
+                <p>For each question, please indicate how you have been feeling during the past week.</p>
+                
+                <div class="question">
+                    <div class="question-title">1. I found it hard to wind down</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q1" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q1" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q1" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q1" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q1" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">2. I tended to over-react to situations</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q2" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q2" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q2" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q2" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q2" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">3. I felt that I was using a lot of nervous energy</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q3" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q3" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q3" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q3" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q3" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">4. I found myself getting agitated</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q4" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q4" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q4" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q4" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q4" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">5. I found it difficult to relax</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q5" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q5" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q5" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q5" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q5" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">6. I was intolerant of anything that kept me from getting on with what I was doing</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q6" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q6" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q6" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q6" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q6" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">7. I felt that I was rather touchy</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q7" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q7" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q7" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q7" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q7" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">8. I found it hard to calm down after something upset me</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q8" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q8" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q8" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q8" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q8" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">9. I found it difficult to tolerate interruptions to what I was doing</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q9" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q9" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q9" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q9" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q9" value="4"> Always</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">10. I was in a state of nervous tension</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="stress_q10" value="0" required> Never</label>
+                        <label class="option"><input type="radio" name="stress_q10" value="1"> Sometimes</label>
+                        <label class="option"><input type="radio" name="stress_q10" value="2"> Often</label>
+                        <label class="option"><input type="radio" name="stress_q10" value="3"> Usually</label>
+                        <label class="option"><input type="radio" name="stress_q10" value="4"> Always</label>
+                    </div>
+                </div>
+
+                <button type="button" id="prev-btn-3">Previous</button>
+                <button type="button" id="next-btn-3">Next</button>
+            </div>
+
+            <!-- Section 4: Depression Assessment -->
+            <div class="section hidden" id="section-4">
+                <h2>Depression Assessment</h2>
+                <p>For each question, please select how often you've been bothered by the following over the past 2 weeks.</p>
+                
+                <div class="question">
+                    <div class="question-title">1. Little interest or pleasure in doing things</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q1" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q1" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q1" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q1" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">2. Feeling down, depressed, or hopeless</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q2" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q2" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q2" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q2" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">3. Trouble falling or staying asleep, or sleeping too much</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q3" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q3" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q3" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q3" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">4. Feeling tired or having little energy</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q4" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q4" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q4" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q4" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">5. Poor appetite or overeating</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q5" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q5" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q5" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q5" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">6. Feeling bad about yourself or that you are a failure or have let yourself or your family down</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q6" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q6" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q6" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q6" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">7. Trouble concentrating on things, such as reading</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q7" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q7" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q7" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q7" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">8. Moving or speaking so slowly that other people could have noticed</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q8" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q8" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q8" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q8" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-title">9. Thoughts that you would be better off dead or of hurting yourself</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="depression_q9" value="0" required> Not at all</label>
+                        <label class="option"><input type="radio" name="depression_q9" value="1"> Several days</label>
+                        <label class="option"><input type="radio" name="depression_q9" value="2"> More than half the days</label>
+                        <label class="option"><input type="radio" name="depression_q9" value="3"> Nearly every day</label>
+                    </div>
+                </div>
+
+
+                <button type="button" id="prev-btn-4">Previous</button>
+                <button type="button" id="submit-btn">Submit Assessment</button>
+            </div>
+        </form>
+        
+        <!-- Loading indicator -->
+        <div id="loading" class="loading hidden">
+            <p>Processing your results... Please wait.</p>
+        </div>
+        
+        <!-- Error message -->
+        <div id="error-message" class="error hidden"></div>
+        
+        <!-- Results Section -->
+        <div id="results" class="results hidden">
+            <h3>Your Assessment Results</h3>
+            <div id="results-content">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+</body>
