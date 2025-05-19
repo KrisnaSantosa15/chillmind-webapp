@@ -70,12 +70,12 @@ const Header: React.FC = () => {
         <Link href="/" className="text-xl font-bold text-primary">
           ChillMind
         </Link>
-      </div>
-      
-      <nav className={`hidden md:flex items-center space-x-8`}>
+      </div>        <nav className={`hidden md:flex items-center space-x-8`}>
+        <NavLink href="#hero" id="hero">Home</NavLink>
         <NavLink href="#features" id="features">Features</NavLink>
         <NavLink href="#how-it-works" id="how-it-works">How It Works</NavLink>
         <NavLink href="#testimonials" id="testimonials">Testimonials</NavLink>
+        <NavLink href="#tips" id="tips">Tips</NavLink>
         <NavLink href="#faq" id="faq">FAQ</NavLink>
       </nav>
       
@@ -123,17 +123,22 @@ const Header: React.FC = () => {
       
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md shadow-lg p-6 md:hidden flex flex-col space-y-4 border-t border-muted">
-          {isHomePage ? (
+        <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md shadow-lg p-6 md:hidden flex flex-col space-y-4 border-t border-muted">          {isHomePage ? (
             <>
+              <a 
+                href="#hero" 
+                onClick={(e) => scrollToSection(e, 'hero')}
+                className="text-foreground hover:text-primary transition-colors py-2"
+              >
+                Home
+              </a>
               <a 
                 href="#features" 
                 onClick={(e) => scrollToSection(e, 'features')}
                 className="text-foreground hover:text-primary transition-colors py-2"
               >
                 Features
-              </a>
-              <a 
+              </a>              <a 
                 href="#how-it-works" 
                 onClick={(e) => scrollToSection(e, 'how-it-works')}
                 className="text-foreground hover:text-primary transition-colors py-2"
@@ -148,28 +153,47 @@ const Header: React.FC = () => {
                 Testimonials
               </a>
               <a 
+                href="#tips" 
+                onClick={(e) => scrollToSection(e, 'tips')}
+                className="text-foreground hover:text-primary transition-colors py-2"
+              >
+                Tips
+              </a>
+              <a 
                 href="#faq" 
                 onClick={(e) => scrollToSection(e, 'faq')}
                 className="text-foreground hover:text-primary transition-colors py-2"
               >
                 FAQ
               </a>
-            </>
-          ) : (
+            </>          ) : (
             <>
+              <Link 
+                href="/#hero"
+                className="text-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
               <Link 
                 href="/#features"
                 className="text-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Features
-              </Link>
-              <Link 
+              </Link>              <Link 
                 href="/#how-it-works"
                 className="text-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 How It Works
+              </Link>
+              <Link 
+                href="/#tips"
+                className="text-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Tips
               </Link>
               <Link 
                 href="/#testimonials"

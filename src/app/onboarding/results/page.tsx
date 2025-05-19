@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -26,6 +25,48 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Moved fallbackToTraditionalScoring inside useEffect to avoid recreating it on every render
+    const fallbackToTraditionalScoring = () => {
+      const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
+      const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
+      const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
+      
+      // Create a prediction results object from traditional scoring
+      setPredictionResults({
+        depression: {
+          label: getDepressionLabel(phq9Score),
+          probability: 1.0, // Certainty since it's rule-based
+          probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
+        },
+        anxiety: {
+          label: getAnxietyLabel(gad7Score),
+          probability: 1.0,
+          probabilities: [{ label: getAnxietyLabel(gad7Score), probability: 1.0 }]
+        },
+        stress: {
+          label: getStressLabel(pssScore),
+          probability: 1.0,
+          probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
+        }
+      });
+      localStorage.setItem('prediction_results', JSON.stringify({
+        depression: {
+          label: getDepressionLabel(phq9Score),
+          probability: 1.0,
+          probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
+        },
+        anxiety: {
+          label: getAnxietyLabel(gad7Score),
+          probability: 1.0,
+          probabilities: [{ label: getAnxietyLabel(gad7Score), probability: 1.0 }]
+        },
+        stress: {
+          label: getStressLabel(pssScore),
+          probability: 1.0,
+          probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
+        }
+      }));
+    };
     async function loadAssessmentData() {
       try {
         // Load demographic data
@@ -112,50 +153,7 @@ export default function ResultsPage() {
     }
     
     loadAssessmentData();
-  }, []);
-
-  // Fallback to traditional scoring if ML prediction fails
-  const fallbackToTraditionalScoring = () => {
-    const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
-    const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
-    const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
-    
-    // Create a prediction results object from traditional scoring
-    setPredictionResults({
-      depression: {
-        label: getDepressionLabel(phq9Score),
-        probability: 1.0, // Certainty since it's rule-based
-        probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
-      },
-      anxiety: {
-        label: getAnxietyLabel(gad7Score),
-        probability: 1.0,
-        probabilities: [{ label: getAnxietyLabel(gad7Score), probability: 1.0 }]
-      },
-      stress: {
-        label: getStressLabel(pssScore),
-        probability: 1.0,
-        probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
-      }
-    });
-    localStorage.setItem('prediction_results', JSON.stringify({
-      depression: {
-        label: getDepressionLabel(phq9Score),
-        probability: 1.0,
-        probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
-      },
-      anxiety: {
-        label: getAnxietyLabel(gad7Score),
-        probability: 1.0,
-        probabilities: [{ label: getAnxietyLabel(gad7Score), probability: 1.0 }]
-      },
-      stress: {
-        label: getStressLabel(pssScore),
-        probability: 1.0,
-        probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
-      }
-    }));
-  };
+  }, []); // Empty dependency array since fallbackToTraditionalScoring is defined inside
 
   // Traditional scoring functions (as fallback)
   const getDepressionLabel = (score: number): string => {
@@ -223,6 +221,21 @@ export default function ResultsPage() {
     // In a real app, this would first check if the user is logged in
     // and redirect to auth/register if they aren't
     router.push('/dashboard');
+  };
+  
+  const handleRetakeAssessment = () => {
+    // Clear all assessment-related data from localStorage
+    localStorage.removeItem('demographics');
+    localStorage.removeItem('phq9_answers');
+    localStorage.removeItem('phq9_score');
+    localStorage.removeItem('gad7_answers');
+    localStorage.removeItem('gad7_score');
+    localStorage.removeItem('pss_answers');
+    localStorage.removeItem('pss_score');
+    localStorage.removeItem('prediction_results');
+    
+    // Redirect to the beginning of the onboarding process
+    router.push('/onboarding');
   };
 
   if (!loaded) {
@@ -444,27 +457,53 @@ export default function ResultsPage() {
               </div>
             </div>
             
-            {/* Mobile Step Indicator */}
+            {/* Mobile Step Indicator - Redesigned */}
             <div className="md:hidden">
-              <div className="flex justify-around items-center mb-2">
-                {['Introduction', 'Demographics', 'Depression', 'Anxiety', 'Stress', 'Results'].map((step, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <div className={`w-8 h-8 rounded-full ${index === 5 ? 'bg-primary' : 'bg-primary/50'} flex items-center justify-center text-white text-xs font-bold`}>
-                      {index === 5 ? '6' : '✓'}
-                    </div>
-                    <span className={`text-[10px] mt-1 ${index === 5 ? 'text-primary' : 'text-primary/50'} font-medium`}>
-                      {index < 5 ? (index === 0 ? 'Intro' : step.substring(0, 4)) : step}
-                    </span>
+              {/* Progress bar showing completion */}
+              <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-4">
+                <div className="h-full bg-gradient-to-r from-primary/70 to-primary" style={{ width: '100%' }}></div>
+              </div>
+              
+              {/* Current step highlight card */}
+              <div className="relative mb-2">
+                <div className="overflow-x-auto pb-3 scrollbar-hide">
+                  <div className="flex gap-2 w-max px-2">
+                    {['Introduction', 'Demographics', 'Depression', 'Anxiety', 'Stress', 'Results'].map((step, index) => (
+                      <div 
+                        key={index} 
+                        className={`flex items-center px-4 py-2 rounded-lg border transition-all ${
+                          index === 5 
+                            ? 'bg-primary text-white border-primary min-w-[90px] scale-105 shadow-md' 
+                            : 'bg-primary/10 border-primary/20 text-muted-foreground min-w-[85px]'
+                        }`}
+                      >
+                        <span className={`w-5 h-5 rounded-full ${
+                          index === 5 ? 'bg-white text-primary' : 'bg-primary/30 text-white'
+                        } flex items-center justify-center text-xs font-bold mr-2`}>
+                          {index + 1}
+                        </span>
+                        <span className="text-xs whitespace-nowrap">
+                          {index === 0 ? 'Intro' : step}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                
+                {/* Fade effect on edges to indicate scrollability */}
+                <div className="absolute top-0 left-0 h-full w-6 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
+                <div className="absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
               </div>
-              <div className="flex justify-between px-2 mt-1">
-                <div className="h-1 bg-primary/50 flex-grow"></div>
-                <div className="h-1 bg-primary/50 flex-grow"></div>
-                <div className="h-1 bg-primary/50 flex-grow"></div>
-                <div className="h-1 bg-primary/50 flex-grow"></div>
-                <div className="h-1 bg-primary/50 flex-grow"></div>
-              </div>
+              
+              {/* Helper text */}
+              <p className="text-[10px] text-center text-muted-foreground">
+                <span className="inline-flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Swipe to see all steps
+                </span>
+              </p>
             </div>
           </div>
           
@@ -813,11 +852,9 @@ export default function ResultsPage() {
           {/* Footer Navigation - Styled better */}
           <div className="border-t border-muted pt-6 pb-10 mt-6">
             <div className="flex justify-between items-center">
-              <Link href="/onboarding/pss">
-                <Button variant="outline" className="px-6 py-2 text-sm">
-                  ← Previous
-                </Button>
-              </Link>
+              <Button variant="outline" onClick={handleRetakeAssessment} className="px-6 py-2 text-sm">
+                ← Retake Assessment
+              </Button>
               <div className="flex flex-col items-center mx-4 flex-grow">
                 <p className="text-xs text-muted-foreground mb-2 text-center max-w-sm">
                   <strong>Note:</strong> These assessments are not a substitute for professional medical advice or treatment.

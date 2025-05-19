@@ -87,15 +87,26 @@ body {
 
 ::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 127, 215, 0.7);
+  background: var(--primary);
+}
+
+/* Utility class to hide scrollbars while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Smooth transitions for theme switching */

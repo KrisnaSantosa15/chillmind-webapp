@@ -12,7 +12,7 @@ export default function Home() {
       <Header />
       <main className="flex flex-col min-h-screen">
         {/* Enhanced Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center justify-center py-24 md:py-32 px-6 md:px-12 overflow-hidden">
+        <section id="hero" className="relative min-h-[90vh] flex items-center justify-center py-24 md:py-32 px-6 md:px-12 overflow-hidden">
           {/* Animated background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary-light/5 -z-20"></div>
           
@@ -294,7 +294,7 @@ export default function Home() {
         </section>
         
         {/* Mental Health Tips Section */}
-        <section className="py-24 px-6 md:px-12 bg-primary/5">
+        <section id='tips' className="py-24 px-6 md:px-12 bg-primary/5">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-16 text-center">
               Quick Mental <span className="text-primary">Wellness</span> Tips
