@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
+export const dynamic = 'force-dynamic';
+
 export default function ComingSoonPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
