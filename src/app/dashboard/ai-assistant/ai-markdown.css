@@ -1,0 +1,36 @@
+/* AI Assistant Markdown Styling */
+.ai-markdown {
+  font-size: 1rem;
+  line-height: 1.8;
+  padding: 0.5rem 0;
+}
+
+.ai-markdown p {
+  margin-bottom: 1em;
+}
+
+.ai-markdown ul,
+.ai-markdown ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.ai-markdown li {
+  margin-bottom: 0.5em;
+}
+
+.ai-markdown pre {
+  background: #f6f8fa;
+  border-radius: 0.5em;
+  padding: 1em;
+  margin-bottom: 1em;
+  font-size: 0.95em;
+  overflow-x: auto;
+}
+
+.ai-markdown code {
+  background: #f6f8fa;
+  border-radius: 0.3em;
+  padding: 0.2em 0.4em;
+  font-size: 0.95em;
+}

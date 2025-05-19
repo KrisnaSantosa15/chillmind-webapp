@@ -7,8 +7,9 @@ import MoodTracker from '@/components/dashboard/MoodTracker';
 import JournalSection from '@/components/dashboard/JournalSection';
 import MentalHealthStatus from '@/components/dashboard/MentalHealthStatus';
 import HabitTracker from '@/components/dashboard/HabitTracker';
-import AIAssistant from '@/components/dashboard/AIAssistant';
+import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import Recommendations from '@/components/dashboard/Recommendations';
+import '@/styles/ai-markdown.css';
 
 export default function DashboardPage() {
   const [username, setUsername] = useState('Krisna');
@@ -52,10 +53,9 @@ export default function DashboardPage() {
 
           {/* Journal section */}
           <JournalSection />
-          
-          {/* AI Mental Health Assistant */}
+            {/* AI Mental Health Assistant */}
           <div className="h-[400px]">
-            <AIAssistant />
+            <AIAssistantWidget height="400px" compactMode={true} />
           </div>
         </div>
 

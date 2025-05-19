@@ -1,0 +1,52 @@
+/* AI Assistant Markdown Styling */
+.ai-markdown {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 0.25rem 0;
+}
+
+.ai-markdown p {
+  margin-bottom: 0.8em;
+}
+
+.ai-markdown ul,
+.ai-markdown ol {
+  margin-bottom: 0.8em;
+  padding-left: 1.5em;
+  list-style-position: outside;
+}
+
+.ai-markdown ul {
+  list-style-type: disc;
+}
+
+.ai-markdown ol {
+  list-style-type: decimal;
+}
+
+.ai-markdown li {
+  margin-bottom: 0.4em;
+  display: list-item;
+}
+
+.ai-markdown pre {
+  background: #f6f8fa;
+  border-radius: 0.5em;
+  padding: 0.8em;
+  margin-bottom: 0.8em;
+  font-size: 0.9em;
+  overflow-x: auto;
+}
+
+.ai-markdown code {
+  background: #f6f8fa;
+  border-radius: 0.3em;
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+}
+
+/* Dark mode support */
+:root.dark .ai-markdown pre,
+:root.dark .ai-markdown code {
+  background: #1e293b;
+}

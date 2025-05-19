@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^0.15.0",
     "@heroicons/react": "^2.2.0",
     "@tensorflow/tfjs": "^4.22.0",
     "chart.js": "^4.4.1",
@@ -20,7 +21,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.50.1",
-    "react-markdown": "^9.0.1",
+    "react-markdown": "^9.1.0",
     "recharts": "^2.12.0",
     "swr": "^2.2.4"
   },
