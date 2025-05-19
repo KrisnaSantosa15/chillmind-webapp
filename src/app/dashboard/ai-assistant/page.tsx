@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import '@/styles/ai-markdown.css';
@@ -14,6 +14,17 @@ type Suggestion = {
 
 export default function AIAssistantPage() {
   const [selectedTopic, setSelectedTopic] = useState('');
+
+  // Reset selectedTopic after it's been used
+  useEffect(() => {
+    if (selectedTopic) {
+      const timer = setTimeout(() => {
+        setSelectedTopic('');
+      }, 1000); // Reset after 1 second to ensure it's been processed
+      
+      return () => clearTimeout(timer);
+    }
+  }, [selectedTopic]);
 
   const suggestedTopics: Suggestion[] = [
     {
@@ -59,19 +70,9 @@ export default function AIAssistantPage() {
       category: "support"
     }
   ];
-
   const selectTopic = (topic: string) => {
     setSelectedTopic(topic);
-    // Find the message input element in the AIAssistantWidget and set its value
-    const inputElement = document.getElementById('message-input') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.value = topic;
-      inputElement.focus();
-      // Dispatch an input event to update the component's state
-      inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-    }
   };
-  
   return (
     <DashboardLayout>
       <div className="max-w-8xl mx-auto">
@@ -141,10 +142,9 @@ export default function AIAssistantPage() {
               </div>
             </div>
           </div>
-          
-          {/* Main chat area */}
+            {/* Main chat area */}
           <div className="md:col-span-3">
-            <AIAssistantWidget height="75vh" />
+            <AIAssistantWidget height="75vh" initialMessage={selectedTopic} />
           </div>
         </div>
       </div>

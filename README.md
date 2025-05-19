@@ -40,6 +40,11 @@ ChillMind is a personalized mental health monitoring platform designed specifica
 3. Set up environment variables
    Create a `.env.local` file in the root directory with the following variables:
    ```
+   # Gemini API key (server-side only, NOT exposed to client)
+   GEMINI_API_KEY=your_gemini_api_key_here
+   GEMINI_SYSTEM_INSTRUCTION="You are an AI assistant for ChillMind..."
+
+   # Firebase configuration (safe to expose to client)
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id

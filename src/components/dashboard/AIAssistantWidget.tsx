@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 
@@ -17,29 +16,46 @@ type Message = {
 type AIAssistantWidgetProps = {
   height?: string;
   compactMode?: boolean;
+  initialMessage?: string;
 };
 
 async function fetchGeminiResponseStream(prompt: string, onChunk: (chunk: string) => void): Promise<void> {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  if (!apiKey) {
-    onChunk("[Error: Gemini API key is not set. Please contact the administrator.]");
-    return;
-  }
-  
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const stream = await ai.models.generateContentStream({
-      model: "gemini-2.0-flash-lite",
-      contents: prompt,
-      config: {
-        systemInstruction: process.env.NEXT_PUBLIC_GEMINI_SYSTEM_INSTRUCTION,
+    // Call our secure API route instead of the Gemini API directly
+    const response = await fetch('/api/gemini/stream', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    });
-    
-    for await (const chunk of stream) {
-      if (chunk.text) {
-        onChunk(chunk.text);
+      body: JSON.stringify({ prompt }),
+    });    if (!response.ok) {
+      try {
+        const errorData = await response.json();
+        onChunk(`[Error: ${errorData.error || 'Failed to connect to AI service'}]`);
+      } catch {
+        // If response is not JSON or cannot be parsed
+        const errorText = await response.text();
+        onChunk(errorText.startsWith('[Error') ? errorText : `[Error: Failed to connect to AI service]`);
       }
+      return;
+    }
+
+    // Process the streaming response
+    if (!response.body) {
+      onChunk("[Error: No response body from AI service]");
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      // Decode and process the chunk
+      const chunkText = decoder.decode(value, { stream: true });
+      onChunk(chunkText);
     }
   } catch (error) {
     console.error("Error fetching Gemini response:", error);
@@ -49,7 +65,8 @@ async function fetchGeminiResponseStream(prompt: string, onChunk: (chunk: string
 
 const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ 
   height = "400px",
-  compactMode = false
+  compactMode = false,
+  initialMessage = ''
 }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -66,11 +83,26 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
       options: ["Tell me about anxiety", "I'm feeling stressed", "Need help sleeping"]
     }
   ]);
-  
-  const [newMessage, setNewMessage] = useState('');
+    const [newMessage, setNewMessage] = useState(initialMessage);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
+  // Update message when initialMessage prop changes
+  useEffect(() => {
+    if (initialMessage && initialMessage !== newMessage) {
+      setNewMessage(initialMessage);
+      
+      // Auto-submit the form after a short delay to ensure state is updated
+      const timer = setTimeout(() => {
+        const formElement = document.getElementById('message-form');
+        if (formElement) {
+          formElement.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [initialMessage, newMessage]);
   
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
