@@ -37,6 +37,7 @@ export default function PSSPage() {
   const router = useRouter();
   const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(-1));
   const [validated, setValidated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Load any saved answers from localStorage
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function PSSPage() {
       localStorage.setItem('pss_score', score.toString());
       
       // Proceed to results
+      setLoading(true);
       router.push('/onboarding/results');
     } else {
       // Scroll to the first unanswered question
@@ -190,8 +192,9 @@ export default function PSSPage() {
                 <Button 
                   variant="primary" 
                   type="submit"
-                  disabled={!validated}
-                  className={!validated ? "opacity-70 cursor-not-allowed" : ""}
+                  disabled={!validated || loading}
+                  className={!validated || loading ? "opacity-70 cursor-not-allowed" : ""}
+                  isLoading={loading}
                 >
                   View Results
                 </Button>

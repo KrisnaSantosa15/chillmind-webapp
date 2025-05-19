@@ -100,6 +100,7 @@ export default function ResultsPage() {
           results = await processPredictions(firstTensor);
         }
         setPredictionResults(results);
+        localStorage.setItem('prediction_results', JSON.stringify(results));
       } catch (err) {
         console.error('Error during prediction:', err);
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -137,6 +138,23 @@ export default function ResultsPage() {
         probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
       }
     });
+    localStorage.setItem('prediction_results', JSON.stringify({
+      depression: {
+        label: getDepressionLabel(phq9Score),
+        probability: 1.0,
+        probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
+      },
+      anxiety: {
+        label: getAnxietyLabel(gad7Score),
+        probability: 1.0,
+        probabilities: [{ label: getAnxietyLabel(gad7Score), probability: 1.0 }]
+      },
+      stress: {
+        label: getStressLabel(pssScore),
+        probability: 1.0,
+        probabilities: [{ label: getStressLabel(pssScore), probability: 1.0 }]
+      }
+    }));
   };
 
   // Traditional scoring functions (as fallback)

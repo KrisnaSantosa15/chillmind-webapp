@@ -32,6 +32,7 @@ export default function PHQ9Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(-1));
   const [validated, setValidated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Load any saved answers from localStorage
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function PHQ9Page() {
     e.preventDefault();
     
     if (validated) {
-      // Calculate score
+      setLoading(true);
       const score = answers.reduce((sum, answer) => sum + answer, 0);
       localStorage.setItem('phq9_score', score.toString());
       
@@ -175,8 +176,9 @@ export default function PHQ9Page() {
                 <Button 
                   variant="primary" 
                   type="submit"
-                  disabled={!validated}
-                  className={!validated ? "opacity-70 cursor-not-allowed" : ""}
+                  disabled={!validated || loading}
+                  className={!validated || loading ? "opacity-70 cursor-not-allowed" : ""}
+                  isLoading={loading}
                 >
                   Continue to Anxiety Assessment
                 </Button>

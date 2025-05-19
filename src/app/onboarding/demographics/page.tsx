@@ -70,6 +70,7 @@ export default function DemographicsPage() {
   });
 
   const [errors, setErrors] = useState<ErrorState>({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field: keyof DemographicsData, value: string | boolean) => {
     setDemographics(prev => ({
@@ -103,9 +104,8 @@ export default function DemographicsPage() {
     e.preventDefault();
     
     if (validateForm()) {
-      // Store demographics data in localStorage or context
+      setLoading(true);
       localStorage.setItem('demographics', JSON.stringify(demographics));
-      // Proceed to the next step
       router.push('/onboarding/phq9');
     }
   };
@@ -325,7 +325,7 @@ export default function DemographicsPage() {
                     Previous
                   </Button>
                 </Link>
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" disabled={loading} isLoading={loading}>
                   Continue to Depression Assessment
                 </Button>
               </div>
