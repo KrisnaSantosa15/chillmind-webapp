@@ -235,7 +235,7 @@ export default function PHQ9Page() {
                   className={!validated || loading ? "opacity-70 cursor-not-allowed" : ""}
                   isLoading={loading}
                 >
-                  Continue to Anxiety Assessment
+                  Continue
                 </Button>
               </div>
             </form>

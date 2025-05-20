@@ -34,19 +34,23 @@ const Footer: React.FC = () => {
         <div>
           <h4 className="text-sm font-bold uppercase text-foreground mb-4">Navigation</h4>
           <ul className="space-y-2">
-            <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary">Home</Link></li>
-            <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary">About</Link></li>
-            <li><Link href="/features" className="text-sm text-muted-foreground hover:text-primary">Features</Link></li>
-            <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact</Link></li>
+            <li><a href="#hero" className="text-sm text-muted-foreground hover:text-primary">Home</a></li>
+            <li><a href="#features" className="text-sm text-muted-foreground hover:text-primary">Features</a></li>
+            <li><a href="#how-it-works" className="text-sm text-muted-foreground hover:text-primary">How it Works</a></li>
+            <li><a href="#testimonials" className="text-sm text-muted-foreground hover:text-primary">Testimonials</a></li>
+            <li><a href="#tips" className="text-sm text-muted-foreground hover:text-primary">Wellness Tips</a></li>
+            <li><a href="#faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</a></li>
           </ul>
         </div>
         
         <div>
-          <h4 className="text-sm font-bold uppercase text-foreground mb-4">Legal</h4>
+          <h4 className="text-sm font-bold uppercase text-foreground mb-4">Mental Health Resources</h4>
           <ul className="space-y-2">
             <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
             <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
-            <li><Link href="/cookies" className="text-sm text-muted-foreground hover:text-primary">Cookie Policy</Link></li>
+            <li><Link href="/data-commitment" className="text-sm text-muted-foreground hover:text-primary">Data Commitment</Link></li>
+            <li><Link href="/crisis-resources" className="text-sm text-muted-foreground hover:text-primary">Crisis Resources</Link></li>
+            <li><Link href="/accessibility" className="text-sm text-muted-foreground hover:text-primary">Accessibility</Link></li>
           </ul>
         </div>
         
@@ -54,7 +58,9 @@ const Footer: React.FC = () => {
           <h4 className="text-sm font-bold uppercase text-foreground mb-4">Contact</h4>
           <ul className="space-y-2">
             <li className="text-sm text-muted-foreground">Email: info@chillmind.app</li>
-            <li className="text-sm text-muted-foreground">Support: support@chillmind.app</li>
+            <li className="text-sm text-muted-foreground">Support: support@chillmind.app</li>            <li className="text-sm text-muted-foreground mt-4">
+              If you&apos;re in crisis, please contact your local mental health helpline or emergency services.
+            </li>
           </ul>
         </div>
       </div>
@@ -68,4 +74,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer; 
+export default Footer;

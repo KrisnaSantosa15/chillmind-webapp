@@ -23,6 +23,37 @@ export default function ResultsPage() {
   const [demographics, setDemographics] = useState<DemographicData | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Scroll to current step in mobile view
+    const scrollToCurrentStep = () => {
+      const scrollContainer = document.getElementById("stepsScrollContainer");
+      const currentStep = document.getElementById("currentStep");
+      
+      if (scrollContainer && currentStep) {
+        // Calculate the scroll position to center the current step
+        const containerWidth = scrollContainer.clientWidth;
+        const currentStepLeft = currentStep.offsetLeft;
+        const currentStepWidth = currentStep.clientWidth;
+        const scrollPosition = currentStepLeft - (containerWidth / 2) + (currentStepWidth / 2);
+        
+        // Scroll to position with smooth behavior
+        scrollContainer.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth"
+        });
+      }
+    };
+    
+    // Execute after a small delay to ensure elements are rendered
+    const timeoutId = setTimeout(() => {
+      scrollToCurrentStep();
+    }, 100);
+    
+    // Clean up timeout
+    return () => clearTimeout(timeoutId);
+  }, [loaded]); // Re-run when loaded state changes
 
   useEffect(() => {
     // Moved fallbackToTraditionalScoring inside useEffect to avoid recreating it on every render
@@ -220,6 +251,7 @@ export default function ResultsPage() {
     // Redirect to dashboard after all assessments
     // In a real app, this would first check if the user is logged in
     // and redirect to auth/register if they aren't
+    setLoading(true);
     router.push('/dashboard');
   };
   
@@ -466,11 +498,12 @@ export default function ResultsPage() {
               
               {/* Current step highlight card */}
               <div className="relative mb-2">
-                <div className="overflow-x-auto pb-3 scrollbar-hide">
+                <div className="overflow-x-auto pb-3 scrollbar-hide" id="stepsScrollContainer">
                   <div className="flex gap-2 w-max px-2">
                     {['Introduction', 'Demographics', 'Depression', 'Anxiety', 'Stress', 'Results'].map((step, index) => (
                       <div 
-                        key={index} 
+                        key={index}
+                        id={index === 5 ? "currentStep" : `step-${index}`}
                         className={`flex items-center px-4 py-2 rounded-lg border transition-all ${
                           index === 5 
                             ? 'bg-primary text-white border-primary min-w-[90px] scale-105 shadow-md' 
@@ -498,7 +531,8 @@ export default function ResultsPage() {
               {/* Helper text */}
               <p className="text-[10px] text-center text-muted-foreground">
                 <span className="inline-flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                   Swipe to see all steps
@@ -842,26 +876,59 @@ export default function ResultsPage() {
             </div>
             
             <div className="text-center">
-              <button onClick={handleContinue} className="bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-10 rounded-lg transition-colors text-lg shadow-md">
+              <button onClick={handleContinue} className="bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-10 rounded-lg transition-colors text-lg shadow-md flex items-center mx-auto">
                 Go to Dashboard to Continue
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
               </button>
               <p className="text-sm text-muted-foreground mt-4">Your personal dashboard has been set up with tools and resources based on your assessment results.</p>
             </div>
           </div>
           
-          {/* Footer Navigation - Styled better */}
+          {/* Footer Navigation - Redesigned for better mobile experience */}
           <div className="border-t border-muted pt-6 pb-10 mt-6">
-            <div className="flex justify-between items-center">
-              <Button variant="outline" onClick={handleRetakeAssessment} className="px-6 py-2 text-sm">
-                ← Retake Assessment
+            {/* Medical advice disclaimer card - improved contrast for light mode */}
+            <div className="bg-primary/5  rounded-lg p-4 mb-6 shadow-md">
+              <p className="text-center text-sm  font-medium">
+                <span className="inline-flex items-center justify-center mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </span>
+                <strong>Note:</strong> These assessments are not a substitute for professional medical advice or treatment.
+              </p>
+            </div>
+            
+            {/* Action buttons - stacked on mobile, side by side on larger screens */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button 
+                variant="outline" 
+                onClick={handleRetakeAssessment} 
+                className="flex items-center justify-center py-3 px-4 text-sm order-2 md:order-1"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                  <path d="M3 2v6h6"></path>
+                  <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
+                </svg>
+                Retake Assessment
               </Button>
-              <div className="flex flex-col items-center mx-4 flex-grow">
-                <p className="text-xs text-muted-foreground mb-2 text-center max-w-sm">
-                  <strong>Note:</strong> These assessments are not a substitute for professional medical advice or treatment.
-                </p>
-              </div>
-              <Button variant="primary" onClick={handleContinue} className="px-6 py-2 text-sm">
-                Go to Dashboard →
+              
+              <Button 
+                variant="primary" 
+                onClick={handleContinue} 
+                disabled={loading}
+                isLoading={loading}
+                className="flex items-center justify-center py-3 px-4 text-sm order-1 md:order-2"
+              >
+                Go to Dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
               </Button>
             </div>
             

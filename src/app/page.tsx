@@ -40,7 +40,7 @@ export default function Home() {
                     Begin Your Journey
                   </Button>
                 </Link>
-                <Link href="/features">
+                <Link href="#features">
                   <Button variant="outline" size="lg">
                     Learn More
                   </Button>

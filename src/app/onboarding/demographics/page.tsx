@@ -380,8 +380,11 @@ export default function DemographicsPage() {
                     Previous
                   </Button>
                 </Link>
-                <Button variant="primary" type="submit" disabled={loading} isLoading={loading}>
+                <Button variant="primary" type="submit" disabled={loading} isLoading={loading} className='md:inline-block hidden'>
                   Continue to Depression Assessment
+                </Button>
+                <Button variant="primary" type="submit" disabled={loading} isLoading={loading} className='md:hidden '>
+                  Continue
                 </Button>
               </div>
             </form>
