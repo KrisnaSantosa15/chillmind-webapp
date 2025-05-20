@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import { RecommendationItem, recommendationsData } from '@/data/recommendationsData';
 
 type Resource = {
@@ -177,7 +176,6 @@ export default function ResourcesPage() {
   });
 
   return (
-    <DashboardLayout>
       <div className="max-w-8xl mx-auto">
         <div className="bg-background rounded-xl shadow-sm p-6 border border-muted mb-6">
           <div className="mb-6">
@@ -474,6 +472,5 @@ export default function ResourcesPage() {
           )}
         </div>
       </div>
-    </DashboardLayout>
   );
 } 

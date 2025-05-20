@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +13,6 @@ export default function ComingSoonPage() {
   const returnPath = searchParams.get('return') || '/dashboard/resources';
 
   return (
-    <DashboardLayout>
       <div className="max-w-3xl mx-auto text-center py-12">
         <div className="mb-6">
           <div className="w-20 h-20 bg-indigo-600 dark:bg-indigo-800 text-white rounded-full mx-auto flex items-center justify-center">
@@ -48,6 +46,5 @@ export default function ComingSoonPage() {
           </Link>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

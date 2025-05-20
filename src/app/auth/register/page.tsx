@@ -1,12 +1,89 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
+import { useAuth } from '@/lib/authContext';
+import { FirebaseError } from 'firebase/app';
+import LoggedInRedirect from '@/components/auth/LoggedInRedirect';
 
 export default function RegisterPage() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, signInWithGoogle } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signUp(email, password, firstName, lastName);
+      router.push('/onboarding');
+    } catch (error: unknown) {
+      console.error('Registration error:', error);
+      // Handle specific Firebase error codes
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+        if (errorCode === 'auth/email-already-in-use') {
+          setError('This email is already in use. Please use a different email or try logging in.');
+        } else if (errorCode === 'auth/invalid-email') {
+          setError('The email address is not valid. Please enter a valid email.');
+        } else if (errorCode === 'auth/weak-password') {
+          setError('Password is too weak. Please use a stronger password.');
+        } else if (errorCode === 'auth/network-request-failed') {
+          setError('Network error. Please check your internet connection and try again.');
+        } else {
+          setError(`Authentication error: ${errorCode}`);
+        }
+      } else {
+        setError('Failed to create account. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signInWithGoogle();
+      router.push('/onboarding');
+    } catch (error: unknown) {
+      console.error('Google signup error:', error);
+      // Handle specific Firebase error codes for Google sign-in
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+        if (errorCode === 'auth/popup-closed-by-user') {
+          setError('Sign up was cancelled. Please try again.');
+        } else if (errorCode === 'auth/popup-blocked') {
+          setError('Sign up popup was blocked by your browser. Please allow popups for this site.');
+        } else if (errorCode === 'auth/cancelled-popup-request') {
+          setError('Sign up was cancelled. Please try again.');
+        } else if (errorCode === 'auth/network-request-failed') {
+          setError('Network error. Please check your internet connection and try again.');
+        } else {
+          setError(`Authentication error: ${errorCode}`);
+        }
+      } else {
+        setError('Failed to sign up with Google. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
-    <>
+    <LoggedInRedirect>
       <Header />
       <main className="flex min-h-screen items-center justify-center px-6 py-24">
         <div className="w-full max-w-md rounded-lg border border-muted p-8 shadow-sm">
@@ -15,9 +92,13 @@ export default function RegisterPage() {
             <p className="mt-2 text-muted-foreground">
               Start your mental wellness journey today
             </p>
-          </div>
-
-          <form className="space-y-6">
+          </div><form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label 
@@ -32,6 +113,8 @@ export default function RegisterPage() {
                   type="text"
                   required
                   className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div>
@@ -47,6 +130,8 @@ export default function RegisterPage() {
                   type="text"
                   required
                   className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
             </div>
@@ -65,6 +150,8 @@ export default function RegisterPage() {
                 required
                 className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
                 placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -82,6 +169,8 @@ export default function RegisterPage() {
                 required
                 className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <p className="mt-1 text-xs text-muted-foreground">
                 Must be at least 8 characters with a number and special character
@@ -113,8 +202,9 @@ export default function RegisterPage() {
                 variant="primary" 
                 className="w-full"
                 type="submit"
+                disabled={isLoading}
               >
-                Sign up
+                {isLoading ? 'Creating account...' : 'Sign up'}
               </Button>
             </div>
           </form>
@@ -129,11 +219,12 @@ export default function RegisterPage() {
                   Or continue with
                 </span>
               </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-3">
+            </div>            <div className="mt-6 grid grid-cols-1 gap-3">
               <button
+                type="button"
+                onClick={handleGoogleSignUp}
                 className="flex w-full items-center justify-center gap-3 rounded-md border border-muted bg-background px-3 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-muted/50"
+                disabled={isLoading}
               >
                 <svg
                   width="20"
@@ -159,7 +250,7 @@ export default function RegisterPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                Sign up with Google
+                {isLoading ? 'Signing up...' : 'Sign up with Google'}
               </button>
             </div>
           </div>
@@ -171,11 +262,10 @@ export default function RegisterPage() {
               className="text-primary hover:underline"
             >
               Sign in
-            </Link>
-          </p>
+            </Link>          </p>
         </div>
       </main>
       <Footer />
-    </>
+    </LoggedInRedirect>
   );
-} 
+}

@@ -2,14 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Button from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
+import { useAuth } from '@/lib/authContext';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, signOut } = useAuth();
   const isHomePage = pathname === '/';
 
   // Handle scroll event
@@ -21,6 +25,16 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   // Smooth scroll to section
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -78,20 +92,58 @@ const Header: React.FC = () => {
         <NavLink href="#tips" id="tips">Tips</NavLink>
         <NavLink href="#faq" id="faq">FAQ</NavLink>
       </nav>
-      
-      {/* Desktop navigation buttons/controls */}
+        {/* Desktop navigation buttons/controls */}
       <div className="hidden md:flex items-center space-x-4">
         <ThemeToggle />
-        <Link href="/auth/login">
-          <Button variant="outline" size="sm">
-            Login
-          </Button>
-        </Link>
-        <Link href="/onboarding">
-          <Button variant="primary" size="sm">
-            Get Started
-          </Button>
-        </Link>
+        
+        {user ? (
+          <div className="relative">
+            <button 
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <span className="text-primary font-medium text-sm">
+                  {user.displayName ? user.displayName.split(' ').map(n => n[0]).join('') : user.email?.charAt(0) || 'U'}
+                </span>
+              </div>
+              <span className="font-medium">
+                {user.displayName ? user.displayName.split(' ')[0] : 'User'}
+              </span>
+            </button>
+            
+            {profileDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-lg py-1 z-10 border border-muted">
+                <Link href="/dashboard" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                  Dashboard
+                </Link>
+                <Link href="/dashboard/profile" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                  Profile
+                </Link>
+                <div className="border-t border-muted my-1"></div>
+                <button
+                  onClick={handleSignOut}
+                  className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <Link href="/auth/login">
+              <Button variant="outline" size="sm">
+                Login
+              </Button>
+            </Link>
+            <Link href="/onboarding">
+              <Button variant="primary" size="sm">
+                Get Started
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
       
       {/* Mobile navigation */}
@@ -211,20 +263,43 @@ const Header: React.FC = () => {
               </Link>
             </>
           )}
-          
-          {/* Login Button*/}
-          <Link href="/auth/login" className="py-2" onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="outline" size="sm" className="w-full">
-              Login
-            </Button>
-          </Link>
-          
-          {/* Get Started Button*/}
-          <Link href="/onboarding" className="py-2" onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="primary" size="sm" className="w-full">
-              Get Started
-            </Button>
-          </Link>
+            {/* Login Button*/}
+          {user ? (
+            <>              <Link href="/dashboard" className="py-2" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" size="sm" className="w-full">
+                  Dashboard
+                </Button>
+              </Link>
+              <div className="py-2 w-full">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    handleSignOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/login" className="py-2" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" size="sm" className="w-full">
+                  Login
+                </Button>
+              </Link>
+              
+              {/* Get Started Button*/}
+              <Link href="/onboarding" className="py-2" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="primary" size="sm" className="w-full">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </header>

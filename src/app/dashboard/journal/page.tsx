@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 type JournalEntry = {
   id: string;
@@ -72,7 +71,6 @@ export default function JournalPage() {
   };
 
   return (
-    <DashboardLayout>
       <div className="max-w-8xl mx-auto">
         <div className="bg-gradient-to-br from-background to-muted/30 rounded-xl shadow-sm p-6 border border-muted mb-6">
           <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
@@ -214,6 +212,5 @@ export default function JournalPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
 } 

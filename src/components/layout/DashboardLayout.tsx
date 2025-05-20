@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import ThemeToggle from '../ui/ThemeToggle';
+import { useAuth } from '@/lib/authContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,9 +12,11 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
   const [profilePanelOpen, setProfilePanelOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const toggleNotifPanel = () => {
     setNotifPanelOpen(!notifPanelOpen);
@@ -34,6 +37,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       return true;
     }
     return false;
+  };
+  
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return (
@@ -230,17 +243,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="relative">
+            </div>            <div className="relative">
               <button
                 onClick={toggleProfilePanel}
                 className="flex items-center focus:outline-none"
               >
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-primary font-medium text-sm">KS</span>
+                  <span className="text-primary font-medium text-sm">
+                    {user?.displayName ? user.displayName.split(' ').map(n => n[0]).join('') : user?.email?.charAt(0) || 'U'}
+                  </span>
                 </div>
                 <span className="ml-2 text-sm font-medium text-foreground hidden sm:block">
-                  Krisna
+                  {user?.displayName ? user.displayName.split(' ')[0] : 'User'}
                 </span>
               </button>
               
@@ -265,12 +279,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     Achievements
                   </a>
                   <div className="border-t border-muted"></div>
-                  <Link
-                    href="/"
-                    className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted"
                   >
                     Sign out
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

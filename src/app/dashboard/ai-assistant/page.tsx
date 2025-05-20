@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import '@/styles/ai-markdown.css';
 
@@ -74,7 +73,6 @@ export default function AIAssistantPage() {
     setSelectedTopic(topic);
   };
   return (
-    <DashboardLayout>
       <div className="max-w-8xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar with categories and topics */}
@@ -148,6 +146,5 @@ export default function AIAssistantPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

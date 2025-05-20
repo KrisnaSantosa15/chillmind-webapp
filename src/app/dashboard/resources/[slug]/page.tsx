@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import { recommendationsData, RecommendationItem } from '@/data/recommendationsData';
 import { Accordion, AccordionItem } from '@/components/ui/Accordion';
 
@@ -124,7 +123,6 @@ export default function ResourcePage() {
   };
 
   return (
-    <DashboardLayout>
       <div className="max-w-3xl mx-auto">
         {isLoading ? (
           // Loading skeleton
@@ -443,6 +441,5 @@ export default function ResourcePage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 }

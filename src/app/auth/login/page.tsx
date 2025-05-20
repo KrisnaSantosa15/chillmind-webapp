@@ -1,12 +1,83 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
+import { useAuth } from '@/lib/authContext';
+import { FirebaseError } from 'firebase/app';
+import LoggedInRedirect from '@/components/auth/LoggedInRedirect';
 
 export default function LoginPage() {
-  return (
-    <>
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signInWithGoogle } = useAuth();
+  const router = useRouter();  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signIn(email, password);
+      router.push('/dashboard');
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      // Handle specific Firebase error codes
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+        if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
+          setError('Invalid email or password. Please try again.');
+        } else if (errorCode === 'auth/user-disabled') {
+          setError('This account has been disabled. Please contact support.');
+        } else if (errorCode === 'auth/too-many-requests') {
+          setError('Too many failed login attempts. Please try again later or reset your password.');
+        } else if (errorCode === 'auth/network-request-failed') {
+          setError('Network error. Please check your internet connection and try again.');
+        } else {
+          setError(`Authentication error: ${errorCode}`);
+        }
+      } else {
+        setError('Failed to sign in. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signInWithGoogle();
+      router.push('/dashboard');
+    } catch (error: unknown) {
+      console.error('Google login error:', error);
+      // Handle specific Firebase error codes for Google sign-in
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+        if (errorCode === 'auth/popup-closed-by-user') {
+          setError('Sign in was cancelled. Please try again.');
+        } else if (errorCode === 'auth/popup-blocked') {
+          setError('Sign in popup was blocked by your browser. Please allow popups for this site.');
+        } else if (errorCode === 'auth/cancelled-popup-request') {
+          setError('Sign in was cancelled. Please try again.');
+        } else if (errorCode === 'auth/network-request-failed') {
+          setError('Network error. Please check your internet connection and try again.');
+        } else {
+          setError(`Authentication error: ${errorCode}`);
+        }
+      } else {
+        setError('Failed to sign in with Google. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };  return (
+    <LoggedInRedirect>
       <Header />
       <main className="flex min-h-screen items-center justify-center px-6 py-24">
         <div className="w-full max-w-md rounded-lg border border-muted p-8 shadow-sm">
@@ -15,9 +86,13 @@ export default function LoginPage() {
             <p className="mt-2 text-muted-foreground">
               Sign in to continue your mental wellness journey
             </p>
-          </div>
-
-          <form className="space-y-6">
+          </div><form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            
             <div>
               <label 
                 htmlFor="email" 
@@ -32,6 +107,8 @@ export default function LoginPage() {
                 required
                 className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
                 placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -57,6 +134,8 @@ export default function LoginPage() {
                 required
                 className="w-full rounded border border-muted bg-background px-3 py-2 text-foreground"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
@@ -65,8 +144,9 @@ export default function LoginPage() {
                 variant="primary" 
                 className="w-full"
                 type="submit"
+                disabled={isLoading}
               >
-                Sign in
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </div>
           </form>
@@ -81,11 +161,12 @@ export default function LoginPage() {
                   Or continue with
                 </span>
               </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-3">
+            </div>            <div className="mt-6 grid grid-cols-1 gap-3">
               <button
+                type="button"
+                onClick={handleGoogleSignIn}
                 className="flex w-full items-center justify-center gap-3 rounded-md border border-muted bg-background px-3 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-muted/50"
+                disabled={isLoading}
               >
                 <svg
                   width="20"
@@ -111,7 +192,7 @@ export default function LoginPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                Sign in with Google
+                {isLoading ? 'Signing in...' : 'Sign in with Google'}
               </button>
             </div>
           </div>
@@ -123,11 +204,10 @@ export default function LoginPage() {
               className="text-primary hover:underline"
             >
               Sign up
-            </Link>
-          </p>
+            </Link>          </p>
         </div>
       </main>
       <Footer />
-    </>
+    </LoggedInRedirect>
   );
-} 
+}

@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -5,8 +7,10 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import { Accordion, AccordionItem } from '@/components/ui/Accordion';
+import { useAuth } from '@/lib/authContext';
 
 export default function Home() {
+  const { user } = useAuth();
   return (
     <>
       <Header />
@@ -14,16 +18,16 @@ export default function Home() {
         {/* Enhanced Hero Section */}
         <section id="hero" className="relative min-h-[90vh] flex items-center justify-center py-24 md:py-32 px-6 md:px-12 overflow-hidden">
           {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary-light/5 -z-20"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary-light/5 -z-20 pointer-events-none"></div>
           
           {/* Decorative elements */}
-          <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-primary/5 animate-pulse -z-10"></div>
-          <div className="absolute bottom-[20%] left-[10%] w-48 h-48 rounded-full bg-secondary/5 animate-pulse" style={{ animationDelay: '1s' }} ></div>
+          <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-primary/5 animate-pulse -z-10 pointer-events-none"></div>
+          <div className="absolute bottom-[20%] left-[10%] w-48 h-48 rounded-full bg-secondary/5 animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} ></div>
           
-          {/* Floating shapes */}
-          <div className="absolute top-40 left-[20%] w-8 h-8 rounded-md bg-primary/10 animate-float" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute bottom-32 right-[25%] w-12 h-12 rounded-full bg-secondary/10 animate-float" style={{ animationDelay: '1.2s' }}></div>
-          <div className="absolute top-[30%] left-[60%] w-10 h-10 rounded-lg rotate-45 bg-primary-light/10 animate-float" style={{ animationDelay: '0.8s' }}></div>
+          {/* Floating shapes - adding pointer-events-none to prevent blocking clicks */}
+          <div className="absolute top-40 left-[20%] w-8 h-8 rounded-md bg-primary/10 animate-float pointer-events-none" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute bottom-32 right-[25%] w-12 h-12 rounded-full bg-secondary/10 animate-float pointer-events-none" style={{ animationDelay: '1.2s' }}></div>
+          <div className="absolute top-[30%] left-[60%] w-10 h-10 rounded-lg rotate-45 bg-primary-light/10 animate-float pointer-events-none" style={{ animationDelay: '0.8s' }}></div>
           
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16">
             <div className="md:w-1/2 text-center md:text-left">
@@ -34,12 +38,20 @@ export default function Home() {
                 ChillMind helps students monitor their mental health with
                 personalized tracking, analysis, and recommendations.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start items-center">
-                <Link href="/onboarding">
-                  <Button variant="primary" size="lg" className="shadow-lg shadow-primary/20">
-                    Begin Your Journey
-                  </Button>
-                </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start items-center relative z-10">
+                {user ? (
+                  <Link href="/dashboard">
+                    <Button variant="primary" size="lg" className="shadow-lg shadow-primary/20">
+                      Go to Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/onboarding">
+                    <Button variant="primary" size="lg" className="shadow-lg shadow-primary/20">
+                      Begin Your Journey
+                    </Button>
+                  </Link>
+                )}
                 <Link href="#features">
                   <Button variant="outline" size="lg">
                     Learn More
@@ -47,9 +59,13 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="md:w-1/2 relative h-80 md:h-[460px] w-full max-w-lg">
+            <div className="md:w-1/2 relative h-80 md:h-[460px] w-full max-w-lg z-0">
+              {/* Container for handling events/interactions */}
+              <div className="absolute inset-0 z-10 rounded-2xl">
+                {/* This is an empty div that will catch any click events and pass them through */}
+              </div>
               {/* Abstract illustration container */}
-              <div className="absolute inset-0 rounded-2xl overflow-hidden backdrop-blur-sm border border-primary/10 p-4">
+              <div className="absolute inset-0 rounded-2xl overflow-hidden backdrop-blur-sm border border-primary/10 p-4 pointer-events-none">
                 {/* Center meditation image */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative w-full h-full">
@@ -64,16 +80,16 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Supporting UI elements */}
-                <div className="absolute -top-4 -left-4 w-24 h-24 rounded-full bg-primary/10 animate-pulse"></div>
-                <div className="absolute -bottom-4 -right-4 w-32 h-32 rounded-full bg-secondary/10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                <div className="absolute top-1/2 -left-8 w-16 h-16 rounded-lg rotate-45 bg-primary-light/10 animate-float"></div>
-                <div className="absolute bottom-1/2 -right-8 w-20 h-20 rounded-full bg-secondary/10 animate-float" style={{ animationDelay: '0.8s' }}></div>
+                <div className="absolute -top-4 -left-4 w-24 h-24 rounded-full bg-primary/10 animate-pulse pointer-events-none"></div>
+                <div className="absolute -bottom-4 -right-4 w-32 h-32 rounded-full bg-secondary/10 animate-pulse pointer-events-none" style={{ animationDelay: '0.5s' }}></div>
+                <div className="absolute top-1/2 -left-8 w-16 h-16 rounded-lg rotate-45 bg-primary-light/10 animate-float pointer-events-none"></div>
+                <div className="absolute bottom-1/2 -right-8 w-20 h-20 rounded-full bg-secondary/10 animate-float pointer-events-none" style={{ animationDelay: '0.8s' }}></div>
                 {/* Glowing border effect */}
-                <div className="absolute inset-0 rounded-2xl border-2 border-primary/20 animate-pulse"></div>
+                <div className="absolute inset-0 rounded-2xl border-2 border-primary/20 animate-pulse pointer-events-none"></div>
                 {/* Floating particles */}
-                <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-primary/30 animate-float" style={{ animationDelay: '0.2s' }}></div>
-                <div className="absolute bottom-4 left-4 w-2 h-2 rounded-full bg-secondary/30 animate-float" style={{ animationDelay: '0.4s' }}></div>
-                <div className="absolute top-1/3 right-1/3 w-2.5 h-2.5 rounded-full bg-primary-light/30 animate-float" style={{ animationDelay: '0.6s' }}></div>
+                <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-primary/30 animate-float pointer-events-none" style={{ animationDelay: '0.2s' }}></div>
+                <div className="absolute bottom-4 left-4 w-2 h-2 rounded-full bg-secondary/30 animate-float pointer-events-none" style={{ animationDelay: '0.4s' }}></div>
+                <div className="absolute top-1/3 right-1/3 w-2.5 h-2.5 rounded-full bg-primary-light/30 animate-float pointer-events-none" style={{ animationDelay: '0.6s' }}></div>
               </div>
             </div>
           </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import MoodChart from '@/components/dashboard/MoodChart';
 
 export default function ProgressPage() {
@@ -12,7 +11,6 @@ export default function ProgressPage() {
   };
 
   return (
-    <DashboardLayout>
       <div className="max-w-8xl mx-auto">
         {/* Current emotional state card */}
         <div className="bg-gradient-to-r from-background to-muted/20 rounded-xl shadow-sm p-6 border border-muted mb-6">
@@ -170,6 +168,5 @@ export default function ProgressPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
 } 
