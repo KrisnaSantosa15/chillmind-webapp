@@ -27,7 +27,7 @@ export default function ResourcesPage() {
       // Loop through each severity level
       Object.values(severityLevels).forEach(recommendations => {
         // Add all recommendations for this severity level
-        allRecs.push(...recommendations);
+        allRecs.push(...(recommendations as RecommendationItem[]));
       });
     });
     
