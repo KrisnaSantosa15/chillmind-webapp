@@ -9,9 +9,9 @@ import { Accordion, AccordionItem } from '@/components/ui/Accordion';
 // Helper function to find a recommendation by slug from the data
 const findRecommendationBySlug = (slug: string): RecommendationItem | null => {
   // Flatten all recommendations into a single array to search
-  const allRecommendations = Object.values(recommendationsData).flatMap(
-    severityLevels => Object.values(severityLevels).flat()
-  );
+  const allRecommendations: RecommendationItem[] = Object.values(recommendationsData).flatMap(
+    (severityLevels) => Object.values(severityLevels).flat()
+  ) as RecommendationItem[];
   
   // Find the recommendation with a matching slug from the link
   const recommendation = allRecommendations.find(rec => {
@@ -34,9 +34,9 @@ export default function ResourcePage() {
     if (!currentRec.tags || currentRec.tags.length === 0) return [];
     
     // Flatten all recommendations into a single array
-    const allRecommendations = Object.values(recommendationsData).flatMap(
-      severityLevels => Object.values(severityLevels).flat()
-    );
+    const allRecommendations: RecommendationItem[] = Object.values(recommendationsData).flatMap(
+      (severityLevels) => Object.values(severityLevels).flat()
+    ) as RecommendationItem[];
     
     // Filter out the current recommendation and find recommendations with matching tags
     return allRecommendations
