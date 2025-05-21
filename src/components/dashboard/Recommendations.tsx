@@ -1,24 +1,113 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { RecommendationItem, getSampleRecommendations } from '@/data/recommendationsData';
+import Link from 'next/link';
+import { useAuth } from '@/lib/authContext';
+import { db } from '@/lib/firebase';
+import { collection, doc, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { RecommendationItem, recommendationsData, getSampleRecommendations } from '@/data/recommendationsData';
 
 const Recommendations: React.FC = () => {
   const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Fetch sample recommendations when component mounts
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
   useEffect(() => {
-    // Simulate API delay for demo purposes
-    const timer = setTimeout(() => {
-      const sampleRecs = getSampleRecommendations(3);
-      setRecommendations(sampleRecs);
-      setIsLoading(false);
-    }, 800);
+    const fetchRecommendations = async () => {
+      if (!user) {
+        // Show default sample recommendations for non-logged in users
+        setRecommendations(getSampleRecommendations(3));
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        // First, get the user's latest assessment to determine severity levels
+        const userRef = doc(db, "users", user.uid);
+        const assessmentsRef = collection(userRef, "assessments");
+        
+        // Query for the latest assessment
+        const assessmentQuery = query(assessmentsRef, orderBy("timestamp", "desc"), limit(1));
+        const assessmentSnapshot = await getDocs(assessmentQuery);
+        
+        if (assessmentSnapshot.empty) {
+          // If no assessment, use default sample recommendations
+          setRecommendations(getSampleRecommendations(3));
+          setIsLoading(false);
+          return;
+        }
+        
+        // Get the assessment data
+        const assessmentData = assessmentSnapshot.docs[0].data();
+        const { predictionResults } = assessmentData;
+        
+        if (!predictionResults) {
+          throw new Error("Assessment data is incomplete");
+        }
+        
+        // Get user's condition levels as strings
+        const anxietyLevel = predictionResults.anxiety?.label as string;
+        const depressionLevel = predictionResults.depression?.label as string;
+        const stressLevel = predictionResults.stress?.label as string;
+        
+        // Create personalized recommendations based on severity levels from local data
+        const recommendationsArray: RecommendationItem[] = [];
+        
+        // Helper function to safely get a recommendation
+        const getRecommendation = (
+          condition: 'anxiety' | 'depression' | 'stress', 
+          level: string
+        ): RecommendationItem | null => {
+          try {
+            // Need to cast level to a string key that TypeScript recognizes
+            const conditionData = recommendationsData[condition] as Record<string, RecommendationItem[]>;
+            if (level && conditionData[level]?.length > 0) {
+              return conditionData[level][0];
+            }
+          } catch (error) {
+            console.error(`Error getting ${condition} recommendation for level ${level}:`, error);
+          }
+          return null;
+        };
+        
+        // Anxiety recommendation
+        const anxRec = getRecommendation('anxiety', anxietyLevel);
+        if (anxRec) recommendationsArray.push(anxRec);
+        
+        // Depression recommendation
+        const depRec = getRecommendation('depression', depressionLevel);
+        if (depRec) recommendationsArray.push(depRec);
+          // Stress recommendation - need to map High Stress to actual key in data
+        let stressKey = stressLevel;
+        // Need to cast to check if key exists
+        const stressData = recommendationsData.stress as Record<string, RecommendationItem[]>;
+        if (stressLevel === "High Stress" && !stressData["High Stress"]) {
+          // Fallback to Moderate Stress if High Stress doesn't exist in the data
+          stressKey = "Moderate Stress";
+        }
+        
+        const stressRec = getRecommendation('stress', stressKey);
+        if (stressRec) recommendationsArray.push(stressRec);
+        
+        // If we couldn't get personalized recommendations, fallback to default sample recommendations
+        if (recommendationsArray.length === 0) {
+          setRecommendations(getSampleRecommendations(3));
+        } else {
+          // Set the personalized recommendations (limited to 3)
+          setRecommendations(recommendationsArray.slice(0, 3));
+        }
+      } catch (err) {
+        console.error('Error fetching recommendations:', err);
+        setError('Failed to load recommendations');
+        // Show default recommendations on error
+        setRecommendations(getSampleRecommendations(3));
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
-  }, []);
-
+    fetchRecommendations();
+  }, [user]);
   const renderIcon = (icon: string, color: string) => {
     let colorClass = '';
       switch (color) {
@@ -167,15 +256,21 @@ const Recommendations: React.FC = () => {
       );
   };
   }
-  return (
-    <div className="bg-background rounded-xl shadow-sm border border-muted overflow-hidden">      <div className="p-4 border-b border-muted flex justify-between items-center">
-        <h3 className="text-sm font-medium text-foreground">Recommendations</h3>
-        <a href="/dashboard/resources" className="text-xs font-medium text-primary hover:text-primary/80">
-          See all
-        </a>
+    return (
+    <div>      
+      <div className="mb-2 flex justify-end">
+        <Link href="/dashboard/resources" className="text-xs font-medium text-primary hover:text-primary/80">
+          See all resources
+        </Link>
       </div>
       
       <div className="divide-y divide-muted">
+        {error && (
+          <div className="p-4 text-sm text-red-500">
+            {error}
+          </div>
+        )}
+        
         {isLoading ? (
           // Loading state
           Array.from({ length: 3 }).map((_, index) => (
@@ -189,18 +284,33 @@ const Recommendations: React.FC = () => {
               </div>
             </div>
           ))
-        ) : (
-          recommendations.map(rec => (
-            <div key={rec.id} className="p-4 hover:bg-muted/40 transition-colors">
-              <a href={rec.link} className="flex items-center">
-                {renderIcon(rec.icon, rec.color)}
-                <div className="ml-3">
-                  <h4 className="text-sm font-medium text-foreground">{rec.title}</h4>
-                  <p className="text-xs text-muted-foreground">{rec.description}</p>
-                </div>
-              </a>
+        ) : (          recommendations.length > 0 ? (
+            recommendations.map(rec => (
+              <div key={rec.id} className="p-4 hover:bg-muted/40 transition-colors">
+                <a href={rec.link} className="flex items-center">
+                  {renderIcon(rec.icon, rec.color)}
+                  <div className="ml-3">
+                    <h4 className="text-sm font-medium text-foreground">{rec.title}</h4>
+                    <p className="text-xs text-muted-foreground">{rec.description}</p>
+                  </div>
+                </a>
+              </div>
+            ))
+          ) : (
+            <div className="p-4 flex flex-col items-center justify-center py-8 text-center">
+              <div className={`w-16 h-16 rounded-full bg-primary-light/20 text-primary flex items-center justify-center mb-4`}>
+                <i className="fas fa-lightbulb text-lg"></i>
+              </div>
+              <h4 className="text-sm font-medium text-foreground mb-2">No personalized recommendations yet</h4>
+              <p className="text-xs text-muted-foreground mb-3 max-w-xs">
+                Complete a mental health assessment to get personalized recommendations based on your needs.
+              </p>
+              <Link href="/dashboard/resources" className="text-xs font-medium text-primary hover:text-primary/80 inline-flex items-center">
+                <span>Browse all resources</span>
+                <i className="fas fa-arrow-right ml-1 text-xs"></i>
+              </Link>
             </div>
-          ))
+          )
         )}
       </div>
     </div>

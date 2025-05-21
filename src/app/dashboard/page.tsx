@@ -100,10 +100,22 @@ export default function DashboardPage() {
           </div>
 
           {/* Recommendations */}
-          <Recommendations />
+                    <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center">
+              Recommendations
+            </h3>
+            
+            <Recommendations />
+          </div>
 
           {/* Mental health status */}
-          <MentalHealthStatus />
+                    <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center">
+              Health Summary
+            </h3>
+            
+            <MentalHealthStatus />
+          </div>
 
           {/* Habit Tracker */}
           <HabitTracker />

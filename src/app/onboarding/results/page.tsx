@@ -16,14 +16,88 @@ import {
   AssessmentAnswers,
   PredictionResults
 } from '@/lib/model';
+import { useAuth } from '@/lib/authContext';
+import { saveAssessmentResults } from '@/lib/firestore';
+import Link from 'next/link';
 
 export default function ResultsPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [predictionResults, setPredictionResults] = useState<PredictionResults | null>(null);
   const [demographics, setDemographics] = useState<DemographicData | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dataSaved, setDataSaved] = useState(false);
+  const [isReturnFromAuth, setIsReturnFromAuth] = useState(false);
+
+  // Effect to redirect to dashboard if user is already authenticated and data is saved
+  useEffect(() => {
+    // If the user is already logged in and we've saved their data, 
+    // check if they just arrived from authentication flow
+    if (user && dataSaved && !localStorage.getItem('staying_on_results')) {
+      router.push('/dashboard');
+    }
+    
+    // Set a flag to prevent automatic redirect if the user navigated here directly
+    return () => {
+      localStorage.removeItem('staying_on_results');
+    };
+  }, [user, dataSaved, router]);
+
+  // Add effect to check for pending assessment data when user logs in
+  useEffect(() => {
+    // If user just logged in/registered and there's pending assessment data, save it
+    const checkPendingAssessmentData = async () => {
+      const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
+      
+      if (user && hasPendingAssessment && predictionResults && demographics && !dataSaved) {
+        // Set flag to show the user is returning from auth
+        setIsReturnFromAuth(true);
+        
+        try {
+          // Get scores and answers from localStorage
+          const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
+          const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
+          const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
+          
+          // Get the raw answers too
+          const phq9Answers = JSON.parse(localStorage.getItem('phq9_answers') || '[]');
+          const gad7Answers = JSON.parse(localStorage.getItem('gad7_answers') || '[]');
+          const pssAnswers = JSON.parse(localStorage.getItem('pss_answers') || '[]');
+          
+          // Save assessment results to Firestore
+          await saveAssessmentResults(
+            user,
+            demographics,
+            predictionResults,
+            {
+              phq9: phq9Score,
+              gad7: gad7Score,
+              pss: pssScore
+            },
+            {
+              phq9Answers,
+              gad7Answers,
+              pssAnswers
+            }
+          );
+          
+          // Clear all assessment data from localStorage
+          cleanupAssessmentData();
+          
+          setDataSaved(true);
+        } catch (error) {
+          console.error('Error saving assessment data after login:', error);
+        }
+      }
+    };
+    
+    // Only run this effect after assessment data is loaded
+    if (loaded) {
+      checkPendingAssessmentData();
+    }
+  }, [user, loaded, demographics, predictionResults, dataSaved]);
 
   useEffect(() => {
     // Scroll to current step in mobile view
@@ -247,28 +321,84 @@ export default function ResultsPage() {
     return value;
   };
 
-  const handleContinue = () => {
-    // Redirect to dashboard after all assessments
-    // In a real app, this would first check if the user is logged in
-    // and redirect to auth/register if they aren't
+  const handleContinue = async () => {
     setLoading(true);
-    router.push('/dashboard');
+    
+    try {
+      // Check if user is logged in
+      if (!user) {
+        // User is not logged in, store assessment data in localStorage for later
+        localStorage.setItem('assessment_pending', 'true');
+        
+        // Redirect to registration page
+        router.push('/auth/register');
+        return;
+      }
+      
+      // User is logged in, proceed with saving data to Firebase
+      if (!dataSaved && predictionResults && demographics) {
+        // Get scores from localStorage
+        const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
+        const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
+        const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
+        
+        // Get the raw answers too
+        const phq9Answers = JSON.parse(localStorage.getItem('phq9_answers') || '[]');
+        const gad7Answers = JSON.parse(localStorage.getItem('gad7_answers') || '[]');
+        const pssAnswers = JSON.parse(localStorage.getItem('pss_answers') || '[]');
+        
+        // Save assessment results to Firestore
+        await saveAssessmentResults(
+          user,
+          demographics,
+          predictionResults,
+          {
+            phq9: phq9Score,
+            gad7: gad7Score,
+            pss: pssScore
+          },
+          {
+            phq9Answers,
+            gad7Answers,
+            pssAnswers
+          }
+        );
+        
+        // Clean up all assessment data from localStorage after saving
+        cleanupAssessmentData();
+        
+        setDataSaved(true);
+      }
+      
+      // Redirect to dashboard
+      router.push('/dashboard');
+    } catch (err) {
+      console.error('Error saving assessment data:', err);
+      setError('Failed to save your assessment data, but you can still view your results.');
+    } finally {
+      setLoading(false);
+    }
   };
   
   const handleRetakeAssessment = () => {
     // Clear all assessment-related data from localStorage
-    localStorage.removeItem('demographics');
-    localStorage.removeItem('phq9_answers');
-    localStorage.removeItem('phq9_score');
-    localStorage.removeItem('gad7_answers');
-    localStorage.removeItem('gad7_score');
-    localStorage.removeItem('pss_answers');
-    localStorage.removeItem('pss_score');
-    localStorage.removeItem('prediction_results');
+    cleanupAssessmentData();
     
     // Redirect to the beginning of the onboarding process
     router.push('/onboarding');
   };
+
+  // Add effect to automatically redirect to dashboard after data is saved (with a delay for feedback)
+  useEffect(() => {
+    // When a user returns from auth and data is saved, redirect after showing success message
+    if (user && isReturnFromAuth && dataSaved) {
+      const redirectTimer = setTimeout(() => {
+        router.push('/dashboard');
+      }, 3000); // 3 second delay to show success message before redirect
+      
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [user, isReturnFromAuth, dataSaved, router]);
 
   if (!loaded) {
     return (
@@ -435,6 +565,45 @@ export default function ResultsPage() {
             <p className="text-lg text-muted-foreground">
               Based on your responses, here are your mental health assessment results.
             </p>
+            
+            {/* Authentication status */}
+            {!authLoading && !user && (
+              <div className="mt-4 p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <p className="font-medium text-foreground mb-2">
+                  To save your results and access personalized recommendations:
+                </p>
+                <div className="flex justify-center gap-4 mt-3">
+                  <Link href="/auth/register" className="text-white bg-primary hover:bg-primary/90 px-4 py-2 rounded-md font-medium text-sm">
+                    Register
+                  </Link>
+                  <Link href="/auth/login" className="text-primary bg-transparent border border-primary hover:bg-primary/10 px-4 py-2 rounded-md font-medium text-sm">
+                    Log In
+                  </Link>
+                </div>
+              </div>
+            )}
+            
+            {/* Success notification when user returns from authentication */}
+            {!authLoading && user && isReturnFromAuth && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="mr-3 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium text-green-800">
+                      Authentication successful! {dataSaved ? 'Your assessment data has been saved.' : 'Your assessment data is being saved.'}
+                    </p>
+                    <p className="text-sm text-green-600">
+                      {dataSaved ? 'You will be redirected to your personalized dashboard shortly...' : 'Please wait while we prepare your personalized dashboard.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {error && (
               <div className="mt-4 p-3 bg-accent/10 text-accent rounded-lg">
                 <p>There was an issue with the machine learning prediction: {error}</p>
@@ -877,7 +1046,7 @@ export default function ResultsPage() {
             
             <div className="text-center">
               <button onClick={handleContinue} className="bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-10 rounded-lg transition-colors text-lg shadow-md flex items-center mx-auto">
-                Go to Dashboard to Continue
+                {!user ? 'Register to Save & Continue' : (dataSaved ? 'Go to Dashboard' : 'Save Results & Continue')}
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
                   <path d="M5 12h14"></path>
                   <path d="m12 5 7 7-7 7"></path>
@@ -924,7 +1093,7 @@ export default function ResultsPage() {
                 isLoading={loading}
                 className="flex items-center justify-center py-3 px-4 text-sm order-1 md:order-2"
               >
-                Go to Dashboard
+                {!user ? 'Register to Save Results' : (dataSaved ? 'Go to Dashboard' : 'Save Results')}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
                   <path d="M5 12h14"></path>
                   <path d="m12 5 7 7-7 7"></path>
@@ -957,4 +1126,17 @@ const getSeverityIcon = (label: string): string => {
   } else {
     return '✓';
   }
+};
+
+// Helper function to clean up assessment data from localStorage
+const cleanupAssessmentData = () => {
+  localStorage.removeItem('assessment_pending');
+  localStorage.removeItem('demographics');
+  localStorage.removeItem('phq9_answers');
+  localStorage.removeItem('phq9_score');
+  localStorage.removeItem('gad7_answers');
+  localStorage.removeItem('gad7_score');
+  localStorage.removeItem('pss_answers');
+  localStorage.removeItem('pss_score');
+  localStorage.removeItem('prediction_results');
 };

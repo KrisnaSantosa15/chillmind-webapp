@@ -27,8 +27,39 @@ export interface RecommendationItem {
   };
 }
 
+// Define anxiety levels
+type AnxietyLevel =
+  | "Minimal Anxiety"
+  | "Mild Anxiety"
+  | "Moderate Anxiety"
+  | "Severe Anxiety";
+
+// Define depression levels
+type DepressionLevel =
+  | "Minimal Depression"
+  | "Mild Depression"
+  | "Moderate Depression"
+  | "Moderately Severe Depression"
+  | "Severe Depression";
+
+// Define stress levels
+type StressLevel = "Low Stress" | "Moderate Stress" | "High Perceived Stress";
+
+// Define the structure of the recommendations data
+export interface RecommendationsData {
+  anxiety: {
+    [key in AnxietyLevel]: RecommendationItem[];
+  };
+  depression: {
+    [key in DepressionLevel]: RecommendationItem[];
+  };
+  stress: {
+    [key in StressLevel]: RecommendationItem[];
+  };
+}
+
 // Simple recommendation data structure categorized by condition and severity level
-export const recommendationsData = {
+export const recommendationsData: RecommendationsData = {
   anxiety: {
     "Minimal Anxiety": [
       {
