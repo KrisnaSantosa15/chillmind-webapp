@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MoodChart from '@/components/dashboard/MoodChart';
 import MoodTracker from '@/components/dashboard/MoodTracker';
 import JournalSection from '@/components/dashboard/JournalSection';
@@ -9,15 +9,35 @@ import HabitTracker from '@/components/dashboard/HabitTracker';
 import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import Recommendations from '@/components/dashboard/Recommendations';
 import { useAuth } from '@/lib/authContext';
+import { getDayStreak } from '@/lib/journalStorage';
 import '@/styles/ai-markdown.css';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [dayStreak, setDayStreak] = useState(14);
+  const [dayStreak, setDayStreak] = useState(0);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
-
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+  // Load day streak from localStorage on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const streak = getDayStreak();
+      setDayStreak(streak);
+    }
+  }, []);
   const handleTimeRangeChange = (range: 'week' | 'month' | 'year') => {
     setTimeRange(range);
+  };
+  
+  // Handle journal entry save
+  const handleJournalSave = () => {
+    // Trigger update of the mood chart when a new journal entry is saved
+    console.log('Journal entry saved, updating chart with new updateTrigger value');
+    // This will cause the MoodChart to re-render with a new key
+    setUpdateTrigger(prev => prev + 1);
+    
+    // Update streak counter in UI when a journal entry is saved
+    const streak = getDayStreak();
+    setDayStreak(streak);
   };
 
   // Get first name from display name if available
@@ -50,10 +70,16 @@ export default function DashboardPage() {
 
             {/* Daily mood tracker */}
             <MoodTracker />
-          </div>
-
-          {/* Journal section */}
-          <JournalSection />
+          </div>          {/* Journal section */}
+          <JournalSection 
+            compact={true}
+            showRecentEntries={true}
+            showHeader={true}
+            defaultPrompt="highlights"
+            onSave={handleJournalSave}
+            entriesLimit={2}
+          />
+          
             {/* AI Mental Health Assistant */}
           <div className="h-[400px]">
             <AIAssistantWidget height="400px" compactMode={true} />
@@ -63,7 +89,6 @@ export default function DashboardPage() {
         {/* Right column - Mood chart and health status */}
         <div className="space-y-6">
           {/* Mood graph */}
-        {/* Mood graph */}
         <div className="bg-background rounded-xl shadow-sm p-6 border border-muted mb-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">
@@ -95,6 +120,7 @@ export default function DashboardPage() {
                 timeRange={timeRange} 
                 height={280} 
                 darkMode={true}
+                key={`mood-chart-${timeRange}-${updateTrigger}`}
               />
             </div>
           </div>
@@ -123,4 +149,4 @@ export default function DashboardPage() {
         </div>
       </div>
   );
-} 
+}

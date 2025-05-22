@@ -1,40 +1,247 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { predictEmotion, emotionToMood, saveJournalEntry, getJournalEntries } from '@/lib/journalStorage';
 
-const JournalSection: React.FC = () => {
-  const [activePrompt, setActivePrompt] = useState('highlights');
+export type JournalEntry = {
+  id: string;
+  date: string;
+  content: string;
+  mood: string;
+  tags: string[];
+};
+
+type PromptType = 'free' | 'highlights' | 'gratitude' | 'challenges' | 'reflection';
+
+interface JournalSectionProps {
+  compact?: boolean;
+  showRecentEntries?: boolean;
+  showHeader?: boolean;
+  defaultPrompt?: PromptType;
+  customEntries?: JournalEntry[];
+  minHeight?: string;
+  onSave?: (entry: { prompt: PromptType; content: string }) => void;
+  entriesLimit?: number;
+}
+
+const JournalSection: React.FC<JournalSectionProps> = ({
+  compact = true,
+  showRecentEntries = true,
+  showHeader = true,
+  defaultPrompt = 'highlights',
+  customEntries,
+  minHeight,
+  onSave,
+  entriesLimit
+}) => {
+  const [activePrompt, setActivePrompt] = useState<PromptType>(defaultPrompt);
   const [journalEntry, setJournalEntry] = useState('');
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [saving, setSaving] = useState(false);
 
-  const handlePromptChange = (prompt: string) => {
+  // Load entries from local storage on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && showRecentEntries && !customEntries) {
+      const storedEntries = getJournalEntries();
+      setEntries(storedEntries);
+    }
+  }, [showRecentEntries, customEntries]);
+
+  // Listen for storage events (when another tab/window updates the local storage)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && showRecentEntries && !customEntries) {
+      const handleStorageChange = (e: StorageEvent) => {
+        if (e.key === 'chillmind_journal_entries') {
+          const storedEntries = getJournalEntries();
+          setEntries(storedEntries);
+        }
+      };
+
+      window.addEventListener('storage', handleStorageChange);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+      };
+    }
+  }, [showRecentEntries, customEntries]);
+
+  const handlePromptChange = (prompt: PromptType) => {
     setActivePrompt(prompt);
     
     // Set different placeholder text based on prompt
     setJournalEntry('');
   };
 
+  const handleSaveEntry = () => {
+    if (!journalEntry.trim()) return;
+    
+    setSaving(true);
+
+    try {
+      // Predict emotion from text
+      const emotion = predictEmotion(journalEntry);
+      const mood = emotionToMood(emotion);
+      
+      // Extract tags from content (words with # prefix)
+      const tagRegex = /#(\w+)/g;
+      const tags: string[] = [];
+      let match;
+      
+      while ((match = tagRegex.exec(journalEntry)) !== null) {
+        tags.push(match[1].toLowerCase());
+      }
+      
+      // If no tags were found, add default ones based on the prompt type
+      if (tags.length === 0) {
+        switch (activePrompt) {
+          case 'highlights':
+            tags.push('highlights');
+            break;
+          case 'gratitude':
+            tags.push('gratitude');
+            break;
+          case 'challenges':
+            tags.push('challenge');
+            break;
+          case 'reflection':
+            tags.push('reflection');
+            break;
+          case 'free':
+          default:
+            tags.push('journal');
+            break;
+        }
+      }
+      
+      // Save to local storage
+      const newEntry = saveJournalEntry({
+        content: journalEntry,
+        mood,
+        tags
+      });
+      
+      // Update state
+      if (showRecentEntries && !customEntries) {
+        setEntries(prev => [newEntry, ...prev]);
+      }      // Call onSave callback if provided
+      if (onSave) {
+        onSave({
+          prompt: activePrompt,
+          content: journalEntry
+        });
+      }
+      
+      // Reset the journal entry input
+      setJournalEntry('');
+
+    } catch (error) {
+      console.error('Error saving journal entry:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Get entries to display (either from props or from state)
+  const recentEntries = customEntries || entries;
+
+  const getMoodIcon = (mood: string) => {
+    switch (mood) {
+      case 'happy': return <i className="fas fa-smile text-lg"></i>;
+      case 'relaxed': return <i className="fas fa-peace text-lg"></i>;
+      case 'surprised': return <i className="fas fa-surprise text-lg"></i>;
+      case 'anxious': return <i className="fas fa-frown text-lg"></i>;
+      case 'angry': return <i className="fas fa-angry text-lg"></i>;
+      case 'sad': return <i className="fas fa-sad-tear text-lg"></i>;
+      case 'neutral': return <i className="fas fa-meh text-lg"></i>;
+      default: return <i className="fas fa-meh text-lg"></i>;
+    }
+  };
+
+  const getMoodBackground = (mood: string) => {
+    switch (mood) {
+      case 'happy': return 'bg-blue-200';
+      case 'relaxed': return 'bg-green-200';
+      case 'surprised': return 'bg-purple-200';
+      case 'anxious': return 'bg-yellow-200';
+      case 'angry': return 'bg-red-200';
+      case 'sad': return 'bg-indigo-200';
+      case 'neutral': return 'bg-gray-200';
+      default: return 'bg-gray-200';
+    }
+  };
+
+  const getMoodTextColor = (mood: string) => {
+    switch (mood) {
+      case 'happy': return 'text-blue-600';
+      case 'relaxed': return 'text-green-600';
+      case 'surprised': return 'text-purple-600';
+      case 'anxious': return 'text-yellow-600';
+      case 'angry': return 'text-red-600';
+      case 'sad': return 'text-indigo-600';
+      case 'neutral': return 'text-gray-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getTagStyle = (tag: string) => {
+    switch (tag) {
+      case 'work':
+        return 'bg-blue-100 text-blue-800';
+      case 'nature':
+        return 'bg-green-100 text-green-800';
+      case 'sleep':
+        return 'bg-purple-200 text-purple-700';
+      case 'highlights':
+        return 'bg-amber-100 text-amber-800';
+      case 'gratitude':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'challenge':
+        return 'bg-rose-100 text-rose-800';
+      case 'reflection':
+        return 'bg-cyan-100 text-cyan-800';
+      case 'journal':
+        return 'bg-indigo-100 text-indigo-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
-          Today&apos;s Journal
-        </h2>
-        <div className="flex items-center space-x-2">
-          <button
-            className="text-sm font-medium text-primary hover:text-primary/80"
-          >
-            Prompts
-          </button>
-          <button
-            className="text-sm font-medium text-primary hover:text-primary/80"
-          >
-            View all
-          </button>
+      {showHeader && (
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">
+            Today&apos;s Journal
+          </h2>
+          <div className="flex items-center space-x-2">
+            <button
+              className="text-sm font-medium text-primary hover:text-primary/80"
+            >
+              Prompts
+            </button>
+            <button
+              className="text-sm font-medium text-primary hover:text-primary/80"
+            >
+              View all
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-4">
+      <div className={showHeader ? "mt-4" : ""}>
         <div className="flex space-x-2 mb-2 overflow-x-auto pb-2">
+          {!compact && (
+            <button
+              className={`flex-shrink-0 px-3 py-1 text-xs font-medium rounded-full ${
+                activePrompt === 'free' 
+                  ? 'bg-primary/10 text-primary' 
+                  : 'bg-muted text-muted-foreground'
+              }`}
+              onClick={() => handlePromptChange('free')}
+            >
+              Free writing
+            </button>
+          )}
           <button
             className={`flex-shrink-0 px-3 py-1 text-xs font-medium rounded-full ${
               activePrompt === 'highlights' 
@@ -78,9 +285,12 @@ const JournalSection: React.FC = () => {
         </div>
         <textarea
           className="w-full px-4 py-3 border border-muted rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground placeholder:text-muted-foreground"
-          rows={4}
+          rows={compact ? 4 : 8}
+          style={minHeight ? { minHeight } : {}}
           placeholder={
-            activePrompt === 'highlights'
+            activePrompt === 'free'
+              ? "Write freely about whatever is on your mind..."
+              : activePrompt === 'highlights'
               ? "What were the best moments of your day?"
               : activePrompt === 'gratitude'
               ? "What are you grateful for today?"
@@ -90,65 +300,80 @@ const JournalSection: React.FC = () => {
           }
           value={journalEntry}
           onChange={(e) => setJournalEntry(e.target.value)}
+          disabled={saving}
         ></textarea>
         <div className="flex justify-between mt-3">
-            <button className="ml-auto px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary/90 transition-colors flex items-center">
-              <i className="fas fa-save mr-2"></i>
-              Save Entry
+            <button 
+              onClick={handleSaveEntry}
+              className={`ml-auto px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary/90 transition-colors flex items-center ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
+              disabled={saving || !journalEntry.trim()}
+            >
+              {saving ? (
+                <>
+                  <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-save mr-2"></i>
+                  Save Entry
+                </>
+              )}
             </button>
         </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-          Recent Entries
-        </h3>
-        <div className="mt-3 space-y-3">
-          <div className="journal-entry p-4 bg-muted rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center text-blue-600">
-                  <i className="fas fa-smile text-lg"></i>
-                </div>
-                <span className="ml-2 text-sm font-medium text-foreground">Happy</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Yesterday</span>
-            </div>
-            <p className="mt-2 text-sm text-foreground line-clamp-2">
-              Had a great day at work today! Finished my project ahead
-              of schedule and got positive feedback from my manager.
-              Also went for a walk in the park which was very
-              refreshing.
-            </p>
-            <div className="mt-2 flex space-x-2">
-              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">#work</span>
-              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">#nature</span>
-            </div>
+      </div>      {showRecentEntries && recentEntries.length > 0 && (
+        <div className="mt-6">          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              Recent Entries
+            </h3>            {entriesLimit && recentEntries.length > entriesLimit && (              <Link href="/dashboard/journal" className="text-sm text-primary hover:underline flex items-center">
+                View All <i className="fas fa-chevron-right text-xs ml-1"></i>
+              </Link>
+            )}
           </div>
-          
-          <div className="journal-entry p-4 bg-muted rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-                  <i className="fas fa-meh text-lg"></i>
+          <div className="mt-3 space-y-3">
+            {recentEntries.slice(0, entriesLimit || recentEntries.length).map((entry) => (
+              <div key={entry.id} className="journal-entry p-4 bg-muted rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full ${getMoodBackground(entry.mood)} flex items-center justify-center ${getMoodTextColor(entry.mood)}`}>
+                      {getMoodIcon(entry.mood)}
+                    </div>
+                    <span className="ml-2 text-sm font-medium text-foreground">{entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(entry.date).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
                 </div>
-                <span className="ml-2 text-sm font-medium text-foreground">Neutral</span>
+                <p className="mt-2 text-sm text-foreground line-clamp-2">
+                  {entry.content}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {entry.tags.map((tag, index) => (
+                    <span key={index} className={`px-2 py-1 text-xs ${getTagStyle(tag)} rounded-full`}>
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <span className="text-xs text-muted-foreground">2 days ago</span>
-            </div>
-            <p className="mt-2 text-sm text-foreground line-clamp-2">
-              Not much happened today. Felt a bit tired but managed to
-              complete all my tasks. Need to work on getting better
-              sleep.
-            </p>
-            <div className="mt-2 flex space-x-2">
-              <span className="px-2 py-1 text-xs bg-purple-200 text-purple-700 rounded-full">#sleep</span>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
+      
+      {showRecentEntries && recentEntries.length === 0 && (
+        <div className="mt-6 text-center py-6">
+          <div className="text-muted-foreground">
+            <i className="fas fa-book-open text-3xl mb-2"></i>
+            <p>No journal entries yet. Start writing today!</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default JournalSection; 
+export default JournalSection;

@@ -1,15 +1,61 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Chart, registerables } from 'chart.js';
+import { getMoodChartData } from '@/lib/journalStorage';
 
 // Register all Chart.js components
 Chart.register(...registerables);
+
+// Create a custom plugin to draw a dashed line at the Neutral value
+const neutralLinePlugin = {
+  id: 'neutralLine',
+  beforeDraw: (chart: Chart<'line'>) => {
+    if (!chart.chartArea) return;
+    
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    const yScale = chart.scales.y;
+    
+    if (!yScale) return;
+    
+    // Calculate the pixel position for neutral value (3.5)
+    const neutralY = yScale.getPixelForValue(3.5);
+    
+    // Draw a dashed line
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(chartArea.left, neutralY);
+    ctx.lineTo(chartArea.right, neutralY);
+    ctx.setLineDash([8, 4]); // More distinctive dash pattern for better visibility
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.8)'; // Slightly more visible gray color
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset dash pattern
+    
+    // Add a small "Neutral" label at the right end of the dashed line
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.8)';
+    ctx.textAlign = 'right';
+    ctx.font = '10px Arial';
+    ctx.fillText('Neutral', chartArea.right - 5, neutralY - 5);
+    
+    ctx.restore();
+  }
+};
+
+// Register the plugin
+Chart.register(neutralLinePlugin);
 
 interface MoodChartProps {
   timeRange?: 'week' | 'month' | 'year';
   height?: number;
   darkMode?: boolean;
+  // Note: key prop is handled by React automatically, not explicitly in the component
+}
+
+interface ChartData {
+  labels: string[];
+  data: number[];
 }
 
 const MoodChart: React.FC<MoodChartProps> = ({ 
@@ -19,9 +65,10 @@ const MoodChart: React.FC<MoodChartProps> = ({
 }) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
+  const [chartData, setChartData] = useState<ChartData>({ labels: [], data: [] });
 
-  // Create and update chart when component mounts or when theme changes
-  const createChart = () => {
+  // Create chart function - wrapped with useCallback to avoid dependency issues
+  const createChart = useCallback(() => {
     if (chartRef.current) {
       // Destroy existing chart if it exists
       if (chartInstance.current) {
@@ -30,19 +77,33 @@ const MoodChart: React.FC<MoodChartProps> = ({
 
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
-        // Sample data based on timeRange
+        // Use data from journal entries, or fallback to sample data if no entries exist
         let labels: string[] = [];
         let data: number[] = [];
 
-        if (timeRange === 'week') {
-          labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-          data = [5, 4, 3, 5, 6, 4, 5]; // 1=Sadness, 2=Anger, 3=Fear, 4=Surprise, 5=Love, 6=Joy
-        } else if (timeRange === 'month') {
-          labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
-          data = [4, 5, 6, 5];
+        if (chartData.labels.length > 0) {
+          labels = chartData.labels;
+          data = chartData.data;
+          console.log('Chart using real data:', labels, data); // Log to help debug
         } else {
-          labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          data = [3, 4, 5, 4, 6, 5, 6, 4, 3, 4, 2, 3];
+          // Fallback sample data
+          if (timeRange === 'week') {
+            labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            // Default to neutral (3.5) for all days with a slight highlight on today
+            const today = new Date().getDay();
+            data = Array(7).fill(3.5);
+            // Set today's day to 3.5 (Neutral) to emphasize it
+            if (today >= 0 && today < 7) {
+              data[today] = 3.5; // Neutral
+            }
+            console.log('Chart using neutral sample data for days:', data);
+          } else if (timeRange === 'month') {
+            labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
+            data = [3.5, 3.5, 3.5, 3.5]; // Default to neutral for all weeks
+          } else {
+            labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            data = [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5]; // Default to neutral for all months
+          }
         }
 
         // Get theme colors from CSS variables
@@ -65,11 +126,21 @@ const MoodChart: React.FC<MoodChartProps> = ({
                 fill: false,
                 borderColor: darkMode ? '#818cf8' : (primaryColor || 'rgb(99, 102, 241)'),
                 tension: 0.4,
-                pointBackgroundColor: darkMode ? '#0f172a' : 'currentColor',
-                pointBorderColor: darkMode ? '#818cf8' : (primaryColor || 'rgb(99, 102, 241)'),
+                pointBackgroundColor: function(context) {
+                  // Color points differently based on mood value
+                  const value = context.raw as number;
+                  if (value >= 5.5) return '#34D399'; // Joy - green
+                  if (value >= 4.5) return '#818CF8'; // Love - indigo
+                  if (value >= 3.75) return '#A855F7'; // Surprise - purple
+                  if (value >= 3.25 && value <= 3.75) return '#94A3B8'; // Neutral - gray
+                  if (value >= 2.5) return '#FBBF24'; // Fear - amber
+                  if (value >= 1.5) return '#F87171'; // Anger - red
+                  return '#60A5FA'; // Sadness - blue
+                },
+                pointBorderColor: darkMode ? '#0f172a' : '#ffffff',
                 pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: 5,
+                pointHoverRadius: 7,
               },
             ],
           },
@@ -90,7 +161,38 @@ const MoodChart: React.FC<MoodChartProps> = ({
                 bodyColor: '#fff',
                 padding: 10,
                 displayColors: false,
-              },
+                callbacks: {
+                  label: function(context) {
+                    const value = context.raw as number;
+                    // Map to closest mood
+                    const moodLabels: Record<number, string> = {
+                      1: "Sadness",
+                      2: "Anger",
+                      3: "Fear", 
+                      3.5: "Neutral",
+                      4: "Surprise", 
+                      5: "Love",
+                      6: "Joy",
+                    };
+                    
+                    // Find closest mood value
+                    const moodValues = Object.keys(moodLabels).map(Number);
+                    const closestValue = moodValues.reduce((prev, curr) => 
+                      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+                    );
+                    
+                    // Return both the mood name and whether it's above or below neutral (when not neutral)
+                    const mood = moodLabels[closestValue];
+                    if (closestValue === 3.5) {
+                      return `Mood: ${mood}`;
+                    } else if (closestValue > 3.5) {
+                      return `Mood: ${mood} (Positive)`;
+                    } else {
+                      return `Mood: ${mood} (Negative)`;
+                    }
+                  }
+                }
+              }
             },
             scales: {
               y: {
@@ -98,23 +200,32 @@ const MoodChart: React.FC<MoodChartProps> = ({
                 max: 6,
                 grid: {
                   color: gridColor,
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  stepSize: 1,
-                  color: textColor,
+                  // Custom ticks to ensure all emotions are displayed properly
                   callback: function (value) {
-                    const moods = [
-                      "",
-                      "Sadness",
-                      "Anger",
-                      "Fear",
-                      "Surprise", 
-                      "Love",
-                      "Joy",
-                    ];
-                    return moods[value as number];
+                    const moodLabels: Record<number, string> = {
+                      1: "Sadness",
+                      2: "Anger",
+                      3: "Fear", 
+                      3.5: "Neutral", // Special value for Neutral
+                      4: "Surprise", 
+                      5: "Love",
+                      6: "Joy",
+                    };
+                    return moodLabels[value as number] || "";
                   },
-                },
+                  color: textColor,
+                  // Force display specific tick values to show all emotions including Neutral
+                  stepSize: 1,
+                  // Ensure Neutral appears at 3.5
+                  // Include specific manual values to ensure Neutral shows up
+                  autoSkip: false,
+                  major: {
+                    enabled: true
+                  }
+                }
               },
               x: {
                 grid: {
@@ -129,15 +240,25 @@ const MoodChart: React.FC<MoodChartProps> = ({
         });
       }
     }
-  };
+  }, [timeRange, darkMode, chartData]);
 
-  // React to timeRange changes
+  // Load chart data and refresh when timeRange changes or when component key changes
+  // (key changes when dashboard updates after new journal entries)
+  useEffect(() => {
+    console.log('MoodChart refreshing with timeRange:', timeRange);
+    // Get chart data from journal entries
+    const data = getMoodChartData(timeRange);
+    console.log('Got chart data from journal entries:', data);
+    setChartData(data as ChartData);
+  }, [timeRange]);
+
+  // Create and update chart when component mounts, when data changes, or when theme changes
   useEffect(() => {
     createChart();
-  }, [timeRange, darkMode]);
+  }, [createChart]);
 
+  // Cleanup function
   useEffect(() => {
-    // Cleanup function
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
@@ -173,7 +294,7 @@ const MoodChart: React.FC<MoodChartProps> = ({
       mediaQuery.removeEventListener('change', handleThemeChange);
       observer.disconnect();
     };
-  }, []);
+  }, [createChart]);
 
   return (
     <div style={{ height: `${height}px`, position: 'relative' }}>
@@ -182,4 +303,4 @@ const MoodChart: React.FC<MoodChartProps> = ({
   );
 };
 
-export default MoodChart; 
+export default MoodChart;

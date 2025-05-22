@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Button from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '@/lib/authContext';
+import Image from 'next/image';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -81,10 +82,12 @@ const Header: React.FC = () => {
   return (
     <header className={`w-full py-4 px-6 md:px-12 flex items-center justify-between bg-background/80 backdrop-blur-sm fixed top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md py-3' : ''}`}>
       <div className="flex items-center">
-        <Link href="/" className="text-xl font-bold text-primary">
-          ChillMind
+        <Link href="/" className="flex items-center">
+          <Image src="/logo.png" alt="ChillMind Logo" width={32} height={32} className="h-10 w-auto" />
+          <span className="ml-2 text-xl font-bold text-primary">ChillMind</span>
         </Link>
-      </div>        <nav className={`hidden md:flex items-center space-x-8`}>
+      </div>
+      <nav className={`hidden md:flex items-center space-x-8`}>
         <NavLink href="#hero" id="hero">Home</NavLink>
         <NavLink href="#features" id="features">Features</NavLink>
         <NavLink href="#how-it-works" id="how-it-works">How It Works</NavLink>

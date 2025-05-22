@@ -1,12 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-muted py-12 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-1">
-          <h3 className="text-lg font-bold text-primary mb-4">ChillMind</h3>
+          <h3 className="text-lg font-bold text-primary mb-4"><Link href="/" className="flex items-center">
+          <Image src="/logo.png" alt="ChillMind Logo" width={32} height={32} className="h-10 w-auto" />
+          <span className="ml-2 text-xl font-bold text-primary">ChillMind</span>
+        </Link></h3>
           <p className="text-sm text-muted-foreground mb-4">
             Personalized mental health monitoring platform for students.
           </p>
