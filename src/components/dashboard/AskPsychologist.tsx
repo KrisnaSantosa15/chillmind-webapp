@@ -7,7 +7,7 @@ type Psychologist = {
   name: string;
   title: string;
   availability: string;
-  specialization: string;
+  association: string;
   image: string;
   online: boolean;
 };
@@ -19,7 +19,7 @@ const AskPsychologist: React.FC = () => {
       name: 'Dr. Sarah Johnson',
       title: 'Clinical Psychologist',
       availability: 'Available now for a 15-minute consultation about stress management techniques.',
-      specialization: 'Stress Management',
+      association: 'Stress Management',
       image: '/avatars/sarah.jpg',
       online: true
     },
@@ -28,7 +28,7 @@ const AskPsychologist: React.FC = () => {
       name: 'Dr. Mark Williams',
       title: 'Cognitive Behavioral Therapist',
       availability: 'Specializes in anxiety disorders. Next available tomorrow at 2pm.',
-      specialization: 'Anxiety',
+      association: 'Anxiety',
       image: '/avatars/mark.jpg',
       online: false
     }

@@ -126,8 +126,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               >
                 <i className={`fas fa-robot h-5 w-5 mr-3 ${isActive('/dashboard/ai-assistant') ? 'text-primary' : 'text-muted-foreground'}`}></i>
                 AI Assistant
-              </Link>
-              <Link
+              </Link>              <Link
                 href="/dashboard/resources"
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                   isActive('/dashboard/resources') 
@@ -139,6 +138,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
                 </svg>
                 Resources
+              </Link>
+              <Link
+                href="/dashboard/find-psychologist"
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
+                  isActive('/dashboard/find-psychologist') 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'text-foreground hover:bg-muted hover:text-foreground'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-5 w-5 mr-3 ${isActive('/dashboard/find-psychologist') ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <circle cx="12" cy="8" r="5" />
+                  <path d="M20 21a8 8 0 0 0-16 0" />
+                </svg>
+                Find Psychologist
               </Link>
             </nav>            <div className="mt-auto pt-6">
               <div className="p-4 bg-primary/10 rounded-lg">
