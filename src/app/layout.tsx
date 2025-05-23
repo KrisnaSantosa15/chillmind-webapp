@@ -16,6 +16,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ChillMind - Student Mental Wellness",
   description: "A personalized mental health monitoring platform for students, with ML-based assessments and recommendations.",
+  icons: {
+  icon: [
+    { url: '/favicon.ico' },
+    { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+  ],
+  apple: [
+    { url: '/apple-touch-icon.png' },
+  ],
+},
 };
 
 export default function RootLayout({
