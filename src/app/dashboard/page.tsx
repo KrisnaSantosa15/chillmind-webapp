@@ -1,51 +1,34 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MoodChart from '@/components/dashboard/MoodChart';
-import MoodTracker from '@/components/dashboard/MoodTracker';
 import JournalSection from '@/components/dashboard/JournalSection';
 import MentalHealthStatus from '@/components/dashboard/MentalHealthStatus';
 import HabitTracker from '@/components/dashboard/HabitTracker';
 import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import Recommendations from '@/components/dashboard/Recommendations';
+import WellbeingStats from '@/components/dashboard/WellbeingStats';
 import { useAuth } from '@/lib/authContext';
-import { getDayStreak } from '@/lib/journalStorage';
+import { Flame } from 'lucide-react';
 import '@/styles/ai-markdown.css';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [dayStreak, setDayStreak] = useState(0);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
-  const [updateTrigger, setUpdateTrigger] = useState(0);  // Load day streak from Firestore on component mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const loadStreak = async () => {
-        try {
-          const streak = await getDayStreak();
-          setDayStreak(streak);
-        } catch (error) {
-          console.error('Error loading day streak:', error);
-          setDayStreak(0); // Default to 0 if there's an error
-        }
-      };
-      
-      loadStreak();
-    }
-  }, []);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [streakDays, setStreakDays] = useState(0);
+  
   const handleTimeRangeChange = (range: 'week' | 'month' | 'year') => {
     setTimeRange(range);
   };
-    // Handle journal entry save
-  const handleJournalSave = async () => {
+  // Handle journal entry save
+  const handleJournalSave = () => {
     setUpdateTrigger(prev => prev + 1);
-    
-    // Update streak counter in UI when a journal entry is saved
-    try {
-      const streak = await getDayStreak();
-      setDayStreak(streak);
-    } catch (error) {
-      console.error('Error updating day streak:', error);
-    }
+  };
+
+  // Get streak days from WellbeingStats
+  const handleStreakUpdate = (days: number) => {
+    setStreakDays(days);
   };
 
   // Get first name from display name if available
@@ -53,32 +36,32 @@ export default function DashboardPage() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Left column - Main content */}
-      <div className="lg:col-span-2 space-y-6">
+      {/* Left column - Main content */}        <div className="lg:col-span-2 space-y-6">
         {/* Welcome card */}
-        <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">
-          <div className="flex items-center justify-between">
+        <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">          <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-foreground">
                 Good morning, {firstName}!
               </h2>
               <p className="text-muted-foreground mt-1">How are you feeling today?</p>
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm text-muted-foreground mr-2">Day {dayStreak}</span>
-              <div
-                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                </svg>
+            </div>            <div className="flex items-center">
+              <div className="flex items-center bg-muted/30 px-3 py-1.5 rounded-lg">
+                <Flame className="h-4 w-4 text-orange-500 mr-1.5" />
+                <span className="text-sm font-medium">{streakDays}</span>
+                <span className="text-xs text-muted-foreground ml-1">day streak</span>
               </div>
             </div>
           </div>
 
-            {/* Daily mood tracker */}
-            <MoodTracker />
-          </div>          {/* Journal section */}
+            {/* Wellbeing Stats - replaces daily check-in */}
+            <div className="mt-6">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                Your Wellness Snapshot
+              </h3>              <div className="mt-4">
+                <WellbeingStats className="border-0 shadow-none" onStreakUpdate={handleStreakUpdate} />
+              </div>
+            </div>
+          </div>{/* Journal section */}
           <JournalSection 
             compact={true}
             showRecentEntries={true}
@@ -92,9 +75,7 @@ export default function DashboardPage() {
           <div className="h-[400px]">
             <AIAssistantWidget height="400px" compactMode={true} />
           </div>
-        </div>
-
-        {/* Right column - Mood chart and health status */}
+        </div>        {/* Right column - Mood chart and health status */}
         <div className="space-y-6">
           {/* Mood graph */}
         <div className="bg-background rounded-xl shadow-sm p-6 border border-muted mb-6">
