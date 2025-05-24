@@ -239,6 +239,22 @@ export const saveJournalEntry = async (
   }
 };
 
+// Delete a journal entry
+export const deleteJournalEntry = async (entryId: string): Promise<void> => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      // Delete entry from Firestore
+      await journalFirestore.deleteJournalEntry(user, entryId);
+    } else {
+      throw new Error("User not authenticated");
+    }
+  } catch (error) {
+    console.error("Error deleting journal entry:", error);
+    throw error;
+  }
+};
+
 // Get mood chart data - Firestore only
 export const getMoodChartData = async (
   timeRange: "week" | "month" | "year"
@@ -302,6 +318,7 @@ const journalStorage = {
   getMoodChartData,
   getDayStreak,
   updateDayStreak,
+  deleteJournalEntry,
 };
 
 export default journalStorage;
