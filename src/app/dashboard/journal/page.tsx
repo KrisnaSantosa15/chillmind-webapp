@@ -308,8 +308,7 @@ export default function JournalPage() {
             'border-l-green-400'
           }`}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+      <div className="flex items-center justify-between">        <div className="flex items-center">
           <div className={`w-10 h-10 rounded-full ${getMoodBackground(entry.mood)} flex items-center justify-center shadow-sm`}>
             {getMoodIcon(entry.mood)}
           </div>
@@ -325,9 +324,6 @@ export default function JournalPage() {
           </div>
         </div>
         <div className="flex space-x-2">
-          <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full transition-colors">
-            <i className="fas fa-edit text-sm"></i>
-          </button>
           <button 
             className="p-1.5 text-muted-foreground hover:text-accent rounded-full transition-colors"
             onClick={(e) => onDelete(entry.id, e)}
