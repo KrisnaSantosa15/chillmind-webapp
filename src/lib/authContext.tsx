@@ -36,17 +36,13 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+  useEffect(() => {    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
-
-  const signIn = async (email: string, password: string): Promise<User> => {
+  }, []);  const signIn = async (email: string, password: string): Promise<User> => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
@@ -55,7 +51,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw error;
     }
   };
-
   const signInWithGoogle = async (): Promise<User> => {
     try {
       const provider = new GoogleAuthProvider();
@@ -65,9 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error signing in with Google:', error);
       throw error;
     }
-  };
-
-  const signUp = async (email: string, password: string, firstName: string, lastName: string): Promise<User> => {
+  };  const signUp = async (email: string, password: string, firstName: string, lastName: string): Promise<User> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       

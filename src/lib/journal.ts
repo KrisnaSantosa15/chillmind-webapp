@@ -6,7 +6,6 @@ import {
   emotionToMood,
   predictEmotion,
   getMoodChartData,
-  Emotion,
 } from "./journalStorage";
 
 /**
@@ -17,26 +16,30 @@ export const useJournal = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   // Load entries on mount
   useEffect(() => {
-    try {
-      const storedEntries = getJournalEntries();
-      setEntries(storedEntries);
-    } catch (err) {
-      console.error("Error loading journal entries:", err);
-      setError("Failed to load journal entries");
-    } finally {
-      setLoading(false);
-    }
+    const fetchEntries = async () => {
+      try {
+        setLoading(true);
+        const storedEntries = await getJournalEntries();
+        setEntries(storedEntries);
+      } catch (err) {
+        console.error("Error loading journal entries:", err);
+        setError("Failed to load journal entries");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEntries();
   }, []);
 
   // Listen for storage events (when another tab/window updates the local storage)
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
+    const handleStorageChange = async (e: StorageEvent) => {
       if (e.key === "chillmind_journal_entries") {
         try {
-          const storedEntries = getJournalEntries();
+          const storedEntries = await getJournalEntries();
           setEntries(storedEntries);
         } catch (err) {
           console.error("Error synchronizing journal entries:", err);
@@ -51,19 +54,14 @@ export const useJournal = () => {
       };
     }
   }, []);
-
   // Add a new entry
   const addEntry = (
     content: string,
     promptType: string,
     customTags: string[] = []
   ): Promise<JournalEntry> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        // Predict emotion
-        const emotion = predictEmotion(content);
-        const mood = emotionToMood(emotion);
-
         // Extract tags from content (words with # prefix)
         const tagRegex = /#(\w+)/g;
         const tags: string[] = [...customTags];
@@ -97,10 +95,9 @@ export const useJournal = () => {
           }
         }
 
-        // Save to local storage
-        const newEntry = saveJournalEntry({
+        // Save to local storage - now uses async API
+        const newEntry = await saveJournalEntry({
           content,
-          mood,
           tags,
         });
 
@@ -131,13 +128,12 @@ export const useJournal = () => {
       }
     });
   };
-
   // Update an entry
   const updateEntry = (
     id: string,
     updates: Partial<Omit<JournalEntry, "id" | "date">>
   ): Promise<JournalEntry> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const entryIndex = entries.findIndex((entry) => entry.id === id);
 
@@ -148,7 +144,7 @@ export const useJournal = () => {
         // If content was updated, re-predict emotion
         let mood = entries[entryIndex].mood;
         if (updates.content) {
-          const emotion = predictEmotion(updates.content);
+          const emotion = await predictEmotion(updates.content);
           mood = emotionToMood(emotion);
         }
 

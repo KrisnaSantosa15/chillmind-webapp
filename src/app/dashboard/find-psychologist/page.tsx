@@ -133,7 +133,7 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
           }
         } else {
           // If no data, fall back to mock data
-          console.log('No psychologists found from API, using fallback data');
+          // console.log('No psychologists found from API, using fallback data');
           const mockData = getMockPsychologists();
           setPsychologists(mockData);
           setFilteredPsychologists(mockData);

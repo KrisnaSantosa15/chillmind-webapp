@@ -696,7 +696,6 @@ export async function fetchAllPsychologists(
 
   // If we didn't find any psychologists or encountered errors, return mock data as a fallback
   if (result.length === 0) {
-    console.log("No psychologists found from API, using mock data");
     const mockData = getMockPsychologists();
     return {
       psychologists: mockData,

@@ -16,28 +16,36 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [dayStreak, setDayStreak] = useState(0);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
-  const [updateTrigger, setUpdateTrigger] = useState(0);
-  // Load day streak from localStorage on component mount
+  const [updateTrigger, setUpdateTrigger] = useState(0);  // Load day streak from Firestore on component mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const streak = getDayStreak();
-      setDayStreak(streak);
+      const loadStreak = async () => {
+        try {
+          const streak = await getDayStreak();
+          setDayStreak(streak);
+        } catch (error) {
+          console.error('Error loading day streak:', error);
+          setDayStreak(0); // Default to 0 if there's an error
+        }
+      };
+      
+      loadStreak();
     }
   }, []);
   const handleTimeRangeChange = (range: 'week' | 'month' | 'year') => {
     setTimeRange(range);
   };
-  
-  // Handle journal entry save
-  const handleJournalSave = () => {
-    // Trigger update of the mood chart when a new journal entry is saved
-    console.log('Journal entry saved, updating chart with new updateTrigger value');
-    // This will cause the MoodChart to re-render with a new key
+    // Handle journal entry save
+  const handleJournalSave = async () => {
     setUpdateTrigger(prev => prev + 1);
     
     // Update streak counter in UI when a journal entry is saved
-    const streak = getDayStreak();
-    setDayStreak(streak);
+    try {
+      const streak = await getDayStreak();
+      setDayStreak(streak);
+    } catch (error) {
+      console.error('Error updating day streak:', error);
+    }
   };
 
   // Get first name from display name if available

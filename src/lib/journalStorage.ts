@@ -1,4 +1,7 @@
+// Updated version with Firestore support only
 import { JournalEntry } from "@/components/dashboard/JournalSection";
+import journalFirestore from "./journalFirestore";
+import { getCurrentUser } from "./firebaseUtils";
 
 // Emotion categories
 export type Emotion =
@@ -10,8 +13,48 @@ export type Emotion =
   | "sadness"
   | "neutral";
 
-// Dummy emotion prediction function (will be replaced with ML model later)
-export const predictEmotion = (text: string): Emotion => {
+// API response interfaces
+interface EmotionPredictionResponse {
+  emotion: Emotion;
+  confidence: number;
+  all_probabilities: Record<string, number>;
+}
+
+// ML model-based emotion prediction function
+export const predictEmotion = async (text: string): Promise<Emotion> => {
+  // If text is empty or too short, return neutral
+  if (!text || text.trim().length < 3) {
+    return "neutral";
+  }
+
+  try {
+    // Use our internal API route to avoid CORS issues
+    const response = await fetch("/api/emotion-prediction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      console.error("Error calling emotion API:", response.statusText);
+      return fallbackPredictEmotion(text);
+    }
+
+    const data: EmotionPredictionResponse = await response.json();
+
+    // Return the predicted emotion or neutral if it's not one of our types
+    return data.emotion || "neutral";
+  } catch (error) {
+    console.error("Failed to predict emotion from API:", error);
+    // Fallback to rule-based prediction if API fails
+    return fallbackPredictEmotion(text);
+  }
+};
+
+// Keep the original function as fallback
+export const fallbackPredictEmotion = (text: string): Emotion => {
   // Simple keyword-based emotion detection (very basic)
   const lowerText = text.toLowerCase();
   const emotionKeywords = {
@@ -72,17 +115,17 @@ export const predictEmotion = (text: string): Emotion => {
 export const emotionToMood = (emotion: Emotion): string => {
   switch (emotion) {
     case "joy":
-      return "happy";
+      return "joy";
     case "love":
-      return "relaxed";
+      return "love";
     case "surprise":
-      return "surprised";
+      return "surprise";
     case "fear":
-      return "anxious";
+      return "fear";
     case "anger":
-      return "angry";
+      return "anger";
     case "sadness":
-      return "sad";
+      return "sadness";
     default:
       return "neutral";
   }
@@ -94,9 +137,6 @@ export const emotionToValue = (emotion: Emotion | string): number => {
   // Ensure input is lowercase for case-insensitive matching
   const lowerEmotion =
     typeof emotion === "string" ? emotion.toLowerCase() : emotion;
-
-  // Log for debugging purposes
-  console.log(`Converting emotion "${emotion}" to chart value`);
 
   switch (lowerEmotion) {
     case "joy":
@@ -128,245 +168,113 @@ export const emotionToValue = (emotion: Emotion | string): number => {
   }
 };
 
-// Storage key for journal entries
-const JOURNAL_ENTRIES_KEY = "chillmind_journal_entries";
-const STREAK_KEY = "chillmind_day_streak";
-
-// Get all journal entries from local storage
-export const getJournalEntries = (): JournalEntry[] => {
-  if (typeof window === "undefined") return [];
-
-  const entriesJson = localStorage.getItem(JOURNAL_ENTRIES_KEY);
-  return entriesJson ? JSON.parse(entriesJson) : [];
-};
-
-// Get the current day streak
-export const getDayStreak = (): number => {
-  if (typeof window === "undefined") return 0;
-
-  const streakJson = localStorage.getItem(STREAK_KEY);
-  if (!streakJson) return 0;
-
-  const streak = JSON.parse(streakJson);
-  // Check if streak data is recent (within 48 hours)
-  const lastUpdate = new Date(streak.lastUpdate);
-  const now = new Date();
-  const hoursDiff = (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60);
-
-  // If more than 48 hours have passed, reset the streak
-  if (hoursDiff >= 48) {
-    const newStreak = { days: 1, lastUpdate: now.toISOString() };
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newStreak));
-    return 1;
-  }
-
-  // Return current streak
-  return streak.days || 0;
-};
-
-// Update the day streak
-export const updateDayStreak = (): number => {
-  if (typeof window === "undefined") return 0;
-
-  const now = new Date();
-  const today = now.toISOString().split("T")[0];
-  const streakJson = localStorage.getItem(STREAK_KEY);
-
-  if (!streakJson) {
-    // First time journaling - start with day 1
-    const newStreak = { days: 1, lastUpdate: now.toISOString() };
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newStreak));
-    return 1;
-  }
-
-  const streak = JSON.parse(streakJson);
-  const lastUpdate = new Date(streak.lastUpdate);
-  const lastUpdateDay = lastUpdate.toISOString().split("T")[0];
-  const hoursDiff = (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60);
-
-  // If entry is from a new day and within 48 hours of last entry, increment streak
-  if (today !== lastUpdateDay && hoursDiff < 48) {
-    const newDays = streak.days + 1;
-    const newStreak = { days: newDays, lastUpdate: now.toISOString() };
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newStreak));
-    return newDays;
-  }
-  // If entry is from today, maintain current streak but update timestamp
-  else if (today === lastUpdateDay) {
-    const newStreak = { days: streak.days, lastUpdate: now.toISOString() };
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newStreak));
-    return streak.days;
-  }
-  // If more than 48 hours have passed, reset the streak
-  else {
-    const newStreak = { days: 1, lastUpdate: now.toISOString() };
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newStreak));
-    return 1;
+// Get all journal entries - Firestore only
+export const getJournalEntries = async (): Promise<JournalEntry[]> => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      return await journalFirestore.getJournalEntriesFromFirestore(user);
+    }
+    return [];
+  } catch (error) {
+    console.error("Error getting journal entries:", error);
+    return [];
   }
 };
 
-// Save a journal entry to local storage
-export const saveJournalEntry = (
-  entry: Omit<JournalEntry, "id" | "date">
-): JournalEntry => {
-  const entries = getJournalEntries();
+// Get the current day streak - Firestore only
+export const getDayStreak = async (): Promise<number> => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      return await journalFirestore.getUserStreak(user);
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error getting day streak:", error);
+    return 0;
+  }
+};
 
-  const newEntry: JournalEntry = {
-    id: Date.now().toString(),
-    date: new Date().toISOString(),
+// Update the day streak - Firestore only
+export const updateDayStreak = async (): Promise<number> => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      return await journalFirestore.updateUserStreak(user);
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error updating day streak:", error);
+    return 0;
+  }
+};
+
+// Save a journal entry - Firestore only
+export const saveJournalEntry = async (
+  entry: Omit<JournalEntry, "id" | "date" | "mood">
+): Promise<JournalEntry> => {
+  // Predict emotion from the text
+  const predictedEmotion = await predictEmotion(entry.content);
+  const mood = emotionToMood(predictedEmotion);
+
+  const entryWithMood = {
     ...entry,
+    mood,
   };
 
-  // Add new entry at the beginning
-  entries.unshift(newEntry);
-
-  // Save to local storage
-  localStorage.setItem(JOURNAL_ENTRIES_KEY, JSON.stringify(entries));
-
-  // Update streak and return the new streak count
-  updateDayStreak();
-
-  return newEntry;
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      // Save entry to Firestore
+      return await journalFirestore.saveJournalEntryToFirestore(
+        user,
+        entryWithMood
+      );
+    }
+    throw new Error("User not authenticated");
+  } catch (error) {
+    console.error("Error saving journal entry:", error);
+    throw error;
+  }
 };
 
-// Get mood data for the chart based on time range
-export const getMoodChartData = (timeRange: "week" | "month" | "year") => {
-  const entries = getJournalEntries();
-  if (entries.length === 0) {
-    // Return default neutral data instead of empty arrays
-    if (timeRange === "week") {
-      return {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        data: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], // All neutral
-      };
-    } else if (timeRange === "month") {
-      return {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-        data: [3.5, 3.5, 3.5, 3.5], // All neutral
-      };
-    } else {
-      return {
-        labels: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        data: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], // All neutral
-      };
-    }
-  }
-
-  const now = new Date();
-  let filteredEntries: JournalEntry[] = [];
-  let labels: string[] = [];
-  const dayToIndexMap: Record<string, number> = {};
-
-  if (timeRange === "week") {
-    // Get entries from last 7 days
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    labels = [];
-
-    // Create array of last 7 days - with proper order (starting from past to current day)
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dayName = days[date.getDay()];
-      const dayIndex = labels.length;
-      labels.push(dayName);
-
-      // Store the mapping of date string (YYYY-MM-DD) to index
-      const dateStr = date.toISOString().split("T")[0]; // Get YYYY-MM-DD format
-      dayToIndexMap[dateStr] = dayIndex;
-    }
-
-    // Filter entries from last 7 days
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    filteredEntries = entries.filter((entry) => {
-      const entryDate = new Date(entry.date);
-      return entryDate >= oneWeekAgo;
-    });
-  } else if (timeRange === "month") {
-    // Get entries from last 4 weeks
-    labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
-
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
-    filteredEntries = entries.filter((entry) => {
-      const entryDate = new Date(entry.date);
-      return entryDate >= oneMonthAgo;
-    });
-  } else {
-    // Get entries from last 12 months
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    labels = [];
-
-    // Create array of months in order
-    const currentMonth = now.getMonth();
-    for (let i = 0; i < 12; i++) {
-      const monthIndex = (currentMonth - 11 + i + 12) % 12;
-      labels.push(months[monthIndex]);
-    }
-
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-    filteredEntries = entries.filter((entry) => {
-      const entryDate = new Date(entry.date);
-      return entryDate >= oneYearAgo;
-    });
-  }
-
-  // Group entries by day (for week view)
-  // or by week (for month view)
-  // or by month (for year view)
-  const entriesByPeriod: Record<number, JournalEntry[]> = {};
-
-  filteredEntries.forEach((entry) => {
-    const entryDate = new Date(entry.date);
-    let index = -1;
-
-    if (timeRange === "week") {
-      // Map to the specific day using our mapping
-      const dateStr = entryDate.toISOString().split("T")[0];
-      index =
-        dayToIndexMap[dateStr] !== undefined ? dayToIndexMap[dateStr] : -1;
-    } else if (timeRange === "month") {
-      // Map to the week
-      const weekDiff = Math.floor(
-        (now.getTime() - entryDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
+// Get mood chart data - Firestore only
+export const getMoodChartData = async (
+  timeRange: "week" | "month" | "year"
+) => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      // Get chart data from Firestore
+      return await journalFirestore.getMoodChartDataFromFirestore(
+        user,
+        timeRange
       );
-      if (weekDiff < 4) {
-        index = weekDiff;
-      }
-    } else {
-      // Map to the month
-      const monthIndex = entryDate.getMonth();
-      const months = [
+    }
+    return getDefaultChartData(timeRange);
+  } catch (error) {
+    console.error("Error getting mood chart data:", error);
+    return getDefaultChartData(timeRange);
+  }
+};
+
+// Helper function to get default chart data
+const getDefaultChartData = (timeRange: "week" | "month" | "year") => {
+  // Return default neutral data
+  if (timeRange === "week") {
+    return {
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], // All neutral
+    };
+  } else if (timeRange === "month") {
+    return {
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      data: [3.5, 3.5, 3.5, 3.5], // All neutral
+    };
+  } else {
+    return {
+      labels: [
         "Jan",
         "Feb",
         "Mar",
@@ -379,107 +287,17 @@ export const getMoodChartData = (timeRange: "week" | "month" | "year") => {
         "Oct",
         "Nov",
         "Dec",
-      ];
-      const monthName = months[monthIndex];
-      index = labels.indexOf(monthName);
-    }
-
-    if (index !== -1) {
-      if (!entriesByPeriod[index]) {
-        entriesByPeriod[index] = [];
-      }
-      entriesByPeriod[index].push(entry);
-    }
-  });
-
-  // Initialize data array with nulls
-  const data = Array(labels.length).fill(null);
-  // Calculate average mood for each period
-  Object.keys(entriesByPeriod).forEach((indexStr) => {
-    const index = parseInt(indexStr);
-    const periodEntries = entriesByPeriod[index];
-    if (periodEntries && periodEntries.length > 0) {
-      if (periodEntries.length === 1) {
-        // If there's just one entry, use its exact emotion value
-        const emotionValue = emotionToValue(periodEntries[0].mood);
-        console.log(
-          `Single entry for ${labels[index]}: mood=${periodEntries[0].mood}, value=${emotionValue}`
-        );
-        data[index] = emotionValue;
-      } else {
-        // For multiple entries, find the most frequent emotion rather than averaging
-        const moodCounts: Record<string, number> = {};
-
-        // Count occurrences of each mood
-        periodEntries.forEach((entry) => {
-          if (!moodCounts[entry.mood]) {
-            moodCounts[entry.mood] = 0;
-          }
-          moodCounts[entry.mood]++;
-        });
-
-        // Find the most frequent mood
-        let maxCount = 0;
-        let dominantMood = "neutral";
-
-        Object.keys(moodCounts).forEach((mood) => {
-          if (moodCounts[mood] > maxCount) {
-            maxCount = moodCounts[mood];
-            dominantMood = mood;
-          }
-        });
-
-        // If there's a tie, use a weighted average
-        if (
-          Object.values(moodCounts).filter((count) => count === maxCount)
-            .length > 1
-        ) {
-          // Calculate weighted average if no clear dominant mood
-          let totalValue = 0;
-          periodEntries.forEach((entry) => {
-            const emotionValue = emotionToValue(entry.mood);
-            console.log(
-              `Entry for ${labels[index]}: mood=${entry.mood}, value=${emotionValue}`
-            );
-            totalValue += emotionValue;
-          });
-
-          data[index] = totalValue / periodEntries.length;
-          console.log(
-            `Multiple entries with tie for ${labels[index]}, using average: ${data[index]}`
-          );
-        } else {
-          // Use the dominant mood's value
-          const dominantValue = emotionToValue(dominantMood);
-          data[index] = dominantValue;
-          console.log(
-            `Multiple entries for ${labels[index]}, dominant mood: ${dominantMood} (${dominantValue})`
-          );
-        }
-      }
-    }
-  });
-  // Replace nulls with default value (3.5 - neutral)
-  const finalData = data.map((value) => (value === null ? 3.5 : value));
-  // Ensure we have some data to display - log the final chart data
-  console.log("Final chart data:", {
-    labels,
-    data: finalData,
-    defaultMood: "Neutral",
-    explanation:
-      "Joy=6, Love=5, Surprise=4, Neutral=3.5, Fear=3, Anger=2, Sadness=1",
-  });
-
-  return {
-    labels,
-    data: finalData,
-  };
+      ],
+      data: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], // All neutral
+    };
+  }
 };
 
 const journalStorage = {
   getJournalEntries,
   saveJournalEntry,
   predictEmotion,
+  fallbackPredictEmotion,
   emotionToMood,
   getMoodChartData,
   getDayStreak,

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { predictEmotion, emotionToMood, saveJournalEntry, getJournalEntries } from '@/lib/journalStorage';
+import { saveJournalEntry, getJournalEntries } from '@/lib/journalStorage';
 
 export type JournalEntry = {
   id: string;
@@ -38,30 +38,19 @@ const JournalSection: React.FC<JournalSectionProps> = ({
   const [activePrompt, setActivePrompt] = useState<PromptType>(defaultPrompt);
   const [journalEntry, setJournalEntry] = useState('');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [saving, setSaving] = useState(false);
-
-  // Load entries from local storage on component mount
+  const [saving, setSaving] = useState(false);  // Load entries from local storage on component mount
   useEffect(() => {
     if (typeof window !== 'undefined' && showRecentEntries && !customEntries) {
-      const storedEntries = getJournalEntries();
-      setEntries(storedEntries);
-    }
-  }, [showRecentEntries, customEntries]);
-
-  // Listen for storage events (when another tab/window updates the local storage)
-  useEffect(() => {
-    if (typeof window !== 'undefined' && showRecentEntries && !customEntries) {
-      const handleStorageChange = (e: StorageEvent) => {
-        if (e.key === 'chillmind_journal_entries') {
-          const storedEntries = getJournalEntries();
+      const fetchEntries = async () => {
+        try {
+          const storedEntries = await getJournalEntries();
           setEntries(storedEntries);
+        } catch (error) {
+          console.error('Error loading journal entries:', error);
+          setEntries([]);
         }
       };
-
-      window.addEventListener('storage', handleStorageChange);
-      return () => {
-        window.removeEventListener('storage', handleStorageChange);
-      };
+      fetchEntries();
     }
   }, [showRecentEntries, customEntries]);
 
@@ -72,16 +61,12 @@ const JournalSection: React.FC<JournalSectionProps> = ({
     setJournalEntry('');
   };
 
-  const handleSaveEntry = () => {
+  const handleSaveEntry = async () => {
     if (!journalEntry.trim()) return;
     
     setSaving(true);
-
+    
     try {
-      // Predict emotion from text
-      const emotion = predictEmotion(journalEntry);
-      const mood = emotionToMood(emotion);
-      
       // Extract tags from content (words with # prefix)
       const tagRegex = /#(\w+)/g;
       const tags: string[] = [];
@@ -111,19 +96,18 @@ const JournalSection: React.FC<JournalSectionProps> = ({
             tags.push('journal');
             break;
         }
-      }
-      
-      // Save to local storage
-      const newEntry = saveJournalEntry({
+      }      // Save to local storage - the text is passed to predict emotion in saveJournalEntry
+      const newEntry = await saveJournalEntry({
         content: journalEntry,
-        mood,
         tags
       });
       
       // Update state
       if (showRecentEntries && !customEntries) {
         setEntries(prev => [newEntry, ...prev]);
-      }      // Call onSave callback if provided
+      }
+      
+      // Call onSave callback if provided
       if (onSave) {
         onSave({
           prompt: activePrompt,
@@ -146,12 +130,12 @@ const JournalSection: React.FC<JournalSectionProps> = ({
 
   const getMoodIcon = (mood: string) => {
     switch (mood) {
-      case 'happy': return <i className="fas fa-smile text-lg"></i>;
-      case 'relaxed': return <i className="fas fa-peace text-lg"></i>;
-      case 'surprised': return <i className="fas fa-surprise text-lg"></i>;
-      case 'anxious': return <i className="fas fa-frown text-lg"></i>;
-      case 'angry': return <i className="fas fa-angry text-lg"></i>;
-      case 'sad': return <i className="fas fa-sad-tear text-lg"></i>;
+      case 'joy': return <i className="fas fa-smile text-lg"></i>;
+      case 'love': return <i className="fas fa-peace text-lg"></i>;
+      case 'surprise': return <i className="fas fa-surprise text-lg"></i>;
+      case 'fear': return <i className="fas fa-frown text-lg"></i>;
+      case 'anger': return <i className="fas fa-angry text-lg"></i>;
+      case 'sadness': return <i className="fas fa-sad-tear text-lg"></i>;
       case 'neutral': return <i className="fas fa-meh text-lg"></i>;
       default: return <i className="fas fa-meh text-lg"></i>;
     }
@@ -159,12 +143,12 @@ const JournalSection: React.FC<JournalSectionProps> = ({
 
   const getMoodBackground = (mood: string) => {
     switch (mood) {
-      case 'happy': return 'bg-blue-200';
-      case 'relaxed': return 'bg-green-200';
-      case 'surprised': return 'bg-purple-200';
-      case 'anxious': return 'bg-yellow-200';
-      case 'angry': return 'bg-red-200';
-      case 'sad': return 'bg-indigo-200';
+      case 'joy': return 'bg-blue-200';
+      case 'love': return 'bg-green-200';
+      case 'surprise': return 'bg-purple-200';
+      case 'fear': return 'bg-yellow-200';
+      case 'anger': return 'bg-red-200';
+      case 'sadness': return 'bg-indigo-200';
       case 'neutral': return 'bg-gray-200';
       default: return 'bg-gray-200';
     }
@@ -172,12 +156,12 @@ const JournalSection: React.FC<JournalSectionProps> = ({
 
   const getMoodTextColor = (mood: string) => {
     switch (mood) {
-      case 'happy': return 'text-blue-600';
-      case 'relaxed': return 'text-green-600';
-      case 'surprised': return 'text-purple-600';
-      case 'anxious': return 'text-yellow-600';
-      case 'angry': return 'text-red-600';
-      case 'sad': return 'text-indigo-600';
+      case 'joy': return 'text-blue-600';
+      case 'love': return 'text-green-600';
+      case 'surprise': return 'text-purple-600';
+      case 'fear': return 'text-yellow-600';
+      case 'anger': return 'text-red-600';
+      case 'sadness': return 'text-indigo-600';
       case 'neutral': return 'text-gray-600';
       default: return 'text-gray-600';
     }
