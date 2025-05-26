@@ -116,7 +116,7 @@ export const saveJournalEntryToFirestore = async (
     // Return the entry with generated ID and date
     return {
       id: docRef.id,
-      date: new Date().toISOString(), // We use client date since serverTimestamp isn't returned immediately
+      date: new Date().toISOString(),
       ...entry,
     };
   } catch (error) {
@@ -227,9 +227,7 @@ export const updateJournalEntry = async (
     console.error("Error updating journal entry:", error);
     throw error;
   }
-};
-
-// Get the day streak for a user
+}; // Get the day streak for a user
 export const getUserStreak = async (user: User): Promise<number> => {
   if (!user || !user.uid) {
     throw new Error("User is not authenticated");
@@ -261,10 +259,13 @@ export const getUserStreak = async (user: User): Promise<number> => {
     const hoursDiff =
       (currentTime.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60);
 
-    // If more than 48 hours have passed, reset the streak
+    // Allow 48 hours of grace period before breaking the streak
+    // But don't reset the streak as we want it to accumulate over time
     if (hoursDiff >= 48) {
-      await updateUserStreak(user, true); // reset streak
-      return 1;
+      // Log but don't reset the streak
+      console.log(
+        "Streak might be stale but keeping it for cumulative tracking"
+      );
     }
 
     return streak.days || 0;
@@ -329,20 +330,23 @@ export const updateUserStreak = async (
 
     const lastUpdateDay = lastUpdate.toISOString().split("T")[0];
     const currentTime = new Date();
+    // We're keeping hoursDiff for reference but it's no longer used for streak resets
     const hoursDiff =
       (currentTime.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60);
 
     let newDays = streak.days;
 
-    // If entry is from a new day and within 48 hours of last entry, increment streak
-    if (today !== lastUpdateDay && hoursDiff < 48) {
+    // If entry is from a new day, always increment the streak (for cumulative tracking)
+    if (today !== lastUpdateDay) {
       newDays = streak.days + 1;
+      // console.log("Incrementing streak from", streak.days, "to", newDays);
+    } else {
+      // console.log(
+      //   "Entry is from the same day, maintaining current streak:",
+      //   streak.days
+      // );
     }
-    // If more than 48 hours have passed, reset the streak
-    else if (hoursDiff >= 48) {
-      newDays = 1;
-    }
-    // Otherwise maintain current streak but update timestamp
+    // We never reset the streak anymore as we want it to be cumulative over time
 
     const newStreak: FirestoreStreak = {
       days: newDays,
@@ -376,8 +380,12 @@ export const getMoodChartDataFromFirestore = async (
     let startDate;
 
     if (timeRange === "week") {
-      startDate = new Date();
-      startDate.setDate(startDate.getDate() - 7);
+      startDate = new Date(now); // Create a new Date object from now
+      // Adjust startDate to be the Monday of the current week
+      const dayOfWeek = startDate.getDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
+      const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when day is Sunday
+      startDate.setDate(diff);
+      startDate.setHours(0, 0, 0, 0); // Set to the beginning of the day
     } else if (timeRange === "month") {
       startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 1);
@@ -437,20 +445,42 @@ export const getMoodChartDataFromFirestore = async (
 
     // Process entries similar to the journalStorage.getMoodChartData function
     const entriesByPeriod: Record<number, JournalEntry[]> = {};
-    const dayToIndexMap: Record<string, number> = {};
+    const dayToIndexMap: Record<string, number> = {}; // For week view
+
+    const monthViewWeekStartDates: Date[] = []; // Holds start dates for "Week 1" to "Week 4" in month view
 
     if (timeRange === "week") {
       // Create array of last 7 days - with proper order (starting from past to current day)
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       for (let i = 6; i >= 0; i--) {
-        const date = new Date();
+        const date = new Date(); // This date is for determining the day name for the current week's labels
         date.setDate(date.getDate() - i);
         const dayName = days[date.getDay()];
-        const dayIndex = labels.indexOf(dayName);
+        const dayIndex = labels.indexOf(dayName); // labels are ["Mon", ..., "Sun"]
 
         // Store the mapping of date string (YYYY-MM-DD) to index
-        const dateStr = date.toISOString().split("T")[0]; // Get YYYY-MM-DD format
+        const dateStr = date.toISOString().split("T")[0];
         dayToIndexMap[dateStr] = dayIndex;
+      }
+    } else if (timeRange === "month") {
+      // Calculate the start dates for each of the 4 weeks in the month view chart.
+      // "Week 4" on the chart is the current week, "Week 1" is 3 weeks prior.
+      const startOfChartWeek4 = new Date(now); // 'now' is defined at the beginning of the function
+      const currentDay = startOfChartWeek4.getDay(); // Sunday is 0, Monday is 1, etc.
+      // Adjust to Monday of the current week
+      const offsetToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+      startOfChartWeek4.setDate(startOfChartWeek4.getDate() + offsetToMonday);
+      startOfChartWeek4.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 4; i++) {
+        // For "Week 1" through "Week 4"
+        const weekStartDate = new Date(startOfChartWeek4);
+        // labels are ["Week 1", "Week 2", "Week 3", "Week 4"]
+        // monthViewWeekStartDates[0] for "Week 1", monthViewWeekStartDates[3] for "Week 4"
+        // "Week 1" (index 0) starts 3 weeks before startOfChartWeek4
+        // "Week 4" (index 3) starts 0 weeks before startOfChartWeek4
+        weekStartDate.setDate(startOfChartWeek4.getDate() - (3 - i) * 7);
+        monthViewWeekStartDates.push(weekStartDate);
       }
     }
 
@@ -464,14 +494,26 @@ export const getMoodChartDataFromFirestore = async (
         index =
           dayToIndexMap[dateStr] !== undefined ? dayToIndexMap[dateStr] : -1;
       } else if (timeRange === "month") {
-        // Map to the week
-        const weekDiff = Math.floor(
-          (now.getTime() - entryDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
-        );
-        if (weekDiff < 4) {
-          index = weekDiff;
+        // Assign entry to the correct week in the month view
+        if (monthViewWeekStartDates.length === 4) {
+          // Ensure dates are calculated
+          // Check from latest week ("Week 4") to earliest ("Week 1")
+          if (entryDate >= monthViewWeekStartDates[3]) {
+            // Belongs to "Week 4" (chart index 3)
+            index = 3;
+          } else if (entryDate >= monthViewWeekStartDates[2]) {
+            // Belongs to "Week 3" (chart index 2)
+            index = 2;
+          } else if (entryDate >= monthViewWeekStartDates[1]) {
+            // Belongs to "Week 2" (chart index 1)
+            index = 1;
+          } else if (entryDate >= monthViewWeekStartDates[0]) {
+            // Belongs to "Week 1" (chart index 0)
+            index = 0;
+          }
         }
       } else {
+        // timeRange === "year"
         // Map to the month
         const monthIndex = entryDate.getMonth();
         const months = [

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { getJournalEntries } from '@/lib/journalStorage';
+import { getCurrentUser } from '@/lib/firebaseUtils';
+import { getUserStreak } from '@/lib/journalFirestore';
 import { Flame } from 'lucide-react';
 
 interface WellbeingStatsProps {
@@ -77,15 +79,20 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
         // Total count
         const journalCount = entries.length;
         
-        // Entries in the last 7 days
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const recentEntries = sortedEntries.filter(entry => 
-          new Date(entry.date) > oneWeekAgo
-        );
-        const weeklyEntries = recentEntries.length;
+        // Entries in the current week (Monday to Sunday) rather than last 7 days
+        const now = new Date();
+        const currentWeekDay = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+        const startOfWeek = new Date(now);
+        // Set to Monday of current week
+        startOfWeek.setDate(now.getDate() - (currentWeekDay === 0 ? 6 : currentWeekDay - 1));
+        startOfWeek.setHours(0, 0, 0, 0); // Start of the day
         
-        // Journal progress - % of days with entries in last 7 days
+        const entriesThisWeek = sortedEntries.filter(entry => 
+          new Date(entry.date) >= startOfWeek
+        );
+        const weeklyEntries = entriesThisWeek.length;
+        
+        // Journal progress - % of days with entries in current week
         const journalProgress = Math.round((weeklyEntries / 7) * 100);
         
         // Mood distribution and dominant mood
@@ -133,34 +140,45 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
         
         Object.entries(moodCounts).forEach(([mood, count]) => {
           moodDistribution[mood] = totalMoods > 0 ? Math.round((count / totalMoods) * 100) : 0;
-        });
-        
-        // Calculate streak
+        });        // Use the streak value from Firebase instead of calculating locally
         let streakDays = 0;
-        let currentStreak = 0;
-        const currentDate = new Date();
-        
-        // Go back up to 30 days to check for streak
-        for (let i = 0; i < 30; i++) {
-          const checkDate = new Date(currentDate);
-          checkDate.setDate(checkDate.getDate() - i);
-          
-          // Format dates to YYYY-MM-DD for comparison
-          const checkDateStr = checkDate.toISOString().split('T')[0];
-          
-          const hasEntryOnDate = sortedEntries.some(entry => {
-            const entryDate = new Date(entry.date);
-            return entryDate.toISOString().split('T')[0] === checkDateStr;
-          });
-          
-          if (hasEntryOnDate) {
-            currentStreak++;
-          } else if (i > 0) { // Don't break streak on current day
-            break;
+        try {
+          const user = getCurrentUser();
+          if (user) {
+            // Get the streak directly from Firebase
+            streakDays = await getUserStreak(user);
+            console.log('Retrieved streak from Firebase:', streakDays);
+          } else {
+            console.log('No user found, using default streak value of 0');
           }
+        } catch (error) {
+          console.error('Error getting streak from Firebase:', error);
+          // Fallback to local calculation if Firebase retrieval fails
+          let currentStreak = 0;
+          const currentDate = new Date();
+          
+          // Go back up to 30 days to check for streak
+          for (let i = 0; i < 30; i++) {
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(checkDate.getDate() - i);
+            
+            // Format dates to YYYY-MM-DD for comparison
+            const checkDateStr = checkDate.toISOString().split('T')[0];
+            
+            const hasEntryOnDate = sortedEntries.some(entry => {
+              const entryDate = new Date(entry.date);
+              return entryDate.toISOString().split('T')[0] === checkDateStr;
+            });
+            
+            if (hasEntryOnDate) {
+              currentStreak++;
+            } else if (i > 0) { // Don't break streak on current day
+              break;
+            }
+          }
+          
+          streakDays = currentStreak;
         }
-        
-        streakDays = currentStreak;
         
         // Most common tags
         const tagCounts: Record<string, number> = {};
@@ -411,9 +429,9 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
               ))}
             </div>
           </div>
-        </div>{/* Mood Distribution */}
+        </div>        {/* Mood Distribution */}
         <div className="bg-muted/30 rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-3">Recent Mood Pattern</h3>
+          <h3 className="text-sm font-medium mb-3">Recent Mood Pattern <span className="text-xs text-muted-foreground">(last 10 entries)</span></h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col space-y-2">              {Object.entries(stats.moodDistribution)
                 .filter(([, percentage]) => percentage > 0)

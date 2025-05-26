@@ -197,18 +197,6 @@ const JournalSection: React.FC<JournalSectionProps> = ({
           <h2 className="text-lg font-semibold text-foreground">
             Today&apos;s Journal
           </h2>
-          <div className="flex items-center space-x-2">
-            <button
-              className="text-sm font-medium text-primary hover:text-primary/80"
-            >
-              Prompts
-            </button>
-            <button
-              className="text-sm font-medium text-primary hover:text-primary/80"
-            >
-              View all
-            </button>
-          </div>
         </div>
       )}
 
