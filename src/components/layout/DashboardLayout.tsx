@@ -100,8 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <polyline points="10 9 9 9 8 9" />
                 </svg>
                 Journal
-              </Link>
-              <Link
+              </Link>              <Link
                 href="/dashboard/progress"
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                   isActive('/dashboard/progress') 
@@ -117,6 +116,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 Progress
               </Link>
               <Link
+                href="/dashboard/assessments"
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
+                  isActive('/dashboard/assessments') 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'text-foreground hover:bg-muted hover:text-foreground'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-5 w-5 mr-3 ${isActive('/dashboard/assessments') ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <path d="M9 12l2 2 4-4" />
+                  <path d="M21 12c.552 0 1-.448 1-1s-.448-1-1-1h-3.586l-4.707-4.707A.997.997 0 0 0 12 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8c.276 0 .526-.112.707-.293L17.414 14H21z" />
+                </svg>
+                Assessments
+              </Link>
+              <Link
                 href="/dashboard/ai-assistant"
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                   isActive('/dashboard/ai-assistant') 
@@ -126,7 +139,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               >
                 <i className={`fas fa-robot h-5 w-5 mr-3 ${isActive('/dashboard/ai-assistant') ? 'text-primary' : 'text-muted-foreground'}`}></i>
                 AI Assistant
-              </Link>              <Link
+              </Link><Link
                 href="/dashboard/resources"
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                   isActive('/dashboard/resources') 

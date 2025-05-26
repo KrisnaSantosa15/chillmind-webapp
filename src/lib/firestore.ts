@@ -120,9 +120,50 @@ export const getLatestAssessment = async (user: User) => {
       id: querySnapshot.docs[0].id,
       ...latestAssessment,
       timestamp: timestamp.toDate(),
-    };
-  } catch (error) {
+    };  } catch (error) {
     console.error("Error getting latest assessment:", error);
+    throw error;
+  }
+};
+
+// Get all assessments for a user (for assessment history)
+export const getAllUserAssessments = async (user: User) => {
+  if (!user || !user.uid) {
+    throw new Error("User is not authenticated");
+  }
+
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const assessmentsRef = collection(userRef, "assessments");
+
+    // Query for all assessments ordered by timestamp (newest first)
+    const querySnapshot = await getDocs(
+      query(assessmentsRef, orderBy("timestamp", "desc"))
+    );
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    // Return all assessments with their IDs
+    const assessments = querySnapshot.docs.map((doc) => {
+      const data = doc.data() as AssessmentResults;
+      
+      // Convert Firestore Timestamp to JS Date for better client-side handling
+      const timestamp = data.timestamp as unknown as {
+        toDate: () => Date;
+      };
+
+      return {
+        id: doc.id,
+        ...data,
+        timestamp: timestamp.toDate(),
+      };
+    });
+
+    return assessments;
+  } catch (error) {
+    console.error("Error getting all user assessments:", error);
     throw error;
   }
 };
