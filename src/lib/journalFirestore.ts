@@ -371,6 +371,14 @@ export const getMoodChartDataFromFirestore = async (
     throw new Error("User is not authenticated");
   }
 
+  // Helper function to format a Date object to 'YYYY-MM-DD' in local timezone
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   try {
     const userRef = doc(db, "users", user.uid);
     const journalCollectionRef = collection(userRef, "journal_entries");
@@ -459,7 +467,7 @@ export const getMoodChartDataFromFirestore = async (
         const dayIndex = labels.indexOf(dayName); // labels are ["Mon", ..., "Sun"]
 
         // Store the mapping of date string (YYYY-MM-DD) to index
-        const dateStr = date.toISOString().split("T")[0];
+        const dateStr = formatLocalDate(date); // Use local date
         dayToIndexMap[dateStr] = dayIndex;
       }
     } else if (timeRange === "month") {
@@ -490,7 +498,7 @@ export const getMoodChartDataFromFirestore = async (
 
       if (timeRange === "week") {
         // Map to the specific day using our mapping
-        const dateStr = entryDate.toISOString().split("T")[0];
+        const dateStr = formatLocalDate(entryDate); // Use local date
         index =
           dayToIndexMap[dateStr] !== undefined ? dayToIndexMap[dateStr] : -1;
       } else if (timeRange === "month") {
