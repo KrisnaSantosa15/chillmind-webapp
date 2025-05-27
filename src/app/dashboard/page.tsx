@@ -71,10 +71,6 @@ export default function DashboardPage() {
             entriesLimit={2}
           />
           
-            {/* AI Mental Health Assistant */}
-          <div className="h-[400px]">
-            <AIAssistantWidget height="400px" compactMode={true} />
-          </div>
         </div>        {/* Right column - Mood chart and health status */}
         <div className="space-y-6">
           {/* Mood graph */}
@@ -132,8 +128,9 @@ export default function DashboardPage() {
             <MentalHealthStatus />
           </div>
 
-          {/* Habit Tracker */}
-          <HabitTracker />
+          <div className="h-[400px]">
+            <AIAssistantWidget height="400px" compactMode={true} />
+          </div>
 
         </div>
       </div>
