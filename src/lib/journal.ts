@@ -93,17 +93,15 @@ export const useJournal = () => {
               tags.push("journal");
               break;
           }
-        }
-
-        // Save to local storage - now uses async API
-        const newEntry = await saveJournalEntry({
+        } // Save to local storage - now uses async API
+        const result = await saveJournalEntry({
           content,
           tags,
         });
 
-        // Update state
-        setEntries((prev) => [newEntry, ...prev]);
-        resolve(newEntry);
+        // Update state - extract the journalEntry from the result
+        setEntries((prev) => [result.journalEntry, ...prev]);
+        resolve(result.journalEntry);
       } catch (err) {
         console.error("Error adding journal entry:", err);
         reject(err);
