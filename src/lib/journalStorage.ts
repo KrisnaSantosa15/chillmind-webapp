@@ -210,10 +210,20 @@ export const updateDayStreak = async (): Promise<number> => {
   }
 };
 
+// Import the emotion insight functions
+import { getEmotionInsight, EmotionInsight } from "./emotionInsights";
+
+// Updated return type to include emotion insight
+interface JournalEntryWithInsight {
+  journalEntry: JournalEntry;
+  insight: EmotionInsight | null;
+  emotion: Emotion;
+}
+
 // Save a journal entry - Firestore only
 export const saveJournalEntry = async (
   entry: Omit<JournalEntry, "id" | "date" | "mood">
-): Promise<JournalEntry> => {
+): Promise<JournalEntryWithInsight> => {
   // Predict emotion from the text
   const predictedEmotion = await predictEmotion(entry.content);
   const mood = emotionToMood(predictedEmotion);
@@ -227,10 +237,19 @@ export const saveJournalEntry = async (
     const user = getCurrentUser();
     if (user) {
       // Save entry to Firestore
-      return await journalFirestore.saveJournalEntryToFirestore(
+      const savedEntry = await journalFirestore.saveJournalEntryToFirestore(
         user,
         entryWithMood
       );
+      
+      // Get insight for the detected emotion
+      const insight = await getEmotionInsight(predictedEmotion, user);
+      
+      return { 
+        journalEntry: savedEntry, 
+        insight, 
+        emotion: predictedEmotion 
+      };
     }
     throw new Error("User not authenticated");
   } catch (error) {

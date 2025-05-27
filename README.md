@@ -2,6 +2,10 @@
 
 ChillMind is a personalized mental health monitoring platform designed specifically for students. It integrates machine learning and sentiment analysis to help track mental health conditions such as depression, anxiety, and stress through surveys, journaling, and provides personalized activity recommendations.
 
+## Repos:
+- [ChillMind Web App](https://github.com/KrisnaSantosa15/chillmind-webapp)
+- [ChillMind Models](https://github.com/KrisnaSantosa15/chillmind-models)
+
 ## Features
 
 - **Smart Mental Health Assessment**: AI-powered analysis using standardized psychological measures (PHQ-9, GAD-7, PSS)

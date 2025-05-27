@@ -200,16 +200,20 @@ const MentalHealthStatus: React.FC = () => {
             </div>
           ))
         )}      </div>
-      
-      {loading ? (
-        // Loading skeleton for button
+        {loading ? (
+        // Loading skeleton for buttons
         <div className="mt-4 animate-pulse">
           <div className="w-full h-10 bg-gray-200 rounded-md"></div>
         </div>
       ) : (
-        <Link href="/onboarding" className="mt-4 w-full px-4 py-2 text-sm font-medium text-center text-white bg-primary rounded-md hover:bg-primary/90 inline-block">
-          Take Assessment Again
-        </Link>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Link href="/onboarding" className="px-4 py-2 text-sm font-medium text-center text-white bg-primary rounded-md hover:bg-primary/90 inline-block">
+            Take Assessment Again
+          </Link>
+          <Link href="/dashboard/assessments" className="px-4 py-2 text-sm font-medium text-center text-primary bg-primary/10 rounded-md hover:bg-primary/20 inline-block border border-primary/20">
+            View History
+          </Link>
+        </div>
       )}
     </div>
   );

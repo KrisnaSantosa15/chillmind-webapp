@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { saveJournalEntry, getJournalEntries } from '@/lib/journalStorage';
+import { saveJournalEntry, getJournalEntries, Emotion } from '@/lib/journalStorage';
+import { EmotionInsight } from '@/lib/emotionInsights';
+import EmotionInsightCard from './EmotionInsightCard';
 
 export type JournalEntry = {
   id: string;
@@ -38,7 +40,14 @@ const JournalSection: React.FC<JournalSectionProps> = ({
   const [activePrompt, setActivePrompt] = useState<PromptType>(defaultPrompt);
   const [journalEntry, setJournalEntry] = useState('');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [saving, setSaving] = useState(false);  // Load entries from local storage on component mount
+  const [saving, setSaving] = useState(false);
+  // New state for the insight card
+  const [currentInsight, setCurrentInsight] = useState<{
+    insight: EmotionInsight;
+    emotion: Emotion;
+  } | null>(null);
+
+  // Load entries from local storage on component mount
   useEffect(() => {
     if (typeof window !== 'undefined' && showRecentEntries && !customEntries) {
       const fetchEntries = async () => {
@@ -96,15 +105,25 @@ const JournalSection: React.FC<JournalSectionProps> = ({
             tags.push('journal');
             break;
         }
-      }      // Save to local storage - the text is passed to predict emotion in saveJournalEntry
-      const newEntry = await saveJournalEntry({
+      }
+
+      // Save to local storage - the text is passed to predict emotion in saveJournalEntry
+      const result = await saveJournalEntry({
         content: journalEntry,
         tags
       });
       
-      // Update state
+      // Update state with the new journal entry
       if (showRecentEntries && !customEntries) {
-        setEntries(prev => [newEntry, ...prev]);
+        setEntries(prev => [result.journalEntry, ...prev]);
+      }
+      
+      // Show the emotion insight card
+      if (result.insight) {
+        setCurrentInsight({
+          insight: result.insight,
+          emotion: result.emotion
+        });
       }
       
       // Call onSave callback if provided
@@ -122,7 +141,11 @@ const JournalSection: React.FC<JournalSectionProps> = ({
       console.error('Error saving journal entry:', error);
     } finally {
       setSaving(false);
-    }
+    }  };
+
+  // Handle dismissing the insight card
+  const handleDismissInsight = () => {
+    setCurrentInsight(null);
   };
 
   // Get entries to display (either from props or from state)
@@ -293,7 +316,18 @@ const JournalSection: React.FC<JournalSectionProps> = ({
               )}
             </button>
         </div>
-      </div>      {showRecentEntries && recentEntries.length > 0 && (
+      </div>      {/* Emotion Insight Card */}
+      {currentInsight && (
+        <div className="mt-4 w-full dark:text-foreground">
+          <EmotionInsightCard
+            insight={currentInsight.insight}
+            emotion={currentInsight.emotion}
+            onDismiss={handleDismissInsight}
+          />
+        </div>
+      )}
+
+      {showRecentEntries && recentEntries.length > 0 && (
         <div className="mt-6">          <div className="flex justify-between items-center">
             <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
               Recent Entries
