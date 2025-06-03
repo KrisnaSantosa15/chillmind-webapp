@@ -36,7 +36,7 @@ const firestoreToJournalEntry = (doc: {
 // GET /api/journals/[id] - Get specific journal entry by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = await authenticateUser(request);
@@ -44,7 +44,7 @@ export async function GET(
       return createAuthErrorResponse("Authentication required");
     }
 
-    const entryId = params.id;
+    const { id: entryId } = await params;
     if (!entryId) {
       return NextResponse.json(
         { error: "Entry ID is required" },
@@ -86,7 +86,7 @@ export async function GET(
 // PUT /api/journals/[id] - Update existing journal entry
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = await authenticateUser(request);
@@ -94,7 +94,7 @@ export async function PUT(
       return createAuthErrorResponse("Authentication required");
     }
 
-    const entryId = params.id;
+    const { id: entryId } = await params;
     if (!entryId) {
       return NextResponse.json(
         { error: "Entry ID is required" },
@@ -186,7 +186,7 @@ export async function PUT(
 // DELETE /api/journals/[id] - Delete journal entry
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = await authenticateUser(request);
@@ -194,7 +194,7 @@ export async function DELETE(
       return createAuthErrorResponse("Authentication required");
     }
 
-    const entryId = params.id;
+    const { id: entryId } = await params;
     if (!entryId) {
       return NextResponse.json(
         { error: "Entry ID is required" },
