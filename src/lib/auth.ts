@@ -17,6 +17,14 @@ export async function authenticateRequest(
   request: NextRequest
 ): Promise<AuthenticatedUser | null> {
   try {
+    // Check if Firebase Admin is initialized
+    if (!adminAuth) {
+      console.error(
+        "Firebase Admin SDK not initialized. Cannot authenticate requests."
+      );
+      return null;
+    }
+
     // Get Authorization header
     const authHeader = request.headers.get("authorization");
 
@@ -48,8 +56,6 @@ export async function authenticateRequest(
     return null;
   }
 }
-
-
 
 /**
  * Create standardized auth error response
