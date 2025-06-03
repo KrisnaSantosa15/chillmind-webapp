@@ -1,7 +1,8 @@
-// Updated version with Firestore support only
+// Updated version with support
 import { JournalEntry } from "@/components/dashboard/JournalSection";
-import journalFirestore from "./journalFirestore";
+import journalApiClient from "./journalApi";
 import { getCurrentUser } from "./firebaseUtils";
+import { getEmotionInsight, EmotionInsight } from "./emotionInsights";
 
 // Emotion categories
 export type Emotion =
@@ -55,7 +56,7 @@ export const predictEmotion = async (text: string): Promise<Emotion> => {
 
 // Keep the original function as fallback
 export const fallbackPredictEmotion = (text: string): Emotion => {
-  // Simple keyword-based emotion detection (very basic)
+  // Simple keyword-based emotion detection
   const lowerText = text.toLowerCase();
   const emotionKeywords = {
     joy: ["happy", "excited", "great", "wonderful", "amazing", "joy", "glad"],
@@ -168,12 +169,12 @@ export const emotionToValue = (emotion: Emotion | string): number => {
   }
 };
 
-// Get all journal entries - Firestore only
+// Get all journal entries -
 export const getJournalEntries = async (): Promise<JournalEntry[]> => {
   try {
     const user = getCurrentUser();
     if (user) {
-      return await journalFirestore.getJournalEntriesFromFirestore(user);
+      return await journalApiClient.getEntries();
     }
     return [];
   } catch (error) {
@@ -182,12 +183,12 @@ export const getJournalEntries = async (): Promise<JournalEntry[]> => {
   }
 };
 
-// Get the current day streak - Firestore only
+// Get the current day streak
 export const getDayStreak = async (): Promise<number> => {
   try {
     const user = getCurrentUser();
     if (user) {
-      return await journalFirestore.getUserStreak(user);
+      return await journalApiClient.getStreak();
     }
     return 0;
   } catch (error) {
@@ -196,12 +197,12 @@ export const getDayStreak = async (): Promise<number> => {
   }
 };
 
-// Update the day streak - Firestore only
+// Update the day streak
 export const updateDayStreak = async (): Promise<number> => {
   try {
     const user = getCurrentUser();
     if (user) {
-      return await journalFirestore.updateUserStreak(user);
+      return await journalApiClient.updateStreak();
     }
     return 0;
   } catch (error) {
@@ -210,9 +211,6 @@ export const updateDayStreak = async (): Promise<number> => {
   }
 };
 
-// Import the emotion insight functions
-import { getEmotionInsight, EmotionInsight } from "./emotionInsights";
-
 // Updated return type to include emotion insight
 interface JournalEntryWithInsight {
   journalEntry: JournalEntry;
@@ -220,7 +218,7 @@ interface JournalEntryWithInsight {
   emotion: Emotion;
 }
 
-// Save a journal entry - Firestore only
+// Save a journal entry -
 export const saveJournalEntry = async (
   entry: Omit<JournalEntry, "id" | "date" | "mood">
 ): Promise<JournalEntryWithInsight> => {
@@ -236,19 +234,23 @@ export const saveJournalEntry = async (
   try {
     const user = getCurrentUser();
     if (user) {
-      // Save entry to Firestore
-      const savedEntry = await journalFirestore.saveJournalEntryToFirestore(
-        user,
-        entryWithMood
-      );
-      
+      // Save entry
+      const savedEntry = await journalApiClient.createEntry(entryWithMood);
+
+      // Update user streak after saving entry
+      try {
+        await journalApiClient.updateStreak();
+      } catch (streakError) {
+        console.error("Error updating streak:", streakError);
+      }
+
       // Get insight for the detected emotion
       const insight = await getEmotionInsight(predictedEmotion, user);
-      
-      return { 
-        journalEntry: savedEntry, 
-        insight, 
-        emotion: predictedEmotion 
+
+      return {
+        journalEntry: savedEntry,
+        insight,
+        emotion: predictedEmotion,
       };
     }
     throw new Error("User not authenticated");
@@ -258,13 +260,13 @@ export const saveJournalEntry = async (
   }
 };
 
-// Delete a journal entry
+// Delete a journal entry -
 export const deleteJournalEntry = async (entryId: string): Promise<void> => {
   try {
     const user = getCurrentUser();
     if (user) {
-      // Delete entry from Firestore
-      await journalFirestore.deleteJournalEntry(user, entryId);
+      // Delete entry
+      await journalApiClient.deleteEntry(entryId);
     } else {
       throw new Error("User not authenticated");
     }
@@ -274,18 +276,36 @@ export const deleteJournalEntry = async (entryId: string): Promise<void> => {
   }
 };
 
-// Get mood chart data - Firestore only
+// Update a journal entry
+export const updateJournalEntry = async (
+  entryId: string,
+  updates: Partial<Omit<JournalEntry, "id" | "date">>
+): Promise<JournalEntry> => {
+  try {
+    const user = getCurrentUser();
+    if (user) {
+      // Update entry
+      return await journalApiClient.updateEntry(entryId, updates);
+    } else {
+      throw new Error("User not authenticated");
+    }
+  } catch (error) {
+    console.error("Error updating journal entry:", error);
+    throw error;
+  }
+};
+
+// Get mood chart data
 export const getMoodChartData = async (
   timeRange: "week" | "month" | "year"
 ) => {
   try {
     const user = getCurrentUser();
     if (user) {
-      // Get chart data from Firestore
-      return await journalFirestore.getMoodChartDataFromFirestore(
-        user,
-        timeRange
-      );
+      const response = await journalApiClient.getMoodChartData(timeRange);
+      if (response && response.labels && response.data) {
+        return response;
+      }
     }
     return getDefaultChartData(timeRange);
   } catch (error) {
@@ -331,13 +351,14 @@ const getDefaultChartData = (timeRange: "week" | "month" | "year") => {
 const journalStorage = {
   getJournalEntries,
   saveJournalEntry,
+  updateJournalEntry,
+  deleteJournalEntry,
   predictEmotion,
   fallbackPredictEmotion,
   emotionToMood,
   getMoodChartData,
   getDayStreak,
   updateDayStreak,
-  deleteJournalEntry,
 };
 
 export default journalStorage;
