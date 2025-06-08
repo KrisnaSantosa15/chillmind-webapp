@@ -18,15 +18,11 @@ export default function ResourcesPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCondition, setActiveCondition] = useState<string | null>(null);
-  // Get all recommendations as a flat array
   const getAllRecommendations = (): RecommendationItem[] => {
     const allRecs: RecommendationItem[] = [];
     
-    // Loop through each condition (anxiety, depression, stress)
     Object.entries(recommendationsData).forEach(([condition, severityLevels]) => {
-      // Loop through each severity level
       Object.values(severityLevels).forEach(recommendations => {
-        // Add all recommendations for this severity level
         allRecs.push(...(recommendations as RecommendationItem[]));
       });
     });
@@ -35,7 +31,6 @@ export default function ResourcesPage() {
   };
   
   const allRecommendations = getAllRecommendations();
-    // Convert recommendations to resources format  // Helper function to get a condition-specific styling
   const getConditionStyling = (resourceId: string) => {
     if (resourceId.startsWith('anx')) {
       return {
@@ -69,7 +64,6 @@ export default function ResourcesPage() {
 
   const mapRecommendationsToResources = (): Resource[] => {
     return allRecommendations.map(rec => {
-      // Determine resource type based on tags or description
       let type: 'article' | 'video' | 'podcast' | 'exercise' | 'tool' = 'article';
       
       if (rec.tags?.some(tag => ['guided', 'meditation', 'breathing', 'stretches', 'relaxation'].includes(tag))) {
@@ -82,7 +76,6 @@ export default function ResourcesPage() {
         type = 'tool';
       }
       
-      // Create placeholder images based on mental health condition
       let imageUrl: string | undefined = undefined;
       
       if (rec.id.startsWith('anx')) {
@@ -93,7 +86,6 @@ export default function ResourcesPage() {
         imageUrl = 'https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1';
       }
       
-      // Generate duration based on resource type
       let duration: string | undefined = undefined;
       if (type === 'exercise') {
         duration = '5-15 min';
@@ -115,7 +107,6 @@ export default function ResourcesPage() {
   };
   
   const resources = mapRecommendationsToResources();
-  // Get currently active condition count
   const getActiveConditionCount = () => {
     if (!activeCondition) return filteredResources.length;
     
@@ -124,7 +115,7 @@ export default function ResourcesPage() {
       (activeCondition === 'depression' && resource.id.startsWith('dep')) ||
       (activeCondition === 'stress' && resource.id.startsWith('str'))
     ).length;
-  };  // Get condition information
+  }; 
   const getConditionInfo = (condition: string | null) => {
     switch (condition) {
       case 'anxiety':
@@ -155,9 +146,7 @@ export default function ResourcesPage() {
   };
     
 
-  // Filter resources based on active condition, category and search query
   const filteredResources = resources.filter(resource => {
-    // Filter by condition
     const matchesCondition = !activeCondition || 
       (activeCondition === 'anxiety' && resource.id.startsWith('anx')) ||
       (activeCondition === 'depression' && resource.id.startsWith('dep')) ||
@@ -304,7 +293,7 @@ export default function ResourcesPage() {
             </div>
           ) : (            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredResources.map(resource => (                <div key={resource.id} className="flex flex-col border border-muted rounded-lg overflow-hidden transition-all hover:shadow-md hover:border-primary/30 h-full bg-gradient-to-b from-background to-background/50">
-                  {/* Image area with condition-based styling */}
+                  
                   <div className="h-40 relative bg-muted/30">
                     {resource.imageUrl ? (
                       <>
@@ -322,7 +311,7 @@ export default function ResourcesPage() {
                             resource.id.startsWith('dep') ? 'bg-blue-100 text-blue-600' : 
                             'bg-teal-100 text-teal-600'
                           } flex items-center justify-center`}>                            {(() => {
-                              // Find the original recommendation to get the icon
+                              
                               const origRec = allRecommendations.find(r => r.id === resource.id);
                               const iconName = origRec?.icon || 'lightbulb';
                               
@@ -355,7 +344,6 @@ export default function ResourcesPage() {
                         </div>
                       </>
                     ) : (
-                      // Gradient background with condition-based colors
                       <div className={`absolute inset-0 ${
                         resource.id.startsWith('anx') ? 'bg-gradient-to-br from-indigo-50 to-indigo-200' : 
                         resource.id.startsWith('dep') ? 'bg-gradient-to-br from-blue-50 to-blue-200' : 
@@ -366,7 +354,7 @@ export default function ResourcesPage() {
                           resource.id.startsWith('dep') ? 'bg-blue-100 text-blue-600' : 
                           'bg-teal-100 text-teal-600'
                         } flex items-center justify-center`}>                          {(() => {
-                            // Find the original recommendation to get the icon
+                            
                             const origRec = allRecommendations.find(r => r.id === resource.id);
                             const iconName = origRec?.icon || 'lightbulb';
                             
@@ -399,7 +387,6 @@ export default function ResourcesPage() {
                       </div>
                     )}
                     
-                    {/* Condition and severity badge */}
                     <div className="absolute top-3 left-3">
                       <span className={`text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm ${
                         resource.id.startsWith('anx') ? 'bg-indigo-600 text-white' : 
@@ -419,7 +406,6 @@ export default function ResourcesPage() {
                     </div>
                   </div>
                   
-                  {/* Content area - with flex layout for consistent spacing */}
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex flex-wrap gap-1">

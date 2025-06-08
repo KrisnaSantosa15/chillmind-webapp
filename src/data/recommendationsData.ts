@@ -1,4 +1,3 @@
-// Define recommendation item type
 export interface RecommendationItem {
   id: string;
   title: string;
@@ -14,11 +13,11 @@ export interface RecommendationItem {
       title: string;
       description: string;
     }>;
-    duration?: string; // e.g. "5 minutes", "15-20 minutes"
+    duration?: string;
     materials?: string[];
-    mediaUrl?: string; // For videos, audio files, etc.
-    articleText?: string; // For longer text content
-    toolUrl?: string; // For external tools or resources
+    mediaUrl?: string;
+    articleText?: string;
+    toolUrl?: string;
     additionalResources?: Array<{
       title: string;
       description: string;
@@ -27,14 +26,12 @@ export interface RecommendationItem {
   };
 }
 
-// Define anxiety levels
 type AnxietyLevel =
   | "Minimal Anxiety"
   | "Mild Anxiety"
   | "Moderate Anxiety"
   | "Severe Anxiety";
 
-// Define depression levels
 type DepressionLevel =
   | "Minimal Depression"
   | "Mild Depression"
@@ -42,10 +39,8 @@ type DepressionLevel =
   | "Moderately Severe Depression"
   | "Severe Depression";
 
-// Define stress levels
 type StressLevel = "Low Stress" | "Moderate Stress" | "High Perceived Stress";
 
-// Define the structure of the recommendations data
 export interface RecommendationsData {
   anxiety: {
     [key in AnxietyLevel]: RecommendationItem[];
@@ -58,7 +53,6 @@ export interface RecommendationsData {
   };
 }
 
-// Simple recommendation data structure categorized by condition and severity level
 export const recommendationsData: RecommendationsData = {
   anxiety: {
     "Minimal Anxiety": [
@@ -1667,13 +1661,10 @@ export const recommendationsData: RecommendationsData = {
   },
 };
 
-// Simple utility to get sample recommendations for demo purposes
 export function getSampleRecommendations(
   count: number = 3
 ): RecommendationItem[] {
-  // For demo: select 1 recommendation from each condition at mild/moderate level
   const samples: RecommendationItem[] = [
-    // Ensure we're using the exact types from the RecommendationItem interface
     {
       ...recommendationsData.anxiety["Mild Anxiety"][0],
       content: recommendationsData.anxiety["Mild Anxiety"][0].content

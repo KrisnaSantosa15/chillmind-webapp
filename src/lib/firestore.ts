@@ -1,4 +1,3 @@
-// Firebase Firestore utilities
 import { db } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import {
@@ -13,11 +12,9 @@ import {
   limit,
 } from "firebase/firestore";
 
-// Import types from model.ts
 import { DemographicData, PredictionResults } from "./model";
 import { FieldValue } from "firebase/firestore";
 
-// Type definitions
 export interface AssessmentResults {
   demographics: DemographicData;
   predictionResults: PredictionResults;
@@ -31,10 +28,9 @@ export interface AssessmentResults {
     gad7Answers: number[];
     pssAnswers: number[];
   };
-  timestamp: FieldValue; // Will be serverTimestamp()
+  timestamp: FieldValue;
 }
 
-// Save assessment results to Firestore
 export const saveAssessmentResults = async (
   user: User,
   demographics: DemographicData,
@@ -55,10 +51,8 @@ export const saveAssessmentResults = async (
   }
 
   try {
-    // Create user document with assessments collection if doesn't exist
     const userRef = doc(db, "users", user.uid);
 
-    // Check if user document exists, if not create it
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
       await setDoc(userRef, {
@@ -67,18 +61,17 @@ export const saveAssessmentResults = async (
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
       });
-    } // Create assessment document with timestamp and data
+    }
     const assessmentsRef = collection(userRef, "assessments");
 
     const assessmentData: AssessmentResults = {
       demographics,
       predictionResults,
       scores: rawScores,
-      ...(answers && { answers }), // Include answers if provided
+      ...(answers && { answers }),
       timestamp: serverTimestamp(),
     };
 
-    // Use auto-generated ID for the assessment
     const newAssessmentRef = doc(assessmentsRef);
     await setDoc(newAssessmentRef, assessmentData);
 
@@ -89,7 +82,6 @@ export const saveAssessmentResults = async (
   }
 };
 
-// Get the latest assessment for a user
 export const getLatestAssessment = async (user: User) => {
   if (!user || !user.uid) {
     throw new Error("User is not authenticated");
@@ -99,7 +91,6 @@ export const getLatestAssessment = async (user: User) => {
     const userRef = doc(db, "users", user.uid);
     const assessmentsRef = collection(userRef, "assessments");
 
-    // Query for the latest assessment
     const querySnapshot = await getDocs(
       query(assessmentsRef, orderBy("timestamp", "desc"), limit(1))
     );
@@ -108,10 +99,8 @@ export const getLatestAssessment = async (user: User) => {
       return null;
     }
 
-    // Return the first (latest) assessment
     const latestAssessment = querySnapshot.docs[0].data() as AssessmentResults;
 
-    // Convert Firestore Timestamp to JS Date for better client-side handling
     const timestamp = latestAssessment.timestamp as unknown as {
       toDate: () => Date;
     };
@@ -120,13 +109,13 @@ export const getLatestAssessment = async (user: User) => {
       id: querySnapshot.docs[0].id,
       ...latestAssessment,
       timestamp: timestamp.toDate(),
-    };  } catch (error) {
+    };
+  } catch (error) {
     console.error("Error getting latest assessment:", error);
     throw error;
   }
 };
 
-// Get all assessments for a user (for assessment history)
 export const getAllUserAssessments = async (user: User) => {
   if (!user || !user.uid) {
     throw new Error("User is not authenticated");
@@ -136,7 +125,6 @@ export const getAllUserAssessments = async (user: User) => {
     const userRef = doc(db, "users", user.uid);
     const assessmentsRef = collection(userRef, "assessments");
 
-    // Query for all assessments ordered by timestamp (newest first)
     const querySnapshot = await getDocs(
       query(assessmentsRef, orderBy("timestamp", "desc"))
     );
@@ -145,11 +133,9 @@ export const getAllUserAssessments = async (user: User) => {
       return [];
     }
 
-    // Return all assessments with their IDs
     const assessments = querySnapshot.docs.map((doc) => {
       const data = doc.data() as AssessmentResults;
-      
-      // Convert Firestore Timestamp to JS Date for better client-side handling
+
       const timestamp = data.timestamp as unknown as {
         toDate: () => Date;
       };

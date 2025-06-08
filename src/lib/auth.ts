@@ -1,4 +1,3 @@
-// JWT Authentication utilities for API routes
 import { NextRequest } from "next/server";
 import { adminAuth } from "./firebaseAdmin";
 
@@ -17,7 +16,6 @@ export async function authenticateRequest(
   request: NextRequest
 ): Promise<AuthenticatedUser | null> {
   try {
-    // Check if Firebase Admin is initialized
     if (!adminAuth) {
       console.error(
         "Firebase Admin SDK not initialized. Cannot authenticate requests."
@@ -25,7 +23,6 @@ export async function authenticateRequest(
       return null;
     }
 
-    // Get Authorization header
     const authHeader = request.headers.get("authorization");
 
     if (!authHeader) {
@@ -33,7 +30,6 @@ export async function authenticateRequest(
       return null;
     }
 
-    // Extract Bearer token
     const token = authHeader.replace("Bearer ", "");
 
     if (!token || token === authHeader) {
@@ -43,7 +39,6 @@ export async function authenticateRequest(
       return null;
     }
 
-    // Verify the Firebase ID token using Admin SDK
     const decodedToken = await adminAuth.verifyIdToken(token);
 
     return {
@@ -57,9 +52,6 @@ export async function authenticateRequest(
   }
 }
 
-/**
- * Create standardized auth error response
- */
 export function createAuthErrorResponse(message = "Unauthorized") {
   return Response.json(
     {

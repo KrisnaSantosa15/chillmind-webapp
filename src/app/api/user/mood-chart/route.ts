@@ -10,13 +10,11 @@ import {
   where,
 } from "firebase/firestore";
 
-// Helper function to authenticate user from request
 async function authenticateUser(request: NextRequest): Promise<string | null> {
   const authenticatedUser = await authenticateRequest(request);
   return authenticatedUser?.uid || null;
 }
 
-// Convert emotion to numeric value for the chart
 const emotionToValue = (emotion: string): number => {
   const lowerEmotion = emotion.toLowerCase();
 
@@ -47,7 +45,6 @@ const emotionToValue = (emotion: string): number => {
   }
 };
 
-// Format date as local date string for consistency
 const formatLocalDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -76,11 +73,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user's journal entries from Firestore
     const userRef = doc(db, "users", userId);
     const journalCollectionRef = collection(userRef, "journal_entries");
 
-    // Determine the date range based on timeRange
     const now = new Date();
     let startDate;
 
@@ -98,7 +93,6 @@ export async function GET(request: NextRequest) {
       startDate.setFullYear(startDate.getFullYear() - 1);
     }
 
-    // Query for entries within the date range
     const q = query(
       journalCollectionRef,
       where("date", ">=", startDate),
@@ -107,7 +101,6 @@ export async function GET(request: NextRequest) {
 
     const querySnapshot = await getDocs(q);
 
-    // Convert Firestore documents to entries
     const entries = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -119,7 +112,6 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Generate default empty data
     let labels: string[] = [];
     let defaultData: number[] = [];
 
@@ -239,7 +231,6 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Initialize data array with nulls
     const data = Array(labels.length).fill(null);
 
     // Calculate average mood for each period
@@ -262,7 +253,6 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Replace nulls with default value (3.5 - neutral)
     const finalData = data.map((value) => (value === null ? 3.5 : value));
 
     return NextResponse.json({

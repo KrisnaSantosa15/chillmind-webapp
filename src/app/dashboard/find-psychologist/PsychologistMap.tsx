@@ -6,11 +6,8 @@ import L from 'leaflet';
 import Image from 'next/image';
 import 'leaflet/dist/leaflet.css';
 
-// Import interface from parent
 import { Psychologist } from './types';
 
-// Coordinates are now part of the standard interface but we'll make sure they exist
-// No need for the extra interface now - coordinates are included in the base interface
 
 interface PsychologistMapProps {
   psychologists: Psychologist[];
@@ -19,8 +16,6 @@ interface PsychologistMapProps {
   userLocation: [number, number] | null;
 }
 
-// Fix for default markers in react-leaflet
-// Define a more specific type for the icon prototype
 interface IconDefaultPrototype extends L.Icon.Default {
   _getIconUrl?: string;
 }
@@ -39,7 +34,7 @@ const psychologistIcon = new L.Icon({
   iconSize: [28, 28],
   iconAnchor: [14, 28],
   popupAnchor: [0, -28],
-  className: 'psychologist-marker', // Added class for potential styling
+  className: 'psychologist-marker',
 });
 
 const psychologistAvailableIcon = new L.Icon({
@@ -47,7 +42,7 @@ const psychologistAvailableIcon = new L.Icon({
   iconSize: [28, 28],
   iconAnchor: [14, 28],
   popupAnchor: [0, -28],
-  className: 'psychologist-marker psychologist-available', // Added pulse effect class
+  className: 'psychologist-marker psychologist-available', 
 });
 
 const userIcon = new L.Icon({
@@ -55,10 +50,9 @@ const userIcon = new L.Icon({
   iconSize: [20, 20],
   iconAnchor: [10, 20],
   popupAnchor: [0, -20],
-  className: 'user-marker', // Added class for potential styling
+  className: 'user-marker', 
 });
 
-// Component to handle map center updates
 function MapUpdater({ center, selectedPsychologist }: { center: [number, number], selectedPsychologist: Psychologist | null }) {
   const map = useMap();
   
@@ -81,7 +75,6 @@ export default function PsychologistMap({
 }: PsychologistMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   
-  // Default center to Jakarta if no user location
   const defaultCenter: [number, number] = [-6.2088, 106.8456];
   const mapCenter = userLocation || defaultCenter;
   
@@ -99,8 +92,7 @@ export default function PsychologistMap({
         zoom={12}
         className="h-full w-full rounded-lg"
         ref={mapRef}
-        // Improved map options for better user experience
-        zoomControl={false} // We'll add custom zoom control placement
+        zoomControl={false}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -132,7 +124,6 @@ export default function PsychologistMap({
             key={psychologist.id}
             position={psychologist.coordinates}
             icon={psychologist.available ? psychologistAvailableIcon : psychologistIcon}
-            // Use different icon for available psychologists
           >            <Popup closeButton={false} className="custom-popup" maxWidth={320}>              <div className="min-w-[280px] p-4 rounded-lg shadow-md border border-gray-50 group transition-all hover:shadow-lg">
                 <div className="flex items-start gap-3">
                   <div className="w-16 h-16 rounded-full overflow-hidden relative flex-shrink-0 border-2 border-white shadow-sm">
@@ -147,7 +138,6 @@ export default function PsychologistMap({
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 text-base">{psychologist.name}</h3>
                     <p className="text-sm text-gray-600">{psychologist.title}</p>
-                    {/* Only show rating if it's explicitly available */}
                     {typeof psychologist.rating === 'number' && (
                       <div className="flex items-center gap-1 mt-1">
                         {renderStars(psychologist.rating)}
@@ -160,7 +150,6 @@ export default function PsychologistMap({
                 </div>
                 
                 <div className="mt-3 space-y-2">
-                  {/* Only show association if available */}
                   {psychologist.association && psychologist.association.length > 0 && (
                     <div>
                       <p className="text-sm font-medium text-gray-900">association:</p>
@@ -171,7 +160,6 @@ export default function PsychologistMap({
                     </div>
                   )}
                   
-                  {/* Show experience if available */}
                   {typeof psychologist.experience === 'number' && (
                     <div>
                       <p className="text-sm font-medium text-gray-900">Experience:</p>
@@ -179,14 +167,12 @@ export default function PsychologistMap({
                     </div>
                   )}
                   
-                  {/* Show registration year if experience isn't available */}
                   {!psychologist.experience && psychologist.registrationYear && (
                     <div>
                       <p className="text-sm font-medium text-gray-900">Registered since:</p>
                       <p className="text-sm text-gray-600">{psychologist.registrationYear}</p>
                     </div>
                   )}
-                    {/* Show price if available */}
                   {typeof psychologist.price === 'number' && (
                     <div>                      <p className="text-sm font-medium text-gray-900">Price:</p>
                       <p className="text-sm text-gray-600">
@@ -196,7 +182,6 @@ export default function PsychologistMap({
                     </div>
                   )}
                     <div className="flex items-center justify-between pt-2">
-                    {/* Show availability indicator with fallback handling */}
                     <span className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
                       typeof psychologist.available === 'boolean'
                         ? (psychologist.available 
@@ -214,10 +199,9 @@ export default function PsychologistMap({
                         : 'Status Unknown'}
                     </span>
                     
-                    {/* View details button */}
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent event bubbling
+                        e.stopPropagation(); 
                         onPsychologistSelect(psychologist);
                       }}
                       className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-1"
@@ -235,7 +219,6 @@ export default function PsychologistMap({
           </Marker>
         ))}
       </MapContainer>
-        {/* Map legend - enhanced styling */}
       <div className="absolute bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg z-[1000] border border-gray-100 animate-fadeIn">
         <h4 className="font-semibold text-sm mb-3 text-gray-800 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">

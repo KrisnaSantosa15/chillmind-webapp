@@ -5,9 +5,6 @@ import { GoogleGenAI } from "@google/genai";
 export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
   const geminiSystemInstruction = process.env.GEMINI_SYSTEM_INSTRUCTION;
-  // Get API key from server-side environment variable (no NEXT_PUBLIC_ prefix)
-
-  // Enhanced API key validation
   if (!apiKey) {
     console.error("Missing Gemini API key in environment variables");
     return Response.json(
@@ -16,7 +13,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Log API key length and format (not the actual key) for debugging
   console.log(
     `API key present: ${
       apiKey.length
@@ -24,16 +20,13 @@ export async function POST(request: Request) {
   );
 
   try {
-    // Parse request body
     const { prompt } = await request.json();
     if (!prompt) {
       return Response.json({ error: "No prompt provided" }, { status: 400 });
     }
 
-    // Initialize Gemini
     const ai = new GoogleGenAI({ apiKey });
 
-    // Create a readable stream for streaming the response
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -54,11 +47,9 @@ export async function POST(request: Request) {
         } catch (error) {
           console.error("Error in Gemini stream:", error);
 
-          // Detailed error message for API key issues
           let errorMessage =
             "[Error: Unable to generate AI response. Please try again later.]";
 
-          // Check for API key related errors
           const errorStr = String(error);
           if (
             errorStr.includes("API key not valid") ||
@@ -71,7 +62,6 @@ export async function POST(request: Request) {
               "[Error: API key validation failed. Please contact the administrator.]";
           }
 
-          // Send plain text error message that client can display directly
           controller.enqueue(new TextEncoder().encode(errorMessage));
           controller.close();
         }

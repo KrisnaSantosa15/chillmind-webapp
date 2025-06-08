@@ -32,7 +32,6 @@ export default function GAD7Page() {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Load any saved answers from localStorage
   useEffect(() => {
     const savedAnswers = localStorage.getItem('gad7_answers');
     if (savedAnswers) {
@@ -56,10 +55,8 @@ export default function GAD7Page() {
       const score = answers.reduce((sum, answer) => sum + answer, 0);
       localStorage.setItem('gad7_score', score.toString());
       
-      // Proceed to next assessment
       router.push('/onboarding/pss');
     } else {
-      // Scroll to the first unanswered question
       const firstUnansweredIndex = answers.findIndex(answer => answer === -1);
       if (firstUnansweredIndex !== -1) {
         const element = document.getElementById(`question-${firstUnansweredIndex}`);
@@ -128,14 +125,11 @@ export default function GAD7Page() {
               </div>
             </div>
             
-            {/* Mobile Step Indicator - Redesigned */}
             <div className="md:hidden">
-              {/* Progress bar showing completion */}
               <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-4">
                 <div className="h-full bg-gradient-to-r from-primary/70 to-primary" style={{ width: '66.7%' }}></div>
               </div>
               
-              {/* Current step highlight card */}
               <div className="relative mb-2">
                 <div className="overflow-x-auto pb-3 scrollbar-hide">
                   <div className="flex gap-2 w-max px-2">
@@ -167,12 +161,10 @@ export default function GAD7Page() {
                   </div>
                 </div>
                 
-                {/* Fade effect on edges to indicate scrollability */}
                 <div className="absolute top-0 left-0 h-full w-6 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
                 <div className="absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
               </div>
               
-              {/* Helper text */}
               <p className="text-[10px] text-center text-muted-foreground">
                 <span className="inline-flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

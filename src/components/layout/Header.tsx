@@ -17,7 +17,6 @@ const Header: React.FC = () => {
   const { user, signOut } = useAuth();
   const isHomePage = pathname === '/';
 
-  // Handle scroll event
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -27,7 +26,6 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle sign out
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -37,7 +35,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // Smooth scroll to section
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -55,7 +52,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // Create navigation link with proper handling for home page sections
   const NavLink = ({ href, id, children }: { href: string, id?: string, children: React.ReactNode }) => {
     if (isHomePage && id) {
       return (
@@ -95,7 +91,6 @@ const Header: React.FC = () => {
         <NavLink href="#tips" id="tips">Tips</NavLink>
         <NavLink href="#faq" id="faq">FAQ</NavLink>
       </nav>
-        {/* Desktop navigation buttons/controls */}
       <div className="hidden md:flex items-center space-x-4">
         <ThemeToggle />
         
@@ -149,11 +144,9 @@ const Header: React.FC = () => {
         )}
       </div>
       
-      {/* Mobile navigation */}
       <div className="flex md:hidden items-center space-x-3">
         <ThemeToggle />
         
-        {/* Mobile menu button */}
         <button 
           className="text-foreground p-1"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -176,7 +169,6 @@ const Header: React.FC = () => {
         </button>
       </div>
       
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md shadow-lg p-6 md:hidden flex flex-col space-y-4 border-t border-muted">          {isHomePage ? (
             <>
@@ -266,7 +258,6 @@ const Header: React.FC = () => {
               </Link>
             </>
           )}
-            {/* Login Button*/}
           {user ? (
             <>              <Link href="/dashboard" className="py-2" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full">
@@ -295,7 +286,6 @@ const Header: React.FC = () => {
                 </Button>
               </Link>
               
-              {/* Get Started Button*/}
               <Link href="/onboarding" className="py-2" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="primary" size="sm" className="w-full">
                   Get Started

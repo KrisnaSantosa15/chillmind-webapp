@@ -14,12 +14,11 @@ type Suggestion = {
 export default function AIAssistantPage() {
   const [selectedTopic, setSelectedTopic] = useState('');
 
-  // Reset selectedTopic after it's been used
   useEffect(() => {
     if (selectedTopic) {
       const timer = setTimeout(() => {
         setSelectedTopic('');
-      }, 1000); // Reset after 1 second to ensure it's been processed
+      }, 1000); 
       
       return () => clearTimeout(timer);
     }

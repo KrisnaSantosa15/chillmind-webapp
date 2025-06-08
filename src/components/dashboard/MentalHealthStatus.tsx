@@ -4,15 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { getLatestAssessment } from '@/lib/firestore';
 import Link from 'next/link';
-
-// Type for the metrics we'll display
 interface MentalHealthMetric {
   name: string;
-  value: number;     // Calculated percentage for progress bar display (severityLevel/maxLevel * 100)
-  status: string;    // The clinical status (Minimal, Mild, Moderate, etc.)
+  value: number; 
+  status: string;    
   colorClass: string;
-  severityLevel?: number; // The numeric severity level (e.g., 1, 2, 3)
-  maxLevel?: number;      // The maximum possible severity level
+  severityLevel?: number; 
+  maxLevel?: number; 
 }
 
 const MentalHealthStatus: React.FC = () => {
@@ -24,7 +22,6 @@ const MentalHealthStatus: React.FC = () => {
     { name: 'Stress Level', value: 0, status: 'Loading...', colorClass: 'bg-yellow-500', severityLevel: 0, maxLevel: 3 },
   ]);
   
-  // Helper functions to determine status, colors, and severity level based on ML prediction labels
   const getDepressionMetrics = (label: string): { status: string, colorClass: string, severityLevel: number, maxLevel: number } => {
     const maxLevel = 5;
     
@@ -76,7 +73,6 @@ const MentalHealthStatus: React.FC = () => {
       
       try {
         const assessment = await getLatestAssessment(user);
-        // Process assessment data if available
         
         if (assessment) {
           
@@ -88,12 +84,10 @@ const MentalHealthStatus: React.FC = () => {
           
           const { predictionResults } = assessment;
           
-          // Get metrics from ML prediction labels
           const depressionResult = getDepressionMetrics(predictionResults.depression.label);
           const anxietyResult = getAnxietyMetrics(predictionResults.anxiety.label);
           const stressResult = getStressMetrics(predictionResults.stress.label);
           
-          // Order metrics by severity (from highest to lowest)
           const orderedMetrics = [            
             { 
               name: 'Depression Level', 
@@ -121,11 +115,10 @@ const MentalHealthStatus: React.FC = () => {
             }
           ];
           
-          // Sort by severity percentage (highest first)
           orderedMetrics.sort((a, b) => b.value - a.value);
           
           setMentalHealthMetrics(orderedMetrics);
-        } else {          // No assessment data found
+        } else {        
           setMentalHealthMetrics([
             { name: 'Depression Level', value: 0, status: 'No data', colorClass: 'bg-gray-300', severityLevel: 0, maxLevel: 5 },
             { name: 'Anxiety', value: 0, status: 'No data', colorClass: 'bg-gray-300', severityLevel: 0, maxLevel: 4 },
@@ -155,7 +148,6 @@ const MentalHealthStatus: React.FC = () => {
       )}
         <div className="mt-4 space-y-4">
         {loading ? (
-          // Loading skeleton 
           <>
             {[
               { name: 'Depression Level', maxLevel: 5 },
@@ -176,7 +168,7 @@ const MentalHealthStatus: React.FC = () => {
               </div>
             ))}
           </>
-        ) : (// Actual data
+        ) : (
           mentalHealthMetrics.map((metric) => (
             <div key={metric.name} className="mb-4">              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-foreground">{metric.name}</span>
@@ -201,7 +193,6 @@ const MentalHealthStatus: React.FC = () => {
           ))
         )}      </div>
         {loading ? (
-        // Loading skeleton for buttons
         <div className="mt-4 animate-pulse">
           <div className="w-full h-10 bg-gray-200 rounded-md"></div>
         </div>

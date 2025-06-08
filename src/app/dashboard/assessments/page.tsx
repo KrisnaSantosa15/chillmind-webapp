@@ -40,7 +40,6 @@ export default function AssessmentsPage() {
   }, [user]);
   // Helper function to get severity level score for trend analysis
   const getSeverityScore = (label: string): number => {
-    // Extract the severity level from the label (ignoring the condition type)
     if (label.includes('Minimal') || label.includes('Normal') || label.includes('Low')) {
       return 1; // Normal/Minimal/Low severity
     } else if (label.includes('Mild')) {
@@ -48,14 +47,13 @@ export default function AssessmentsPage() {
     } else if (label.includes('Moderate') && !label.includes('Moderately Severe')) {
       return 3; // Moderate severity
     } else if (label.includes('Moderately Severe')) {
-      return 4; // Moderately Severe (specific to depression)
+      return 4; // Moderately Severe
     } else if (label.includes('Severe') || label.includes('High')) {
       return 5; // Severe/High severity
     }
     
     return 0; // Unknown
-  };  // No unused functions or variables
-  // Generate trend insights comparing current vs previous assessments
+  };  
   const generateInsights = () => {
     if (assessments.length < 2) return null;
 

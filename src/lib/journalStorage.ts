@@ -1,10 +1,8 @@
-// Updated version with support
 import { JournalEntry } from "@/components/dashboard/JournalSection";
 import journalApiClient from "./journalApi";
 import { getCurrentUser } from "./firebaseUtils";
 import { getEmotionInsight, EmotionInsight } from "./emotionInsights";
 
-// Emotion categories
 export type Emotion =
   | "joy"
   | "love"
@@ -14,22 +12,18 @@ export type Emotion =
   | "sadness"
   | "neutral";
 
-// API response interfaces
 interface EmotionPredictionResponse {
   emotion: Emotion;
   confidence: number;
   all_probabilities: Record<string, number>;
 }
 
-// ML model-based emotion prediction function
 export const predictEmotion = async (text: string): Promise<Emotion> => {
-  // If text is empty or too short, return neutral
   if (!text || text.trim().length < 3) {
     return "neutral";
   }
 
   try {
-    // Use our internal API route to avoid CORS issues
     const response = await fetch("/api/emotion-prediction", {
       method: "POST",
       headers: {
@@ -45,18 +39,14 @@ export const predictEmotion = async (text: string): Promise<Emotion> => {
 
     const data: EmotionPredictionResponse = await response.json();
 
-    // Return the predicted emotion or neutral if it's not one of our types
     return data.emotion || "neutral";
   } catch (error) {
     console.error("Failed to predict emotion from API:", error);
-    // Fallback to rule-based prediction if API fails
     return fallbackPredictEmotion(text);
   }
 };
 
-// Keep the original function as fallback
 export const fallbackPredictEmotion = (text: string): Emotion => {
-  // Simple keyword-based emotion detection
   const lowerText = text.toLowerCase();
   const emotionKeywords = {
     joy: ["happy", "excited", "great", "wonderful", "amazing", "joy", "glad"],
@@ -75,7 +65,6 @@ export const fallbackPredictEmotion = (text: string): Emotion => {
     neutral: ["ok", "fine", "average", "neutral", "normal"],
   };
 
-  // Count occurrences of emotion keywords
   const emotionCounts: Record<Emotion, number> = {
     joy: 0,
     love: 0,
@@ -86,7 +75,6 @@ export const fallbackPredictEmotion = (text: string): Emotion => {
     neutral: 0,
   };
 
-  // Count occurrences of each emotion keyword
   for (const emotion of Object.keys(emotionKeywords) as Emotion[]) {
     for (const keyword of emotionKeywords[emotion]) {
       const regex = new RegExp("\\b" + keyword + "\\b", "gi");
@@ -97,7 +85,6 @@ export const fallbackPredictEmotion = (text: string): Emotion => {
     }
   }
 
-  // Find the emotion with the highest count
   let maxCount = 0;
   let predictedEmotion: Emotion = "neutral";
 
@@ -108,11 +95,9 @@ export const fallbackPredictEmotion = (text: string): Emotion => {
     }
   }
 
-  // If no emotion was detected strongly, return neutral
   return maxCount > 0 ? predictedEmotion : "neutral";
 };
 
-// Convert emotion to mood for consistency with the UI
 export const emotionToMood = (emotion: Emotion): string => {
   switch (emotion) {
     case "joy":
@@ -132,10 +117,7 @@ export const emotionToMood = (emotion: Emotion): string => {
   }
 };
 
-// Convert emotion to numeric value for the chart
 export const emotionToValue = (emotion: Emotion | string): number => {
-  // Handle both emotion types and mood strings that are stored in entries
-  // Ensure input is lowercase for case-insensitive matching
   const lowerEmotion =
     typeof emotion === "string" ? emotion.toLowerCase() : emotion;
 
@@ -169,7 +151,6 @@ export const emotionToValue = (emotion: Emotion | string): number => {
   }
 };
 
-// Get all journal entries -
 export const getJournalEntries = async (): Promise<JournalEntry[]> => {
   try {
     const user = getCurrentUser();
@@ -183,7 +164,6 @@ export const getJournalEntries = async (): Promise<JournalEntry[]> => {
   }
 };
 
-// Get the current day streak
 export const getDayStreak = async (): Promise<number> => {
   try {
     const user = getCurrentUser();
@@ -197,7 +177,6 @@ export const getDayStreak = async (): Promise<number> => {
   }
 };
 
-// Update the day streak
 export const updateDayStreak = async (): Promise<number> => {
   try {
     const user = getCurrentUser();
@@ -211,18 +190,15 @@ export const updateDayStreak = async (): Promise<number> => {
   }
 };
 
-// Updated return type to include emotion insight
 interface JournalEntryWithInsight {
   journalEntry: JournalEntry;
   insight: EmotionInsight | null;
   emotion: Emotion;
 }
 
-// Save a journal entry -
 export const saveJournalEntry = async (
   entry: Omit<JournalEntry, "id" | "date" | "mood">
 ): Promise<JournalEntryWithInsight> => {
-  // Predict emotion from the text
   const predictedEmotion = await predictEmotion(entry.content);
   const mood = emotionToMood(predictedEmotion);
 
@@ -234,17 +210,14 @@ export const saveJournalEntry = async (
   try {
     const user = getCurrentUser();
     if (user) {
-      // Save entry
       const savedEntry = await journalApiClient.createEntry(entryWithMood);
 
-      // Update user streak after saving entry
       try {
         await journalApiClient.updateStreak();
       } catch (streakError) {
         console.error("Error updating streak:", streakError);
       }
 
-      // Get insight for the detected emotion
       const insight = await getEmotionInsight(predictedEmotion, user);
 
       return {
@@ -260,12 +233,10 @@ export const saveJournalEntry = async (
   }
 };
 
-// Delete a journal entry -
 export const deleteJournalEntry = async (entryId: string): Promise<void> => {
   try {
     const user = getCurrentUser();
     if (user) {
-      // Delete entry
       await journalApiClient.deleteEntry(entryId);
     } else {
       throw new Error("User not authenticated");
@@ -276,7 +247,6 @@ export const deleteJournalEntry = async (entryId: string): Promise<void> => {
   }
 };
 
-// Update a journal entry
 export const updateJournalEntry = async (
   entryId: string,
   updates: Partial<Omit<JournalEntry, "id" | "date">>
@@ -284,7 +254,6 @@ export const updateJournalEntry = async (
   try {
     const user = getCurrentUser();
     if (user) {
-      // Update entry
       return await journalApiClient.updateEntry(entryId, updates);
     } else {
       throw new Error("User not authenticated");
@@ -295,7 +264,6 @@ export const updateJournalEntry = async (
   }
 };
 
-// Get mood chart data
 export const getMoodChartData = async (
   timeRange: "week" | "month" | "year"
 ) => {
@@ -314,9 +282,7 @@ export const getMoodChartData = async (
   }
 };
 
-// Helper function to get default chart data
 const getDefaultChartData = (timeRange: "week" | "month" | "year") => {
-  // Return default neutral data
   if (timeRange === "week") {
     return {
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

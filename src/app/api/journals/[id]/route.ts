@@ -10,13 +10,11 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-// Helper function to authenticate user from request
 async function authenticateUser(request: NextRequest): Promise<string | null> {
   const authenticatedUser = await authenticateRequest(request);
   return authenticatedUser?.uid || null;
 }
 
-// Convert Firestore document to JournalEntry
 const firestoreToJournalEntry = (doc: {
   id: string;
   data: () => Record<string, unknown>;
@@ -105,7 +103,6 @@ export async function PUT(
     const body = await request.json();
     const { content, mood, tags } = body;
 
-    // Validate at least one field is provided for update
     if (!content && !mood && !tags) {
       return NextResponse.json(
         {
@@ -116,7 +113,6 @@ export async function PUT(
       );
     }
 
-    // Build updates object
     const updates: Record<string, unknown> = {};
     if (content !== undefined) {
       if (typeof content !== "string") {
@@ -148,21 +144,19 @@ export async function PUT(
       updates.tags = tags;
     }
 
-    // Get entry reference
     const userRef = doc(db, "users", userId);
     const entryRef = doc(collection(userRef, "journal_entries"), entryId);
 
-    // Check if entry exists first
+    // Check if entry exists
     const docSnapshot = await getDoc(entryRef);
     if (!docSnapshot.exists()) {
       return NextResponse.json(
         { error: "Journal entry not found" },
         { status: 404 }
       );
-    } // Update the entry
+    }
     await updateDoc(entryRef, updates as Record<string, string | string[]>);
 
-    // Fetch the updated entry to return
     const updatedDocSnapshot = await getDoc(entryRef);
     const updatedEntry = firestoreToJournalEntry({
       id: updatedDocSnapshot.id,
@@ -202,7 +196,6 @@ export async function DELETE(
       );
     }
 
-    // Get entry reference
     const userRef = doc(db, "users", userId);
     const entryRef = doc(collection(userRef, "journal_entries"), entryId);
 

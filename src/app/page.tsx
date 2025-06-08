@@ -15,16 +15,13 @@ export default function Home() {
     <>
       <Header />
       <main className="flex flex-col min-h-screen">
-        {/* Enhanced Hero Section */}
         <section id="hero" className="relative min-h-[90vh] flex items-center justify-center py-24 md:py-32 px-6 md:px-12 overflow-hidden">
-          {/* Animated background gradient */}
+          
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary-light/5 -z-20 pointer-events-none"></div>
           
-          {/* Decorative elements */}
           <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-primary/5 animate-pulse -z-10 pointer-events-none"></div>
           <div className="absolute bottom-[20%] left-[10%] w-48 h-48 rounded-full bg-secondary/5 animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} ></div>
           
-          {/* Floating shapes - adding pointer-events-none to prevent blocking clicks */}
           <div className="absolute top-40 left-[20%] w-8 h-8 rounded-md bg-primary/10 animate-float pointer-events-none" style={{ animationDelay: '0.5s' }}></div>
           <div className="absolute bottom-32 right-[25%] w-12 h-12 rounded-full bg-secondary/10 animate-float pointer-events-none" style={{ animationDelay: '1.2s' }}></div>
           <div className="absolute top-[30%] left-[60%] w-10 h-10 rounded-lg rotate-45 bg-primary-light/10 animate-float pointer-events-none" style={{ animationDelay: '0.8s' }}></div>
@@ -60,13 +57,10 @@ export default function Home() {
               </div>
             </div>
             <div className="md:w-1/2 relative h-80 md:h-[460px] w-full max-w-lg z-0">
-              {/* Container for handling events/interactions */}
               <div className="absolute inset-0 z-10 rounded-2xl">
-                {/* This is an empty div that will catch any click events and pass them through */}
               </div>
-              {/* Abstract illustration container */}
               <div className="absolute inset-0 rounded-2xl overflow-hidden backdrop-blur-sm border border-primary/10 p-4 pointer-events-none">
-                {/* Center meditation image */}
+                
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative w-full h-full">
         <Image

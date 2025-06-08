@@ -8,21 +8,17 @@ const ThemeToggle: React.FC = () => {
   const [theme, setTheme] = useState<Theme>('light');
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme from localStorage on component mount
   useEffect(() => {
-    // Get the initial theme from localStorage or system preference
     const storedTheme = localStorage.getItem('theme') as Theme | null;
     const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     
     const initialTheme = storedTheme || systemPreference;
     
-    // Apply theme
     applyTheme(initialTheme);
     setTheme(initialTheme);
     setMounted(true);
   }, []);
 
-  // Apply theme to document
   const applyTheme = (newTheme: Theme) => {
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -37,14 +33,12 @@ const ThemeToggle: React.FC = () => {
     localStorage.setItem('theme', newTheme);
   };
 
-  // Toggle theme 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     applyTheme(newTheme);
     setTheme(newTheme);
   };
 
-  // If not mounted yet, avoid rendering anything to prevent hydration issues
   if (!mounted) return null;
 
   return (

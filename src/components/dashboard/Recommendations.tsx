@@ -15,29 +15,24 @@ const Recommendations: React.FC = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (!user) {
-        // Show default sample recommendations for non-logged in users
         setRecommendations(getSampleRecommendations(3));
         setIsLoading(false);
         return;
       }
       
       try {
-        // First, get the user's latest assessment to determine severity levels
         const userRef = doc(db, "users", user.uid);
         const assessmentsRef = collection(userRef, "assessments");
         
-        // Query for the latest assessment
         const assessmentQuery = query(assessmentsRef, orderBy("timestamp", "desc"), limit(1));
         const assessmentSnapshot = await getDocs(assessmentQuery);
         
         if (assessmentSnapshot.empty) {
-          // If no assessment, use default sample recommendations
           setRecommendations(getSampleRecommendations(3));
           setIsLoading(false);
           return;
         }
         
-        // Get the assessment data
         const assessmentData = assessmentSnapshot.docs[0].data();
         const { predictionResults } = assessmentData;
         
@@ -45,21 +40,17 @@ const Recommendations: React.FC = () => {
           throw new Error("Assessment data is incomplete");
         }
         
-        // Get user's condition levels as strings
         const anxietyLevel = predictionResults.anxiety?.label as string;
         const depressionLevel = predictionResults.depression?.label as string;
         const stressLevel = predictionResults.stress?.label as string;
         
-        // Create personalized recommendations based on severity levels from local data
         const recommendationsArray: RecommendationItem[] = [];
         
-        // Helper function to safely get a recommendation
         const getRecommendation = (
           condition: 'anxiety' | 'depression' | 'stress', 
           level: string
         ): RecommendationItem | null => {
           try {
-            // Need to cast level to a string key that TypeScript recognizes
             const conditionData = recommendationsData[condition] as Record<string, RecommendationItem[]>;
             if (level && conditionData[level]?.length > 0) {
               return conditionData[level][0];
@@ -70,36 +61,28 @@ const Recommendations: React.FC = () => {
           return null;
         };
         
-        // Anxiety recommendation
         const anxRec = getRecommendation('anxiety', anxietyLevel);
         if (anxRec) recommendationsArray.push(anxRec);
         
-        // Depression recommendation
         const depRec = getRecommendation('depression', depressionLevel);
         if (depRec) recommendationsArray.push(depRec);
-          // Stress recommendation - need to map High Stress to actual key in data
         let stressKey = stressLevel;
-        // Need to cast to check if key exists
         const stressData = recommendationsData.stress as Record<string, RecommendationItem[]>;
         if (stressLevel === "High Stress" && !stressData["High Stress"]) {
-          // Fallback to Moderate Stress if High Stress doesn't exist in the data
           stressKey = "Moderate Stress";
         }
         
         const stressRec = getRecommendation('stress', stressKey);
         if (stressRec) recommendationsArray.push(stressRec);
         
-        // If we couldn't get personalized recommendations, fallback to default sample recommendations
         if (recommendationsArray.length === 0) {
           setRecommendations(getSampleRecommendations(3));
         } else {
-          // Set the personalized recommendations (limited to 3)
           setRecommendations(recommendationsArray.slice(0, 3));
         }
       } catch (err) {
         console.error('Error fetching recommendations:', err);
         setError('Failed to load recommendations');
-        // Show default recommendations on error
         setRecommendations(getSampleRecommendations(3));
       } finally {
         setIsLoading(false);
@@ -272,7 +255,6 @@ const Recommendations: React.FC = () => {
         )}
         
         {isLoading ? (
-          // Loading state
           Array.from({ length: 3 }).map((_, index) => (
             <div key={`loading-${index}`} className="p-4 animate-pulse">
               <div className="flex items-center">

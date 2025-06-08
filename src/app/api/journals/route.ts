@@ -13,13 +13,11 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-// Helper function to authenticate user from request
 async function authenticateUser(request: NextRequest): Promise<string | null> {
   const authenticatedUser = await authenticateRequest(request);
   return authenticatedUser?.uid || null;
 }
 
-// Convert Firestore document to JournalEntry
 const firestoreToJournalEntry = (doc: {
   id: string;
   data: () => Record<string, unknown>;
@@ -36,7 +34,6 @@ const firestoreToJournalEntry = (doc: {
   };
 };
 
-// GET /api/journals - Get all journal entries for authenticated user
 export async function GET(request: NextRequest) {
   try {
     const userId = await authenticateUser(request);
@@ -44,11 +41,9 @@ export async function GET(request: NextRequest) {
       return createAuthErrorResponse("Authentication required");
     }
 
-    // Get query parameters
     const { searchParams } = new URL(request.url);
     const limitCount = parseInt(searchParams.get("limit") || "50");
 
-    // Get user's journal entries directly from Firestore
     const userRef = doc(db, "users", userId);
     const journalCollectionRef = collection(userRef, "journal_entries");
 
@@ -101,7 +96,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate tags if provided
     if (tags && !Array.isArray(tags)) {
       return NextResponse.json(
         { error: "Tags must be an array" },
@@ -109,7 +103,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the entry object
     const firestoreEntry = {
       content: content.trim(),
       mood: mood.toLowerCase(),

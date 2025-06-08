@@ -1,6 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
 
-// Categories for one-hot encoding
 const categories = {
   age: ["below18", "18-22", "23-26", "27-30", "above30"],
   gender: ["male", "female", "preferNotToSay"],
@@ -16,14 +15,12 @@ const categories = {
   scholarship: [false, true],
 };
 
-// Interface for assessment answers
 export interface AssessmentAnswers {
   phq9Answers: number[];
   gad7Answers: number[];
   pssAnswers: number[];
 }
 
-// Interface for demographics data
 export interface DemographicData {
   age: string;
   gender: string;
@@ -32,7 +29,6 @@ export interface DemographicData {
   scholarship: boolean | null;
 }
 
-// Interface for prediction results
 export interface PredictionResults {
   depression: {
     label: string;
@@ -51,13 +47,11 @@ export interface PredictionResults {
   };
 }
 
-// Interface for scaler parameters
 interface ScalerParams {
   mean: number[];
   std: number[];
 }
 
-// Helper function for one-hot encoding
 function encodeCategory(
   value: string | boolean | null,
   categoryOptions: Array<string | boolean>
@@ -70,7 +64,6 @@ function encodeCategory(
   return oneHot;
 }
 
-// Load and initialize the model
 let model: tf.GraphModel | null = null;
 let scalerParams: ScalerParams | null = null;
 
@@ -100,7 +93,6 @@ export async function loadScalerParams() {
   }
 }
 
-// Preprocess the data for prediction
 export function preprocessData(
   demographicData: DemographicData,
   assessmentAnswers: AssessmentAnswers
@@ -109,10 +101,8 @@ export function preprocessData(
     throw new Error("Scaler parameters not loaded");
   }
 
-  // Extract categorical features
   const { age, gender, academicYear, gpa, scholarship } = demographicData;
 
-  // One-hot encode categorical features
   const ageEncoded = encodeCategory(age, categories.age);
   const genderEncoded = encodeCategory(gender, categories.gender);
   const academicYearEncoded = encodeCategory(
@@ -125,7 +115,6 @@ export function preprocessData(
     categories.scholarship
   );
 
-  // Combine categorical features
   const categoricalFeatures = [
     ...ageEncoded,
     ...genderEncoded,
@@ -134,30 +123,20 @@ export function preprocessData(
     ...scholarshipEncoded,
   ];
 
-  // Extract numerical features
   const { phq9Answers, gad7Answers, pssAnswers } = assessmentAnswers;
 
-  // Combine all numerical features in the right order
-  const numericalFeatures = [
-    ...gad7Answers, // 7 features (anxiety_q1-7)
-    ...pssAnswers, // 10 features (stress_q1-10)
-    ...phq9Answers, // 9 features (depression_q1-9)
-  ];
+  const numericalFeatures = [...gad7Answers, ...pssAnswers, ...phq9Answers];
 
-  // Apply standardization using mean and std from scalerParams
   const { mean, std } = scalerParams;
   const numericalStandardized = numericalFeatures.map((value, i) => {
-    return (value - mean[i]) / (std[i] + 1e-8); // Add small epsilon to avoid division by zero
+    return (value - mean[i]) / (std[i] + 1e-8);
   });
 
-  // Combine features in the order expected by the model
-  // Note: order might need adjustment based on the model training
   const inputArray = [...numericalStandardized, ...categoricalFeatures];
 
   return tf.tensor2d([inputArray]);
 }
 
-// Process prediction output
 export async function processPredictions(
   predictions: tf.Tensor | tf.Tensor[]
 ): Promise<PredictionResults> {
@@ -182,12 +161,10 @@ export async function processPredictions(
     );
   }
 
-  // Extract probabilities for each condition
-  const stressProbs = data.slice(0, 3); // Low, Moderate, High (3 classes)
-  const anxietyProbs = data.slice(3, 7); // Minimal, Mild, Moderate, Severe (4 classes)
-  const depressionProbs = data.slice(7, 13); // Six classes for depression
+  const stressProbs = data.slice(0, 3);
+  const anxietyProbs = data.slice(3, 7);
+  const depressionProbs = data.slice(7, 13);
 
-  // Normalize probabilities to ensure they sum to 1
   const normalize = (probs: number[]) => {
     const sum = probs.reduce((a, b) => a + b, 0);
     return sum > 0
@@ -195,7 +172,6 @@ export async function processPredictions(
       : probs.map((_, i) => (i === 0 ? 1 : 0));
   };
 
-  // Label mappings for each condition
   const depressionLabels = [
     "Mild Depression",
     "Minimal Depression",
@@ -218,12 +194,10 @@ export async function processPredictions(
     "Moderate Stress",
   ];
 
-  // Normalize probabilities
   const depProbs = normalize(depressionProbs);
   const anxProbs = normalize(anxietyProbs);
   const strProbs = normalize(stressProbs);
 
-  // Find the most likely label for each condition
   const depressionLabel =
     depressionLabels[depProbs.indexOf(Math.max(...depProbs))];
   const anxietyLabel = anxietyLabels[anxProbs.indexOf(Math.max(...anxProbs))];
@@ -257,7 +231,6 @@ export async function processPredictions(
   };
 }
 
-// Helper function to get color for a label
 export function getLabelColor(condition: string, label: string): string {
   if (condition === "depression") {
     switch (label) {

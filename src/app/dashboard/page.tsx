@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import MoodChart from '@/components/dashboard/MoodChart';
 import JournalSection from '@/components/dashboard/JournalSection';
 import MentalHealthStatus from '@/components/dashboard/MentalHealthStatus';
-import HabitTracker from '@/components/dashboard/HabitTracker';
 import AIAssistantWidget from '@/components/dashboard/AIAssistantWidget';
 import Recommendations from '@/components/dashboard/Recommendations';
 import WellbeingStats from '@/components/dashboard/WellbeingStats';
@@ -21,23 +20,20 @@ export default function DashboardPage() {
   const handleTimeRangeChange = (range: 'week' | 'month' | 'year') => {
     setTimeRange(range);
   };
-  // Handle journal entry save
   const handleJournalSave = () => {
     setUpdateTrigger(prev => prev + 1);
   };
 
-  // Get streak days from WellbeingStats
   const handleStreakUpdate = (days: number) => {
     setStreakDays(days);
   };
 
-  // Get first name from display name if available
   const firstName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || 'User';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Left column - Main content */}        <div className="lg:col-span-2 space-y-6">
-        {/* Welcome card */}
+             <div className="lg:col-span-2 space-y-6">
+        
         <div className="bg-background rounded-xl shadow-sm p-6 border border-muted">          <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -53,7 +49,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-            {/* Wellbeing Stats - replaces daily check-in */}
             <div className="mt-6">
               <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                 Your Wellness Snapshot
@@ -61,7 +56,7 @@ export default function DashboardPage() {
                 <WellbeingStats className="border-0 shadow-none" onStreakUpdate={handleStreakUpdate} />
               </div>
             </div>
-          </div>{/* Journal section */}
+          </div>
           <JournalSection 
             compact={true}
             showRecentEntries={true}
@@ -71,7 +66,7 @@ export default function DashboardPage() {
             entriesLimit={2}
           />
           
-        </div>        {/* Right column - Mood chart and health status */}
+        </div>        
         <div className="space-y-6">
           {/* Mood graph */}
         <div className="bg-background rounded-xl shadow-sm p-6 border border-muted mb-6">

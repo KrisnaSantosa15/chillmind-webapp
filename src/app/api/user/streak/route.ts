@@ -10,7 +10,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-// Helper function to authenticate user from request
 async function authenticateUser(request: NextRequest): Promise<string | null> {
   const authenticatedUser = await authenticateRequest(request);
   return authenticatedUser?.uid || null;
@@ -24,14 +23,12 @@ export async function GET(request: NextRequest) {
       return createAuthErrorResponse("Authentication required");
     }
 
-    // Get user's streak data from Firestore
     const userRef = doc(db, "users", userId);
     const streakRef = doc(collection(userRef, "stats"), "streak");
 
     const docSnapshot = await getDoc(streakRef);
 
     if (!docSnapshot.exists()) {
-      // No streak data found, return 0
       return NextResponse.json({
         success: true,
         data: {
@@ -58,7 +55,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/user/streak - Update user's streak (called when saving journal entry)
+// POST /api/user/streak
 export async function POST(request: NextRequest) {
   try {
     const userId = await authenticateUser(request);
@@ -66,7 +63,6 @@ export async function POST(request: NextRequest) {
       return createAuthErrorResponse("Authentication required");
     }
 
-    // Get user's streak data from Firestore
     const userRef = doc(db, "users", userId);
     const streakRef = doc(collection(userRef, "stats"), "streak");
 
@@ -75,7 +71,6 @@ export async function POST(request: NextRequest) {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     if (!docSnapshot.exists()) {
-      // Create new streak record
       await setDoc(streakRef, {
         days: 1,
         lastUpdate: serverTimestamp(),
@@ -96,7 +91,6 @@ export async function POST(request: NextRequest) {
     const lastUpdate = data.lastUpdate?.toDate();
 
     if (!lastUpdate) {
-      // Invalid last update, reset streak
       await updateDoc(streakRef, {
         days: 1,
         lastUpdate: serverTimestamp(),

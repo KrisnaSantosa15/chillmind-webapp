@@ -25,10 +25,8 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       
-      // Check if there's pending assessment data
       const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
       
-      // Redirect to results page if there's pending assessment data, otherwise to dashboard
       if (hasPendingAssessment) {
         router.push('/onboarding/results');
       } else {
@@ -36,7 +34,6 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       console.error('Login error:', error);
-      // Handle specific Firebase error codes
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
         if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
@@ -63,10 +60,8 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
       
-      // Check if there's pending assessment data
       const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
       
-      // Redirect to results page if there's pending assessment data, otherwise to dashboard
       if (hasPendingAssessment) {
         router.push('/onboarding/results');
       } else {
@@ -74,7 +69,6 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       console.error('Google login error:', error);
-      // Handle specific Firebase error codes for Google sign-in
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
         if (errorCode === 'auth/popup-closed-by-user') {

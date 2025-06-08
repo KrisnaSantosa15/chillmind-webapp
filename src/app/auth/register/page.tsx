@@ -27,10 +27,8 @@ export default function RegisterPage() {
     try {
       await signUp(email, password, firstName, lastName);
       
-      // Check if there's pending assessment data
       const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
       
-      // Redirect to results page if there's pending assessment data, otherwise to onboarding
       if (hasPendingAssessment) {
         router.push('/onboarding/results');
       } else {
@@ -38,7 +36,6 @@ export default function RegisterPage() {
       }
     } catch (error: unknown) {
       console.error('Registration error:', error);
-      // Handle specific Firebase error codes
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
         if (errorCode === 'auth/email-already-in-use') {
@@ -66,10 +63,8 @@ export default function RegisterPage() {
     try {
       await signInWithGoogle();
       
-      // Check if there's pending assessment data
       const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
       
-      // Redirect to results page if there's pending assessment data, otherwise to onboarding
       if (hasPendingAssessment) {
         router.push('/onboarding/results');
       } else {
@@ -77,7 +72,6 @@ export default function RegisterPage() {
       }
     } catch (error: unknown) {
       console.error('Google signup error:', error);
-      // Handle specific Firebase error codes for Google sign-in
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
         if (errorCode === 'auth/popup-closed-by-user') {

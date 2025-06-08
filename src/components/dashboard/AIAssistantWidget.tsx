@@ -21,7 +21,6 @@ type AIAssistantWidgetProps = {
 
 async function fetchGeminiResponseStream(prompt: string, onChunk: (chunk: string) => void): Promise<void> {
   try {
-    // Call our secure API route instead of the Gemini API directly
     const response = await fetch('/api/gemini/stream', {
       method: 'POST',
       headers: {
@@ -33,14 +32,12 @@ async function fetchGeminiResponseStream(prompt: string, onChunk: (chunk: string
         const errorData = await response.json();
         onChunk(`[Error: ${errorData.error || 'Failed to connect to AI service'}]`);
       } catch {
-        // If response is not JSON or cannot be parsed
         const errorText = await response.text();
         onChunk(errorText.startsWith('[Error') ? errorText : `[Error: Failed to connect to AI service]`);
       }
       return;
     }
 
-    // Process the streaming response
     if (!response.body) {
       onChunk("[Error: No response body from AI service]");
       return;
@@ -53,7 +50,6 @@ async function fetchGeminiResponseStream(prompt: string, onChunk: (chunk: string
       const { done, value } = await reader.read();
       if (done) break;
       
-      // Decode and process the chunk
       const chunkText = decoder.decode(value, { stream: true });
       onChunk(chunkText);
     }
@@ -87,12 +83,10 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  // Update message when initialMessage prop changes
   useEffect(() => {
     if (initialMessage && initialMessage !== newMessage) {
       setNewMessage(initialMessage);
       
-      // Auto-submit the form after a short delay to ensure state is updated
       const timer = setTimeout(() => {
         const formElement = document.getElementById('message-form');
         if (formElement) {
@@ -104,7 +98,6 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
     }
   }, [initialMessage, newMessage]);
   
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -150,7 +143,6 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
       await fetchGeminiResponseStream(userMsg.text, (chunk) => {
         aiText += chunk;
         setMessages(prev => {
-          // Find the last isTyping message and update its text
           const idx = prev.findIndex(m => m.isTyping);
           if (idx === -1) return prev;
           const updated = [...prev];
@@ -161,7 +153,6 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
       
       setIsTyping(false);
       setMessages(prev => {
-        // Remove the isTyping message and add the final AI message
         const filtered = prev.filter(msg => !msg.isTyping);
         return [
           ...filtered,
@@ -188,7 +179,6 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
 
   const handleQuickReply = (text: string) => {
     setNewMessage(text);
-    // Auto-submit the form
     setTimeout(() => {
       const formElement = document.getElementById('message-form');
       if (formElement) {
@@ -199,7 +189,6 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({
 
   const handleOptionClick = (option: string) => {
     setNewMessage(option);
-    // Auto-submit the form
     setTimeout(() => {
       const formElement = document.getElementById('message-form');
       if (formElement) {

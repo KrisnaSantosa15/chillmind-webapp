@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string): Promise<User> => {
   try {
-    console.log('Attempting sign-in with:', { email, password }); 
+    // console.log('Attempting sign-in with:', { email, password }); 
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {

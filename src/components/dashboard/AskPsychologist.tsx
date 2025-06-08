@@ -47,7 +47,7 @@ const AskPsychologist: React.FC = () => {
             <div className="flex items-start">
               <div className="relative flex-shrink-0">
                 <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-gray-500">
-                  {/* Fallback avatar display with initials */}
+                  
                   {psych.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 {psych.online && (

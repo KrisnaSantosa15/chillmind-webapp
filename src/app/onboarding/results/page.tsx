@@ -31,42 +31,32 @@ export default function ResultsPage() {
   const [dataSaved, setDataSaved] = useState(false);
   const [isReturnFromAuth, setIsReturnFromAuth] = useState(false);
 
-  // Effect to redirect to dashboard if user is already authenticated and data is saved
   useEffect(() => {
-    // If the user is already logged in and we've saved their data, 
-    // check if they just arrived from authentication flow
     if (user && dataSaved && !localStorage.getItem('staying_on_results')) {
       router.push('/dashboard');
     }
     
-    // Set a flag to prevent automatic redirect if the user navigated here directly
     return () => {
       localStorage.removeItem('staying_on_results');
     };
   }, [user, dataSaved, router]);
 
-  // Add effect to check for pending assessment data when user logs in
   useEffect(() => {
-    // If user just logged in/registered and there's pending assessment data, save it
     const checkPendingAssessmentData = async () => {
       const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
       
       if (user && hasPendingAssessment && predictionResults && demographics && !dataSaved) {
-        // Set flag to show the user is returning from auth
         setIsReturnFromAuth(true);
         
         try {
-          // Get scores and answers from localStorage
           const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
           const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
           const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
           
-          // Get the raw answers too
           const phq9Answers = JSON.parse(localStorage.getItem('phq9_answers') || '[]');
           const gad7Answers = JSON.parse(localStorage.getItem('gad7_answers') || '[]');
           const pssAnswers = JSON.parse(localStorage.getItem('pss_answers') || '[]');
           
-          // Save assessment results to Firestore
           await saveAssessmentResults(
             user,
             demographics,
@@ -83,7 +73,6 @@ export default function ResultsPage() {
             }
           );
           
-          // Clear all assessment data from localStorage
           cleanupAssessmentData();
           
           setDataSaved(true);
@@ -93,26 +82,22 @@ export default function ResultsPage() {
       }
     };
     
-    // Only run this effect after assessment data is loaded
     if (loaded) {
       checkPendingAssessmentData();
     }
   }, [user, loaded, demographics, predictionResults, dataSaved]);
 
   useEffect(() => {
-    // Scroll to current step in mobile view
     const scrollToCurrentStep = () => {
       const scrollContainer = document.getElementById("stepsScrollContainer");
       const currentStep = document.getElementById("currentStep");
       
       if (scrollContainer && currentStep) {
-        // Calculate the scroll position to center the current step
         const containerWidth = scrollContainer.clientWidth;
         const currentStepLeft = currentStep.offsetLeft;
         const currentStepWidth = currentStep.clientWidth;
         const scrollPosition = currentStepLeft - (containerWidth / 2) + (currentStepWidth / 2);
         
-        // Scroll to position with smooth behavior
         scrollContainer.scrollTo({
           left: scrollPosition,
           behavior: "smooth"
@@ -120,27 +105,24 @@ export default function ResultsPage() {
       }
     };
     
-    // Execute after a small delay to ensure elements are rendered
     const timeoutId = setTimeout(() => {
       scrollToCurrentStep();
     }, 100);
     
     // Clean up timeout
     return () => clearTimeout(timeoutId);
-  }, [loaded]); // Re-run when loaded state changes
+  }, [loaded]); 
 
   useEffect(() => {
-    // Moved fallbackToTraditionalScoring inside useEffect to avoid recreating it on every render
     const fallbackToTraditionalScoring = () => {
       const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
       const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
       const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
       
-      // Create a prediction results object from traditional scoring
       setPredictionResults({
         depression: {
           label: getDepressionLabel(phq9Score),
-          probability: 1.0, // Certainty since it's rule-based
+          probability: 1.0, 
           probabilities: [{ label: getDepressionLabel(phq9Score), probability: 1.0 }]
         },
         anxiety: {
@@ -174,10 +156,8 @@ export default function ResultsPage() {
     };
     async function loadAssessmentData() {
       try {
-        // Load demographic data
         const demoData = JSON.parse(localStorage.getItem('demographics') || '{}');
         
-        // Map stored demographics to model format
         const mappedDemographics: DemographicData = {
           age: demoData.age || '',
           gender: demoData.gender || '',
@@ -187,25 +167,20 @@ export default function ResultsPage() {
         };
         setDemographics(mappedDemographics);
         
-        // Load answers from each assessment
         const phq9Answers = JSON.parse(localStorage.getItem('phq9_answers') || '[]');
         const gad7Answers = JSON.parse(localStorage.getItem('gad7_answers') || '[]');
         const pssAnswers = JSON.parse(localStorage.getItem('pss_answers') || '[]');
 
-        // Validate if answers exist
         if (phq9Answers.length === 0 || gad7Answers.length === 0 || pssAnswers.length === 0) {
           throw new Error('Assessment answers are missing');
         }
 
-        // Also calculate and store the traditional scores for backup/comparison
         const phq9Score = phq9Answers.reduce((sum: number, val: number) => sum + val, 0);
         const gad7Score = gad7Answers.reduce((sum: number, val: number) => sum + val, 0);
         
-        // Calculate PSS score with reverse scoring for questions 4, 5, 7, and 8 (indexes 3, 4, 6, 7)
         const reverseScored = [3, 4, 6, 7];
         const pssScore = pssAnswers.reduce((sum: number, answer: number, index: number) => {
           if (reverseScored.includes(index)) {
-            // Reverse scoring: 0=4, 1=3, 2=2, 3=1, 4=0
             return sum + (4 - answer);
           }
           return sum + answer;
@@ -215,33 +190,26 @@ export default function ResultsPage() {
         localStorage.setItem('gad7_score', gad7Score.toString());
         localStorage.setItem('pss_score', pssScore.toString());
         
-        // Prepare assessment data for model
         const assessmentData: AssessmentAnswers = {
           phq9Answers,
           gad7Answers,
           pssAnswers
         };
         
-        // Load ML model and parameters
         await loadModel();
         await loadScalerParams();
         
-        // Preprocess the data
         const modelInput = preprocessData(mappedDemographics, assessmentData);
         
-        // Get model prediction
         const model = await loadModel();
         const predictOutput = model.predict(modelInput);
         
-        // Process the prediction results based on the type of output
         let results;
         if (predictOutput instanceof tf.Tensor) {
           results = await processPredictions(predictOutput);
         } else if (Array.isArray(predictOutput)) {
           results = await processPredictions(predictOutput);
         } else {
-          // Handle NamedTensorMap case
-          // Extract the tensors from the named map (we might need the first one only)
           const firstTensor = Object.values(predictOutput)[0];
           results = await processPredictions(firstTensor);
         }
@@ -250,7 +218,6 @@ export default function ResultsPage() {
       } catch (err) {
         console.error('Error during prediction:', err);
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        // Fall back to traditional scoring if ML prediction fails
         fallbackToTraditionalScoring();
       } finally {
         setLoaded(true);
@@ -258,9 +225,8 @@ export default function ResultsPage() {
     }
     
     loadAssessmentData();
-  }, []); // Empty dependency array since fallbackToTraditionalScoring is defined inside
+  }, []); 
 
-  // Traditional scoring functions (as fallback)
   const getDepressionLabel = (score: number): string => {
     if (score >= 0 && score <= 4) return "Minimal Depression";
     if (score >= 5 && score <= 9) return "Mild Depression";
@@ -325,29 +291,22 @@ export default function ResultsPage() {
     setLoading(true);
     
     try {
-      // Check if user is logged in
       if (!user) {
-        // User is not logged in, store assessment data in localStorage for later
         localStorage.setItem('assessment_pending', 'true');
         
-        // Redirect to registration page
         router.push('/auth/register');
         return;
       }
       
-      // User is logged in, proceed with saving data to Firebase
       if (!dataSaved && predictionResults && demographics) {
-        // Get scores from localStorage
         const phq9Score = parseInt(localStorage.getItem('phq9_score') || '0', 10);
         const gad7Score = parseInt(localStorage.getItem('gad7_score') || '0', 10);
         const pssScore = parseInt(localStorage.getItem('pss_score') || '0', 10);
         
-        // Get the raw answers too
         const phq9Answers = JSON.parse(localStorage.getItem('phq9_answers') || '[]');
         const gad7Answers = JSON.parse(localStorage.getItem('gad7_answers') || '[]');
         const pssAnswers = JSON.parse(localStorage.getItem('pss_answers') || '[]');
         
-        // Save assessment results to Firestore
         await saveAssessmentResults(
           user,
           demographics,
@@ -364,13 +323,11 @@ export default function ResultsPage() {
           }
         );
         
-        // Clean up all assessment data from localStorage after saving
         cleanupAssessmentData();
         
         setDataSaved(true);
       }
       
-      // Redirect to dashboard
       router.push('/dashboard');
     } catch (err) {
       console.error('Error saving assessment data:', err);
@@ -381,20 +338,16 @@ export default function ResultsPage() {
   };
   
   const handleRetakeAssessment = () => {
-    // Clear all assessment-related data from localStorage
     cleanupAssessmentData();
     
-    // Redirect to the beginning of the onboarding process
     router.push('/onboarding');
   };
 
-  // Add effect to automatically redirect to dashboard after data is saved (with a delay for feedback)
   useEffect(() => {
-    // When a user returns from auth and data is saved, redirect after showing success message
     if (user && isReturnFromAuth && dataSaved) {
       const redirectTimer = setTimeout(() => {
         router.push('/dashboard');
-      }, 3000); // 3 second delay to show success message before redirect
+      }, 3000);
       
       return () => clearTimeout(redirectTimer);
     }
@@ -612,7 +565,6 @@ export default function ResultsPage() {
             )}
           </div>
           
-          {/* Step Indicator - Improved for mobile */}
           <div className="mb-12">
             <div className="hidden md:flex items-center justify-between">
               <div className="flex flex-col items-center">
@@ -658,14 +610,11 @@ export default function ResultsPage() {
               </div>
             </div>
             
-            {/* Mobile Step Indicator - Redesigned */}
             <div className="md:hidden">
-              {/* Progress bar showing completion */}
               <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-4">
                 <div className="h-full bg-gradient-to-r from-primary/70 to-primary" style={{ width: '100%' }}></div>
               </div>
               
-              {/* Current step highlight card */}
               <div className="relative mb-2">
                 <div className="overflow-x-auto pb-3 scrollbar-hide" id="stepsScrollContainer">
                   <div className="flex gap-2 w-max px-2">
@@ -692,7 +641,6 @@ export default function ResultsPage() {
                   </div>
                 </div>
                 
-                {/* Fade effect on edges to indicate scrollability */}
                 <div className="absolute top-0 left-0 h-full w-6 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
                 <div className="absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
               </div>
@@ -710,7 +658,6 @@ export default function ResultsPage() {
             </div>
           </div>
           
-          {/* Results Summary - Improved for mobile */}
           <div className="bg-background border border-muted rounded-lg p-4 md:p-8 shadow-sm mb-8">
             <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
               Summary of Your Results
@@ -724,7 +671,6 @@ export default function ResultsPage() {
                     <h3 className="font-bold text-white text-center">Anxiety Assessment</h3>
                   </div>
                   <div className="p-4 md:p-6">
-                    {/* Mobile layout - horizontal */}
                     <div className="flex md:hidden items-center gap-4">
                       <div className={`w-16 h-16 rounded-full ${getLabelColor('anxiety', predictionResults.anxiety.label)} flex items-center justify-center flex-shrink-0`}>
                         <span className="font-bold text-white text-xl">
@@ -743,7 +689,6 @@ export default function ResultsPage() {
                       </div>
                     </div>
 
-                    {/* Desktop layout - vertical */}
                     <div className="hidden md:flex flex-col items-center">
                       <div className={`w-20 h-20 rounded-full ${getLabelColor('anxiety', predictionResults.anxiety.label)} flex items-center justify-center mb-3`}>
                         <span className="font-bold text-white text-xl">
@@ -784,7 +729,6 @@ export default function ResultsPage() {
                     <h3 className="font-bold text-white text-center">Depression Assessment</h3>
                   </div>
                   <div className="p-4 md:p-6">
-                    {/* Mobile layout - horizontal */}
                     <div className="flex md:hidden items-center gap-4">
                       <div className={`w-16 h-16 rounded-full ${getLabelColor('depression', predictionResults.depression.label)} flex items-center justify-center flex-shrink-0`}>
                         <span className="font-bold text-white text-xl">
@@ -803,7 +747,6 @@ export default function ResultsPage() {
                       </div>
                     </div>
 
-                    {/* Desktop layout - vertical */}
                     <div className="hidden md:flex flex-col items-center">
                       <div className={`w-20 h-20 rounded-full ${getLabelColor('depression', predictionResults.depression.label)} flex items-center justify-center mb-3`}>
                         <span className="font-bold text-white text-xl">
@@ -844,7 +787,6 @@ export default function ResultsPage() {
                     <h3 className="font-bold text-white text-center">Stress Assessment</h3>
                   </div>
                   <div className="p-4 md:p-6">
-                    {/* Mobile layout - horizontal */}
                     <div className="flex md:hidden items-center gap-4">
                       <div className={`w-16 h-16 rounded-full ${getLabelColor('stress', predictionResults.stress.label)} flex items-center justify-center flex-shrink-0`}>
                         <span className="font-bold text-white text-xl">
@@ -863,7 +805,6 @@ export default function ResultsPage() {
                       </div>
                     </div>
 
-                    {/* Desktop layout - vertical */}
                     <div className="hidden md:flex flex-col items-center">
                       <div className={`w-20 h-20 rounded-full ${getLabelColor('stress', predictionResults.stress.label)} flex items-center justify-center mb-3`}>
                         <span className="font-bold text-white text-xl">
@@ -1056,9 +997,7 @@ export default function ResultsPage() {
             </div>
           </div>
           
-          {/* Footer Navigation - Redesigned for better mobile experience */}
           <div className="border-t border-muted pt-6 pb-10 mt-6">
-            {/* Medical advice disclaimer card - improved contrast for light mode */}
             <div className="bg-primary/5  rounded-lg p-4 mb-6 shadow-md">
               <p className="text-center text-sm  font-medium">
                 <span className="inline-flex items-center justify-center mr-2">
@@ -1072,7 +1011,6 @@ export default function ResultsPage() {
               </p>
             </div>
             
-            {/* Action buttons - stacked on mobile, side by side on larger screens */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button 
                 variant="outline" 
@@ -1112,10 +1050,6 @@ export default function ResultsPage() {
   );
 }
 
-// Add helper functions before the return statement
-// Add these helper functions right before the return statement and after all existing functions
-
-// Helper function to get an appropriate icon based on severity
 const getSeverityIcon = (label: string): string => {
   if (label.includes('Severe') || label.includes('High')) {
     return '!';
@@ -1128,7 +1062,6 @@ const getSeverityIcon = (label: string): string => {
   }
 };
 
-// Helper function to clean up assessment data from localStorage
 const cleanupAssessmentData = () => {
   localStorage.removeItem('assessment_pending');
   localStorage.removeItem('demographics');

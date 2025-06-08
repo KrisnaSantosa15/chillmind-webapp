@@ -41,7 +41,6 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-        {/* Theme script to prevent flash and ensure theme consistency */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

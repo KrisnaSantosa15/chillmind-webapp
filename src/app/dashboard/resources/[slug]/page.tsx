@@ -6,16 +6,12 @@ import Link from 'next/link';
 import { recommendationsData, RecommendationItem } from '@/data/recommendationsData';
 import { Accordion, AccordionItem } from '@/components/ui/Accordion';
 
-// Helper function to find a recommendation by slug from the data
 const findRecommendationBySlug = (slug: string): RecommendationItem | null => {
-  // Flatten all recommendations into a single array to search
   const allRecommendations: RecommendationItem[] = Object.values(recommendationsData).flatMap(
     (severityLevels) => Object.values(severityLevels).flat()
   ) as RecommendationItem[];
   
-  // Find the recommendation with a matching slug from the link
   const recommendation = allRecommendations.find(rec => {
-    // Extract the slug from the link (e.g., "/dashboard/resources/mindful-breathing" -> "mindful-breathing")
     const linkSlug = rec.link.split('/').pop();
     return linkSlug === slug;
   });
@@ -29,30 +25,25 @@ export default function ResourcePage() {
   const [recommendation, setRecommendation] = useState<RecommendationItem | null>(null);
   const [relatedResources, setRelatedResources] = useState<RecommendationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-    // Find related resources based on tags
   const findRelatedResources = (currentRec: RecommendationItem): RecommendationItem[] => {
     if (!currentRec.tags || currentRec.tags.length === 0) return [];
     
-    // Flatten all recommendations into a single array
     const allRecommendations: RecommendationItem[] = Object.values(recommendationsData).flatMap(
       (severityLevels) => Object.values(severityLevels).flat()
     ) as RecommendationItem[];
     
-    // Filter out the current recommendation and find recommendations with matching tags
     return allRecommendations
-      .filter(rec => rec.id !== currentRec.id) // Exclude current recommendation
-      .filter(rec => rec.tags?.some((tag: string) => currentRec.tags?.includes(tag))) // Match at least one tag
+      .filter(rec => rec.id !== currentRec.id) 
+      .filter(rec => rec.tags?.some((tag: string) => currentRec.tags?.includes(tag))) 
       .sort((a, b) => {
-        // Sort by number of matching tags (descending)
         const aMatchCount = a.tags?.filter((tag: string) => currentRec.tags?.includes(tag)).length || 0;
         const bMatchCount = b.tags?.filter((tag: string) => currentRec.tags?.includes(tag)).length || 0;
         return bMatchCount - aMatchCount;
       })
-      .slice(0, 2); // Get top 2 related resources
+      .slice(0, 2);
   };
   
   useEffect(() => {
-    // Simulate API call delay
     setTimeout(() => {
       const foundRecommendation = findRecommendationBySlug(slug);
       setRecommendation(foundRecommendation);
@@ -65,7 +56,6 @@ export default function ResourcePage() {
       setIsLoading(false);
     }, 500);
   }, [slug]);
-  // For rendering the icon at the top of the page
   const renderIcon = (icon: string, color: string) => {
     let colorClass = '';
     switch (color) {
@@ -81,7 +71,6 @@ export default function ResourcePage() {
       default: colorClass = 'bg-primary-light/20 text-primary';
     }
 
-    // A comprehensive icon rendering function
     let iconClass = '';
     switch (icon) {
       // Anxiety icons
@@ -187,7 +176,6 @@ export default function ResourcePage() {
                 </span>
               ))}
             </div>
-              {/* Content area - dynamic based on recommendation type and content */}
             <div className="prose prose-sm dark:prose-invert max-w-none">              <div className={`p-6 rounded-lg border mb-8 ${
                 recommendation.id.startsWith('anx') ? 'border-indigo-300  dark:border-indigo-900' :
                 recommendation.id.startsWith('dep') ? 'border-blue-300  dark:border-blue-900' :
@@ -223,7 +211,6 @@ export default function ResourcePage() {
                 )}
               </div>
               
-              {/* Display dynamic content based on the content data */}
               {recommendation.content ? (
                 <>
                   {/* Instructions */}
@@ -259,7 +246,7 @@ export default function ResourcePage() {
                         ))}
                       </ol>
                     </div>
-                  )}                  {/* Article text - in an accordion */}
+                  )}                 
                   {recommendation.content.articleText && (
                     <div className="mb-6">
                       <Accordion>
@@ -374,7 +361,7 @@ export default function ResourcePage() {
                   )} */}
                 </>
               ) : (
-                // Fallback content if no structured content is available
+                
                 <>
                   <h3>How to use this resource</h3>
                   <p>This resource is designed to help you manage your mental health. Follow the guidelines below to get the most benefit:</p>

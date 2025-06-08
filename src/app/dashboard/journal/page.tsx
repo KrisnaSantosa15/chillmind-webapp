@@ -5,47 +5,40 @@ import JournalSection, { JournalEntry } from '@/components/dashboard/JournalSect
 import { getJournalEntries, deleteJournalEntry } from '@/lib/journalStorage';
 import { toast } from 'sonner';
 
-// Add custom typings for window object
 declare global {
   interface Window {
     searchTimeout: number;
   }
 }
 
-// Constants for better performance
 const DEBOUNCE_DELAY = 300; // ms
 const BATCH_SIZE = 20; // entries per batch for lazy loading
-const SCROLL_THRESHOLD = 100; // pixels from bottom to trigger load more
+const SCROLL_THRESHOLD = 100; 
 
 
 export default function JournalPage() {
-  // State for journal entries
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [filteredEntries, setFilteredEntries] = useState<JournalEntry[]>([]);  const [displayedEntries, setDisplayedEntries] = useState<JournalEntry[]>([]);
+  const [filteredEntries, setFilteredEntries] = useState<JournalEntry[]>([]);  
+  const [displayedEntries, setDisplayedEntries] = useState<JournalEntry[]>([]);
   const [hasMoreEntries, setHasMoreEntries] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   
-  // State for search and filter
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | 'today' | 'week' | 'month'>('all');
-    // State for view mode
   const [viewMode, setViewMode] = useState<'card' | 'list' | 'compact'>('card');
   
-  // State for sort order
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest' | 'mood-asc' | 'mood-desc'>('newest');
   
-  // State for delete confirmation
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-    // Search debounce
+
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Load journal entries from storage
   useEffect(() => {
     const fetchEntries = async () => {
       setIsLoading(true);
@@ -63,7 +56,6 @@ export default function JournalPage() {
     fetchEntries();
   }, []);
     const handleSaveEntry = async () => {
-    // After saving in the JournalSection component, refresh the entries list
     try {
       const updatedEntries = await getJournalEntries();
       setJournalEntries(updatedEntries);
@@ -95,7 +87,6 @@ export default function JournalPage() {
       default: return 'bg-gray-100';
     }  };
   
-  // Sort entries based on selected order - memoized for performance
   const sortEntries = useCallback((entries: JournalEntry[], order: string) => {
     const entriesCopy = [...entries];
     
@@ -112,7 +103,6 @@ export default function JournalPage() {
         return entriesCopy;
     }
   }, []);
-    // Get numerical value for mood for sorting
   const getMoodValue = (mood: string): number => {
     const moodMap: Record<string, number> = {
       joy: 7,
@@ -126,13 +116,11 @@ export default function JournalPage() {
     return moodMap[mood.toLowerCase()] || 4;
   };
   
-  // Memoized filter function for better performance
   const filteredAndSortedEntries = useMemo(() => {
     if (!journalEntries.length) return [];
     
     let results = [...journalEntries];
     
-    // Apply search term filter
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
       results = results.filter(entry => 
@@ -179,12 +167,10 @@ export default function JournalPage() {
     
     return results;
   }, [searchTerm, selectedMoods, selectedTags, selectedDateRange, journalEntries, sortOrder, sortEntries]);
-  // Update filtered entries when memoized results change
   useEffect(() => {
     setFilteredEntries(filteredAndSortedEntries);
   }, [filteredAndSortedEntries]);
 
-  // Function to open delete modal
   const openDeleteModal = (entryId: string, e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation();
@@ -193,55 +179,45 @@ export default function JournalPage() {
     setShowDeleteModal(true);
   };
 
-  // Function to close delete modal
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setEntryToDelete(null);
   };
 
-  // Handle deleting journal entries with modal confirmation
   const handleDeleteEntry = async () => {
     if (!entryToDelete) return;
     setIsLoading(true);
     try {
-      // Delete from storage
       await deleteJournalEntry(entryToDelete);
       
-      // Update local state
       const updatedEntries = journalEntries.filter(entry => entry.id !== entryToDelete);
       setJournalEntries(updatedEntries);
       setFilteredEntries(
         filteredEntries.filter(entry => entry.id !== entryToDelete)
       );
       
-      // Close modal
       closeDeleteModal();
       
-      // Show success notification
       toast.success('Journal entry deleted successfully');
     } catch (error) {
       console.error('Error deleting journal entry:', error);
       
-      // Show error notification
       toast.error('Failed to delete journal entry. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };  // Enhanced memoized function to load more entries with performance monitoring
+  }; 
   const loadMoreEntries = useCallback(() => {
     if (isLoadingMore || !hasMoreEntries) return;
     setIsLoadingMore(true);
     
-    // Calculate next batch of entries
     const startIndex = displayedEntries.length;
     const endIndex = startIndex + BATCH_SIZE;
     const nextEntries = filteredEntries.slice(startIndex, endIndex);
     
-    // Use requestAnimationFrame for better performance
     requestAnimationFrame(() => {
       setDisplayedEntries(prev => [...prev, ...nextEntries]);
       
-      // Check if there are more entries to load
       if (endIndex >= filteredEntries.length) {
         setHasMoreEntries(false);
       }
@@ -249,35 +225,26 @@ export default function JournalPage() {
       setIsLoadingMore(false);
     });
   }, [isLoadingMore, hasMoreEntries, displayedEntries.length, filteredEntries]);
-  // Load initial entries and apply filters
   useEffect(() => {
-    // Reset pagination and displayed entries when filtered entries change
     setHasMoreEntries(true);
     
-    // Load initial batch
     const initialBatch = filteredEntries.slice(0, BATCH_SIZE);
     setDisplayedEntries(initialBatch);
     setHasMoreEntries(filteredEntries.length > BATCH_SIZE);
   }, [filteredEntries]);
-  // Enhanced infinite scrolling with throttled scroll handling for performance
   const throttleRef = useRef<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    // Throttle scroll events for better performance
     if (throttleRef.current) return;
     
-    // Safely capture DOM element reference before the throttled callback
     const container = e.currentTarget;
     if (!container) return;
       throttleRef.current = window.requestAnimationFrame(() => {
-      // Use the persistent ref or fallback to the event target
       const scrollContainer = scrollContainerRef.current || container;
       
-      // Check if container is still valid
       if (scrollContainer) {
         const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
         
-        // Check if user has scrolled to the bottom of the container with improved threshold
         if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD && hasMoreEntries && !isLoadingMore) {
           loadMoreEntries();
         }
@@ -285,7 +252,7 @@ export default function JournalPage() {
       
       throttleRef.current = null;
     });
-  }, [hasMoreEntries, isLoadingMore, loadMoreEntries]);  // Define the component implementation
+  }, [hasMoreEntries, isLoadingMore, loadMoreEntries]); 
   function JournalEntryItemComponent({ entry, viewMode, onDelete }: {
     entry: JournalEntry;
     viewMode: 'card' | 'list' | 'compact';
@@ -362,19 +329,14 @@ export default function JournalPage() {
     );
   }
   
-  // Create memoized version with display name
   const JournalEntryItem = memo(JournalEntryItemComponent);
-  // Set display name explicitly to fix ESLint warning
   JournalEntryItem.displayName = 'JournalEntryItem';
 
-  // Cleanup function for performance optimizations
   useEffect(() => {
     return () => {
-      // Cleanup search timeout
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
-      // Cleanup scroll throttle
       if (throttleRef.current) {
         cancelAnimationFrame(throttleRef.current);
       }
@@ -459,20 +421,18 @@ export default function JournalPage() {
                 type="text"
                 placeholder="Search journal entries..."
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-2 border border-muted rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-background text-sm transition-all duration-200"                onChange={(e) => {
-                  // Enhanced debounced search with performance monitoring
+                 
                   if (searchTimeoutRef.current) {
                     clearTimeout(searchTimeoutRef.current);
                   }
                   
                   const value = e.target.value;
                   
-                  // If clearing search, update immediately
                   if (!value) {
                     setSearchTerm('');
                     return;
                   }
                   
-                  // Set a new timeout using constant with performance tracking
                   searchTimeoutRef.current = setTimeout(() => {
                     setSearchTerm(value);
                   }, DEBOUNCE_DELAY);
@@ -672,7 +632,6 @@ export default function JournalPage() {
                   setSelectedDateRange('all');
                   setSortOrder('newest');
                   
-                  // Also reset the search input field
                   const searchInput = document.getElementById('journal-search') as HTMLInputElement;
                   if (searchInput) {
                     searchInput.value = '';
@@ -688,7 +647,7 @@ export default function JournalPage() {
             ${viewMode === 'card' ? 'space-y-5' : ''}
             ${viewMode === 'list' ? 'divide-y divide-muted' : ''}
             ${viewMode === 'compact' ? 'border border-muted rounded-lg overflow-hidden' : ''}
-          `}>            {/* Native scrollable container for performance */}
+          `}>   
             <div 
               ref={scrollContainerRef}
               className="max-h-[600px] overflow-y-auto scroll-smooth"
@@ -702,7 +661,6 @@ export default function JournalPage() {
                 />
               ))}
               
-              {/* Loading indicator for infinite scroll */}
               {isLoadingMore && (
                 <div className="flex justify-center py-4">
                   <div className="flex items-center text-muted-foreground">
@@ -712,7 +670,6 @@ export default function JournalPage() {
                 </div>
               )}
               
-              {/* End of entries indicator */}
               {!hasMoreEntries && displayedEntries.length > 0 && (
                 <div className="text-center py-4 text-muted-foreground text-sm">
                   <i className="fas fa-check-circle mr-2"></i>

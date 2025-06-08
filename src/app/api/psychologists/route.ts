@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
 
-/**
- * API route to handle HIMPSI API requests while avoiding CORS issues
- */
-
 const API_BASE_URL = "https://api-prod.himpsi.or.id/api";
 
 export async function GET(request: Request) {
@@ -19,14 +15,12 @@ export async function GET(request: Request) {
       );
     }
 
-    // Construct the full API URL
     const apiUrl = `${API_BASE_URL}/${endpoint}${
       queryParams ? `?${queryParams}` : ""
     }`;
 
     console.log(`Proxy request to: ${apiUrl}`);
 
-    // Make the server-side request to the HIMPSI API
     const response = await fetch(apiUrl, {
       headers: {
         Accept: "application/json",
@@ -35,7 +29,6 @@ export async function GET(request: Request) {
       },
     });
 
-    // Get the response data
     const data = await response.json();
 
     // Return the API response

@@ -8,15 +8,10 @@ import {
   getMoodChartData,
 } from "./journalStorage";
 
-/**
- * Custom hook to manage journal entries using local storage
- * In the future, this could be extended to use Firebase
- */
 export const useJournal = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Load entries on mount
   useEffect(() => {
     const fetchEntries = async () => {
       try {
@@ -34,7 +29,6 @@ export const useJournal = () => {
     fetchEntries();
   }, []);
 
-  // Listen for storage events (when another tab/window updates the local storage)
   useEffect(() => {
     const handleStorageChange = async (e: StorageEvent) => {
       if (e.key === "chillmind_journal_entries") {
@@ -54,7 +48,6 @@ export const useJournal = () => {
       };
     }
   }, []);
-  // Add a new entry
   const addEntry = (
     content: string,
     promptType: string,
@@ -62,19 +55,16 @@ export const useJournal = () => {
   ): Promise<JournalEntry> => {
     return new Promise(async (resolve, reject) => {
       try {
-        // Extract tags from content (words with # prefix)
         const tagRegex = /#(\w+)/g;
         const tags: string[] = [...customTags];
         let match;
 
         while ((match = tagRegex.exec(content)) !== null) {
-          // Avoid duplicates
           if (!tags.includes(match[1].toLowerCase())) {
             tags.push(match[1].toLowerCase());
           }
         }
 
-        // If no tags were found, add default ones based on the prompt type
         if (tags.length === 0) {
           switch (promptType) {
             case "highlights":
@@ -93,13 +83,12 @@ export const useJournal = () => {
               tags.push("journal");
               break;
           }
-        } // Save to local storage - now uses async API
+        }
         const result = await saveJournalEntry({
           content,
           tags,
         });
 
-        // Update state - extract the journalEntry from the result
         setEntries((prev) => [result.journalEntry, ...prev]);
         resolve(result.journalEntry);
       } catch (err) {
@@ -109,7 +98,6 @@ export const useJournal = () => {
     });
   };
 
-  // Delete an entry
   const deleteEntry = (id: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       try {
@@ -126,7 +114,6 @@ export const useJournal = () => {
       }
     });
   };
-  // Update an entry
   const updateEntry = (
     id: string,
     updates: Partial<Omit<JournalEntry, "id" | "date">>
@@ -139,7 +126,6 @@ export const useJournal = () => {
           throw new Error("Entry not found");
         }
 
-        // If content was updated, re-predict emotion
         let mood = entries[entryIndex].mood;
         if (updates.content) {
           const emotion = await predictEmotion(updates.content);
@@ -169,7 +155,6 @@ export const useJournal = () => {
     });
   };
 
-  // Get chart data
   const getChartData = (timeRange: "week" | "month" | "year") => {
     return getMoodChartData(timeRange);
   };

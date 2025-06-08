@@ -3,10 +3,8 @@ import { User } from "firebase/auth";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, updateDoc, collection } from "firebase/firestore";
 
-// Define insight levels for progressive learning
 export type InsightLevel = "basic" | "intermediate" | "advanced";
 
-// Interface for emotion insights
 export interface EmotionInsight {
   title: string;
   description: string;
@@ -15,26 +13,21 @@ export interface EmotionInsight {
   factoid?: string;
 }
 
-// Get emotion insight based on the emotion and user's experience level
 export const getEmotionInsight = async (
   emotion: Emotion,
   user: User
 ): Promise<EmotionInsight> => {
-  // Get how many times user has logged this emotion
   const count = await getEmotionCount(user, emotion);
 
-  // Determine insight level based on count
   let level: InsightLevel = "basic";
   if (count > 5) level = "intermediate";
   if (count > 10) level = "advanced";
 
-  // Increment the emotion count in Firestore
   await incrementEmotionCount(user, emotion);
 
   return getInsightContent(emotion, level);
 };
 
-// Get emotion content based on emotion type and level
 const getInsightContent = (
   emotion: Emotion,
   level: InsightLevel
@@ -287,7 +280,6 @@ const getInsightContent = (
   }
 };
 
-// Track emotion frequency in Firestore
 async function getEmotionCount(user: User, emotion: Emotion): Promise<number> {
   try {
     const userRef = doc(db, "users", user.uid);
@@ -307,7 +299,6 @@ async function getEmotionCount(user: User, emotion: Emotion): Promise<number> {
   }
 }
 
-// Update emotion count after saving journal entry
 async function incrementEmotionCount(
   user: User,
   emotion: Emotion
@@ -319,10 +310,8 @@ async function incrementEmotionCount(
     const docSnapshot = await getDoc(statsRef);
 
     if (!docSnapshot.exists()) {
-      // Create new document with count 1 for this emotion
       await setDoc(statsRef, { [emotion]: 1 });
     } else {
-      // Update existing count
       const data = docSnapshot.data();
       const currentCount = data[emotion] || 0;
 

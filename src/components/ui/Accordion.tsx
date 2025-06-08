@@ -2,7 +2,6 @@
 
 import React, { useState, createContext, useContext } from 'react';
 
-// Context to manage which accordion item is currently open
 type AccordionContextType = {
   openItemId: string | null;
   toggleItem: (id: string) => void;
@@ -60,7 +59,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         }`}
         style={{ 
           transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          maxHeight: isOpen ? '80vh' : '0' // Limit to 80% of viewport height
+          maxHeight: isOpen ? '80vh' : '0' 
         }}
       >
         <div className="p-6 pt-0 text-muted-foreground max-h-[80vh] overflow-y-auto">{children}</div>

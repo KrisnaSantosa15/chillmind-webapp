@@ -29,7 +29,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setNotifPanelOpen(false);
   };
   
-  // Helper function to check if the link is active
   const isActive = (path: string) => {
     if (path === '/dashboard' && pathname === '/dashboard') {
       return true;
@@ -40,7 +39,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return false;
   };
   
-  // Handle sign out
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -52,7 +50,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar - hidden on mobile */}
       <div className={`fixed inset-0 z-40 bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${
         mobileSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`} onClick={() => setMobileSidebarOpen(false)}></div>

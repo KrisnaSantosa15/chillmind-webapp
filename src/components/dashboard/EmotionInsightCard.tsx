@@ -20,7 +20,6 @@ export default function EmotionInsightCard({
 }: EmotionInsightCardProps) {
   const [currentTab, setCurrentTab] = useState<'learn' | 'cope' | 'reflect'>('learn');
   const [isExiting, setIsExiting] = useState(false);
-    // Get emotion color scheme
   const getEmotionColor = (emotion: Emotion) => {
     switch(emotion) {
       case "joy": return "bg-background border-blue-400";

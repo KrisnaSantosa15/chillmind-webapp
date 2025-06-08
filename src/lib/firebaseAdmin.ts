@@ -1,17 +1,14 @@
-// Firebase Admin SDK configuration for server-side authentication
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
 let adminApp: import("firebase-admin/app").App | null = null;
 
-// Initialize Firebase Admin only if credentials are available
 function initializeFirebaseAdmin() {
   if (getApps().length > 0) {
     return getApps()[0];
   }
 
-  // Check if we have the required environment variables
   const projectId =
     process.env.FIREBASE_PROJECT_ID ||
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -43,7 +40,6 @@ function initializeFirebaseAdmin() {
   }
 }
 
-// Initialize the admin app
 adminApp = initializeFirebaseAdmin();
 
 export const adminAuth = adminApp ? getAuth(adminApp) : null;

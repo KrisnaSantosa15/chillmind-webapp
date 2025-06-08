@@ -71,31 +71,25 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           return;
         }
         
-        // Sort entries by date (newest first)
         const sortedEntries = [...entries].sort((a, b) => 
           new Date(b.date).getTime() - new Date(a.date).getTime()
         );
         
-        // Total count
         const journalCount = entries.length;
         
-        // Entries in the current week (Monday to Sunday) rather than last 7 days
         const now = new Date();
-        const currentWeekDay = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+        const currentWeekDay = now.getDay(); 
         const startOfWeek = new Date(now);
-        // Set to Monday of current week
         startOfWeek.setDate(now.getDate() - (currentWeekDay === 0 ? 6 : currentWeekDay - 1));
-        startOfWeek.setHours(0, 0, 0, 0); // Start of the day
+        startOfWeek.setHours(0, 0, 0, 0); 
         
         const entriesThisWeek = sortedEntries.filter(entry => 
           new Date(entry.date) >= startOfWeek
         );
         const weeklyEntries = entriesThisWeek.length;
         
-        // Journal progress - % of days with entries in current week
         const journalProgress = Math.round((weeklyEntries / 7) * 100);
         
-        // Mood distribution and dominant mood
         const moodCounts: MoodCounts = {
           joy: 0,
           love: 0, 
@@ -106,7 +100,6 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           sadness: 0
         };
         
-        // Only count recent entries for mood distribution
         const recentEntriesForMood = sortedEntries.slice(0, Math.min(10, sortedEntries.length));
         
         recentEntriesForMood.forEach(entry => {
@@ -126,7 +119,6 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           }
         });
         
-        // Normalize mood distribution for visualization
         const totalMoods = Object.values(moodCounts).reduce((sum, count) => sum + count, 0);
         const moodDistribution: MoodCounts = {
           joy: 0,
@@ -140,12 +132,11 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
         
         Object.entries(moodCounts).forEach(([mood, count]) => {
           moodDistribution[mood] = totalMoods > 0 ? Math.round((count / totalMoods) * 100) : 0;
-        });        // Use the streak value from Firebase instead of calculating locally
+        });     
         let streakDays = 0;
         try {
           const user = getCurrentUser();
           if (user) {
-            // Get the streak directly from Firebase
             streakDays = await getUserStreak(user);
             console.log('Retrieved streak from Firebase:', streakDays);
           } else {
@@ -153,16 +144,13 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           }
         } catch (error) {
           console.error('Error getting streak from Firebase:', error);
-          // Fallback to local calculation if Firebase retrieval fails
           let currentStreak = 0;
           const currentDate = new Date();
           
-          // Go back up to 30 days to check for streak
           for (let i = 0; i < 30; i++) {
             const checkDate = new Date(currentDate);
             checkDate.setDate(checkDate.getDate() - i);
             
-            // Format dates to YYYY-MM-DD for comparison
             const checkDateStr = checkDate.toISOString().split('T')[0];
             
             const hasEntryOnDate = sortedEntries.some(entry => {
@@ -172,7 +160,7 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
             
             if (hasEntryOnDate) {
               currentStreak++;
-            } else if (i > 0) { // Don't break streak on current day
+            } else if (i > 0) {
               break;
             }
           }
@@ -180,7 +168,6 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           streakDays = currentStreak;
         }
         
-        // Most common tags
         const tagCounts: Record<string, number> = {};
         entries.forEach(entry => {
           entry.tags.forEach(tag => {
@@ -193,16 +180,13 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           .map(([tag]) => tag)
           .slice(0, 3);
         
-        // Calculate wellness score (0-100)
-        // Based on journal frequency, mood distribution, and streak
         const frequencyScore = Math.min(100, (weeklyEntries / 7) * 100);
         const positiveEmotions = (moodDistribution.joy || 0) + (moodDistribution.love || 0) + (moodDistribution.surprise || 0);
         const moodScore = Math.min(100, positiveEmotions * 1.5);
-        const streakScore = Math.min(100, streakDays * 14.3); // 7 days = 100%
+        const streakScore = Math.min(100, streakDays * 14.3);
         
         const wellnessScore = Math.round((frequencyScore * 0.4) + (moodScore * 0.4) + (streakScore * 0.2));
         
-        // Get latest entry date
         const latestEntry = sortedEntries.length > 0 
           ? new Date(sortedEntries[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
           : 'No entries yet';
@@ -218,7 +202,6 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
           moodDistribution
         });
         
-        // Call the onStreakUpdate callback if provided
         if (onStreakUpdate) {
           onStreakUpdate(streakDays);
         }
@@ -249,7 +232,6 @@ const WellbeingStats: React.FC<WellbeingStatsProps> = ({ className, onStreakUpda
     
     loadStats();
     
-    // Refresh stats when tab becomes visible
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         loadStats();

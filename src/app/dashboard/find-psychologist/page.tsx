@@ -107,33 +107,28 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
     hasNextPage: false,
     hasPrevPage: false
   });
-  // Fetch psychologists data when component mounts or when page/cities change
+  
   useEffect(() => {
     async function fetchPsychologists() {
       setIsLoading(true);
-      setErrorMessage(null); // Clear previous errors
+      setErrorMessage(null);
       
       try {
-        // Use popular cities if no specific cities are selected
         const popularCities = getPopularIndonesianCities();
         const cities = selectedCities.length > 0 ? selectedCities : popularCities.slice(0, 5);
         
         // console.log('Fetching psychologists for cities:', cities, 'page:', currentPage);
         const result = await fetchAllPsychologists(cities, currentPage, pageSize);
         
-        // If we got data from the API, use it
         if (result && result.psychologists && result.psychologists.length > 0) {
         //   console.log(`Loaded ${result.psychologists.length} psychologists from API`);
           setPsychologists(result.psychologists);
           setFilteredPsychologists(result.psychologists);
           
-          // Update pagination info
           if (result.pagination) {
             setPagination(result.pagination);
           }
         } else {
-          // If no data, fall back to mock data
-          // console.log('No psychologists found from API, using fallback data');
           const mockData = getMockPsychologists();
           setPsychologists(mockData);
           setFilteredPsychologists(mockData);
@@ -151,7 +146,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
         }
       } catch (error) {
         console.error('Error fetching psychologists:', error);
-        // Use fallback data in case of error
         const mockData = getMockPsychologists();
         setPsychologists(mockData);
         setFilteredPsychologists(mockData);
@@ -169,12 +163,10 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
     }
     
     fetchPsychologists();
-  }, [selectedCities, currentPage, pageSize]); // Re-fetch when selected cities or pagination changes
-    // User location will be implemented when map feature is available
-  // For now, we're just setting up the state variable
+  }, [selectedCities, currentPage, pageSize]); 
   useEffect(() => {
-    setUserLocation([-6.2088, 106.8456]); // Default to Jakarta center
-  }, []);  // Handle keyboard events for modal
+    setUserLocation([-6.2088, 106.8456]);
+  }, []);
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showModal) {
@@ -186,7 +178,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showModal]);
   
-  // Filter psychologists based on search criteria
   useEffect(() => {
     const filtered = psychologists.filter(psychologist => {
       const matchesSearch = psychologist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -241,7 +232,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
             height={80}
             className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
             onError={(e) => {
-              // Fallback image if the provided URL fails to load
               const target = e.target as HTMLImageElement;
               target.onerror = null;
               target.src = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face";
@@ -282,7 +272,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
           </div>
             <div className="mt-4">
             <div className="flex flex-wrap gap-2 mb-3">
-              {/* Show only 1 association in mobile, but 3 in desktop */}
               {psychologist.association.slice(0, 1).map((spec, index) => (
                 <span 
                   key={index}
@@ -291,7 +280,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                   {spec}
                 </span>
               ))}
-              {/* Additional associations visible only on desktop */}
               {psychologist.association.slice(1, 3).map((spec, index) => (
                 <span 
                   key={index + 1}
@@ -300,13 +288,11 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                   {spec}
                 </span>
               ))}
-              {/* Show +more for mobile if more than 1 association */}
               {psychologist.association.length > 1 && (
                 <span className="sm:hidden px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
                   +{psychologist.association.length - 1} more
                 </span>
               )}
-              {/* Show +more for desktop if more than 3 associations */}
               {psychologist.association.length > 3 && (
                 <span className="hidden sm:inline-flex px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
                   +{psychologist.association.length - 3} more
@@ -523,7 +509,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                   <PsychologistCard key={psychologist.id} psychologist={psychologist} />
                 ))}
                 
-                {/* Pagination UI - Only show when a specific city is selected */}
                 {selectedCities.length === 1 && pagination && pagination.totalPages > 1 && (
                   <div className="mt-8 flex justify-center">
                     <nav className="flex items-center justify-center gap-2">                      <button
@@ -543,20 +528,15 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                       
                       <div className="flex items-center gap-1">
                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                          // Show pagination numbers based on current page position
                           let pageNum;
                           
                           if (pagination.totalPages <= 5) {
-                            // If 5 or fewer pages, show all
                             pageNum = i + 1;
                           } else if (currentPage <= 3) {
-                            // If near the start, show 1,2,3,4,5
                             pageNum = i + 1;
                           } else if (currentPage >= pagination.totalPages - 2) {
-                            // If near the end, show last 5 pages
                             pageNum = pagination.totalPages - 4 + i;
                           } else {
-                            // Otherwise center around current page
                             pageNum = currentPage - 2 + i;
                           }
                           
@@ -621,7 +601,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                 </button>
               </div>
               
-              {/* Mobile-friendly layout with centered image at top */}
               <div className="flex flex-col items-center mb-6 pt-4">
                 <div className="w-[120px] h-[120px] rounded-full overflow-hidden relative mb-4 shadow-md">
                   <Image
@@ -631,7 +610,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                     height={120}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      // Fallback image if the provided URL fails to load
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
                       target.src = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face";
@@ -687,7 +665,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                     Associations
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {/* Show only 1 association in mobile */}
                     {selectedPsychologist.association.slice(0, 1).map((spec, index) => (
                       <span 
                         key={index}
@@ -697,7 +674,6 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                       </span>
                     ))}
                     
-                    {/* Additional associations visible only on desktop */}
                     {selectedPsychologist.association.slice(1, 3).map((spec, index) => (
                       <span 
                         key={index + 1}
@@ -707,14 +683,12 @@ export default function FindPsychologistPage() {  const [psychologists, setPsych
                       </span>
                     ))}
                     
-                    {/* Show +more indicator on mobile if more than 1 association */}
                     {selectedPsychologist.association.length > 1 && (
                       <span className="sm:hidden px-3 py-1.5 bg-muted text-muted-foreground rounded-full text-sm">
                         +{selectedPsychologist.association.length - 1} more
                       </span>
                     )}
                     
-                    {/* Show +more indicator on desktop if more than 3 associations */}
                     {selectedPsychologist.association.length > 3 && (
                       <span className="hidden sm:inline-block px-3 py-1.5 bg-muted text-muted-foreground rounded-full text-sm">
                         +{selectedPsychologist.association.length - 3} more

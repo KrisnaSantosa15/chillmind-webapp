@@ -10,12 +10,10 @@ export default function LoggedInRedirect({ children }: { children: React.ReactNo
 
   useEffect(() => {
     if (!loading && user) {
-      // If user is logged in, redirect to dashboard
       router.push('/dashboard');
     }
   }, [loading, user, router]);
 
-  // Show loading indicator while checking authentication
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -24,6 +22,5 @@ export default function LoggedInRedirect({ children }: { children: React.ReactNo
     );
   }
 
-  // Only render children if not authenticated
   return !user ? <>{children}</> : null;
 }
