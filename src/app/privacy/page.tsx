@@ -73,7 +73,8 @@ export default function PrivacyPolicy() {
               <span>Last updated: June 3, 2025</span>
             </motion.div>
           </div>
-        </section>        {/* Navigation Tabs */}
+        </section>{" "}
+        {/* Navigation Tabs */}
         <section className="sticky top-20 bg-background/95 backdrop-blur-sm border-b border-muted z-10">
           <div className="max-w-6xl mx-auto px-6 md:px-12">
             {/* Mobile Dropdown Navigation */}
@@ -85,17 +86,23 @@ export default function PrivacyPolicy() {
                 >
                   <div className="flex items-center">
                     {(() => {
-                      const currentSection = sections.find(s => s.id === activeSection);
+                      const currentSection = sections.find(
+                        (s) => s.id === activeSection
+                      );
                       const IconComponent = currentSection?.icon || Eye;
                       return (
                         <>
                           <IconComponent className="h-4 w-4 mr-2 text-indigo-600" />
-                          {currentSection?.title || 'Overview'}
+                          {currentSection?.title || "Overview"}
                         </>
                       );
                     })()}
                   </div>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${mobileMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${
+                      mobileMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
                 {mobileMenuOpen && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-muted rounded-lg shadow-lg z-20">
@@ -110,8 +117,8 @@ export default function PrivacyPolicy() {
                           }}
                           className={`w-full flex items-center px-4 py-3 text-sm font-medium transition-colors ${
                             activeSection === section.id
-                              ? 'text-indigo-600 bg-indigo-50'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                              ? "text-indigo-600 bg-indigo-50"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                           }`}
                         >
                           <IconComponent className="h-4 w-4 mr-2" />
@@ -146,7 +153,6 @@ export default function PrivacyPolicy() {
             </nav>
           </div>
         </section>
-
         {/* Content */}
         <div className="flex-1 py-12 px-6 md:px-12">
           <div className="max-w-4xl mx-auto">

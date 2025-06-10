@@ -101,12 +101,8 @@ ChillMind is a fully-featured, AI-powered mental health monitoring and support p
    ```
 
 3. Set up environment variables
-   Create a `.env.local` file in the root directory with the following variables:
+   Create a `.env` file in the root directory with the following variables:
    ```
-   # Gemini API Configuration
-   GEMINI_API_KEY=your_gemini_api_key_here
-   GEMINI_SYSTEM_INSTRUCTION="You are an AI assistant for ChillMind, a mental wellness platform for students..."
-
    # Firebase Configuration (Client-side)
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
@@ -121,6 +117,13 @@ ChillMind is a fully-featured, AI-powered mental health monitoring and support p
    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_CONTENT\n-----END PRIVATE KEY-----"
    FIREBASE_CLIENT_EMAIL=your_client_email
    FIREBASE_CLIENT_ID=your_client_id
+
+   # App Configuration
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+   # Gemini API Configuration
+   GEMINI_API_KEY=your_gemini_api_key_here
+   GEMINI_SYSTEM_INSTRUCTION="You are an AI assistant for ChillMind, a mental wellness platform for students..."
    ```
 
 4. Run the development server
@@ -129,6 +132,39 @@ ChillMind is a fully-featured, AI-powered mental health monitoring and support p
    ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application
+  
+## 🌐 Environment Variables Setup
+  **How to get these values:**
+  *   **Gemini API Configuration:** <br>
+     1.  Go to [Google AI Studio](https://aistudio.google.com/app/apikey) (formerly MakerSuite). <br>
+     2.  Create or use an existing API key. <br>
+     3.  `GEMINI_API_KEY`: Your generated API key. <br>
+     4.  `GEMINI_SYSTEM_INSTRUCTION`: This is a custom instruction for the AI model. You can use the provided example or customize it. <br>
+  *   **Firebase Configuration (Client-side):** <br>
+     1.  Go to the [Firebase Console](https://console.firebase.google.com/). <br>
+     2.  Select your project (or create a new one). <br>
+     3.  Go to Project settings (click the gear icon ⚙️ next to Project Overview). <br>
+     4.  In the "General" tab, scroll down to "Your apps". <br>
+     5.  If you haven't registered your web app, click the web icon (`</>`) to add a new web app. <br>
+     6.  After registering, you'll find the Firebase SDK snippet. The values for `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, and `NEXT_PUBLIC_FIREBASE_APP_ID` correspond to `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, and `appId` in this snippet.
+  *   **Firebase Configuration (Server-side):** <br>
+     1.  In the Firebase Console, go to Project settings. <br>
+     2.  Navigate to the "Service accounts" tab. <br>
+     3.  Select "Firebase Admin SDK" and your preferred language (Node.js for this project). <br>
+     4.  Click "Generate new private key". A JSON file will be downloaded. <br>
+     5.  Open the downloaded JSON file:
+        *   `FIREBASE_PROJECT_ID`: Use the `project_id` value from the JSON file.
+        *   `FIREBASE_PRIVATE_KEY_ID`: Use the `private_key_id` value from the JSON file.
+        *   `FIREBASE_PRIVATE_KEY`: Use the `private_key` value from the JSON file. Ensure it's formatted as a single string with `\n` for newlines, like the example in `.env`.
+        *   `FIREBASE_CLIENT_EMAIL`: Use the `client_email` value from the JSON file.
+        *   `FIREBASE_CLIENT_ID`: Use the `client_id` value from the JSON file.
+
+- Run the development server
+  ```
+  npm run dev
+  ```
+
+- Open [http://localhost:3000](http://localhost:3000) in your browser to see the application
 
 ## 📁 Project Structure
 

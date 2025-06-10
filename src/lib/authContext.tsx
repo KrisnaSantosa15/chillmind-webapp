@@ -1,25 +1,30 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { 
+import { createContext, useContext, useEffect, useState } from "react";
+import {
   User,
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<User>;
   signInWithGoogle: () => Promise<User>;
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<User>;
+  signUp: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ) => Promise<User>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -27,11 +32,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  signIn: async () => { throw new Error('Not implemented') },
-  signInWithGoogle: async () => { throw new Error('Not implemented') },
-  signUp: async () => { throw new Error('Not implemented') },
-  signOut: async () => { throw new Error('Not implemented') },
-  resetPassword: async () => { throw new Error('Not implemented') }
+  signIn: async () => {
+    throw new Error("Not implemented");
+  },
+  signInWithGoogle: async () => {
+    throw new Error("Not implemented");
+  },
+  signUp: async () => {
+    throw new Error("Not implemented");
+  },
+  signOut: async () => {
+    throw new Error("Not implemented");
+  },
+  resetPassword: async () => {
+    throw new Error("Not implemented");
+  },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -50,15 +65,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string): Promise<User> => {
-  try {
-    // console.log('Attempting sign-in with:', { email, password }); 
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    console.error('Error signing in:', error);
-    throw error;
-  }
-};
+    try {
+      // console.log('Attempting sign-in with:', { email, password });
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential.user;
+    } catch (error) {
+      console.error("Error signing in:", error);
+      throw error;
+    }
+  };
 
   const signInWithGoogle = async (): Promise<User> => {
     try {
@@ -66,20 +85,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userCredential = await signInWithPopup(auth, provider);
       return userCredential.user;
     } catch (error) {
-      console.error('Error signing in with Google:', error);
+      console.error("Error signing in with Google:", error);
       throw error;
     }
   };
 
-  const signUp = async (email: string, password: string, firstName: string, lastName: string): Promise<User> => {
+  const signUp = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<User> => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       await updateProfile(userCredential.user, {
-        displayName: `${firstName} ${lastName}`
+        displayName: `${firstName} ${lastName}`,
       });
       return userCredential.user;
     } catch (error) {
-      console.error('Error signing up:', error);
+      console.error("Error signing up:", error);
       throw error;
     }
   };
@@ -88,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await firebaseSignOut(auth);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
       throw error;
     }
   };
@@ -97,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error) {
-      console.error('Error resetting password:', error);
+      console.error("Error resetting password:", error);
       throw error;
     }
   };
@@ -109,12 +137,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signInWithGoogle,
     signUp,
     signOut,
-    resetPassword
+    resetPassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,48 +1,48 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 type Message = {
   id: string;
   text: string;
-  sender: 'ai' | 'user';
+  sender: "ai" | "user";
   timestamp: Date;
 };
 
 const AIAssistant: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
+      id: "1",
       text: "Hello! I'm your AI mental health assistant. How can I help you today?",
-      sender: 'ai',
-      timestamp: new Date()
+      sender: "ai",
+      timestamp: new Date(),
     },
     {
-      id: '2',
+      id: "2",
       text: "I notice you've been tracking your mood. Would you like to talk about anything specific?",
-      sender: 'ai',
-      timestamp: new Date()
-    }
+      sender: "ai",
+      timestamp: new Date(),
+    },
   ]);
-  
-  const [newMessage, setNewMessage] = useState('');
-  
+
+  const [newMessage, setNewMessage] = useState("");
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (newMessage.trim() === '') return;
-    
+
+    if (newMessage.trim() === "") return;
+
     // Add user message
     const userMsg: Message = {
       id: Date.now().toString(),
       text: newMessage,
-      sender: 'user',
-      timestamp: new Date()
+      sender: "user",
+      timestamp: new Date(),
     };
-    
-    setMessages(prev => [...prev, userMsg]);
-    setNewMessage('');
-    
+
+    setMessages((prev) => [...prev, userMsg]);
+    setNewMessage("");
+
     // Simulate AI response after a short delay
     setTimeout(() => {
       const aiResponses = [
@@ -50,22 +50,23 @@ const AIAssistant: React.FC = () => {
         "That's interesting. Can you tell me more about that?",
         "I'm here to support you. What would help you feel better right now?",
         "Have you tried any coping strategies for this situation before?",
-        "It sounds like you're going through a lot. Let's break this down together."
+        "It sounds like you're going through a lot. Let's break this down together.",
       ];
-      
-      const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-      
+
+      const randomResponse =
+        aiResponses[Math.floor(Math.random() * aiResponses.length)];
+
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
         text: randomResponse,
-        sender: 'ai',
-        timestamp: new Date()
+        sender: "ai",
+        timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, aiMsg]);
+
+      setMessages((prev) => [...prev, aiMsg]);
     }, 1000);
   };
-  
+
   return (
     <div className="bg-background rounded-xl shadow-sm border border-muted overflow-hidden flex flex-col h-full">
       <div className="p-4 border-b border-muted flex items-center justify-between">
@@ -74,7 +75,9 @@ const AIAssistant: React.FC = () => {
             <i className="fas fa-robot text-primary"></i>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-foreground">AI Mental Health Assistant</h3>
+            <h3 className="text-sm font-medium text-foreground">
+              AI Mental Health Assistant
+            </h3>
             <span className="text-xs text-primary flex items-center">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1"></span>
               Online
@@ -82,25 +85,28 @@ const AIAssistant: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="flex-1 p-4 overflow-y-auto max-h-[300px]">
         <div className="space-y-4">
-          {messages.map(message => (
-            <div 
-              key={message.id} 
+          {messages.map((message) => (
+            <div
+              key={message.id}
               className={`chat-message p-3 ${
-                message.sender === 'user' ? 'user-message' : 'ai-message'
+                message.sender === "user" ? "user-message" : "ai-message"
               }`}
             >
               <p className="text-sm">{message.text}</p>
               <span className="text-xs opacity-70 block mt-1">
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {message.timestamp.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
           ))}
         </div>
       </div>
-      
+
       <div className="p-4 border-t border-muted">
         <div className="mb-2">
           <h4 className="text-xs font-medium text-muted-foreground mb-1">
@@ -127,7 +133,7 @@ const AIAssistant: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         <form onSubmit={handleSendMessage} className="flex">
           <input
             type="text"
@@ -148,4 +154,4 @@ const AIAssistant: React.FC = () => {
   );
 };
 
-export default AIAssistant; 
+export default AIAssistant;

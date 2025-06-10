@@ -1,92 +1,105 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Button from '@/components/ui/Button';
-import { useAuth } from '@/lib/authContext';
-import { FirebaseError } from 'firebase/app';
-import LoggedInRedirect from '@/components/auth/LoggedInRedirect';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/authContext";
+import { FirebaseError } from "firebase/app";
+import LoggedInRedirect from "@/components/auth/LoggedInRedirect";
 
 export default function RegisterPage() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signUp, signInWithGoogle } = useAuth();
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await signUp(email, password, firstName, lastName);
-      
-      const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
-      
+
+      const hasPendingAssessment =
+        localStorage.getItem("assessment_pending") === "true";
+
       if (hasPendingAssessment) {
-        router.push('/onboarding/results');
+        router.push("/onboarding/results");
       } else {
-        router.push('/onboarding');
+        router.push("/onboarding");
       }
     } catch (error: unknown) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        if (errorCode === 'auth/email-already-in-use') {
-          setError('This email is already in use. Please use a different email or try logging in.');
-        } else if (errorCode === 'auth/invalid-email') {
-          setError('The email address is not valid. Please enter a valid email.');
-        } else if (errorCode === 'auth/weak-password') {
-          setError('Password is too weak. Please use a stronger password.');
-        } else if (errorCode === 'auth/network-request-failed') {
-          setError('Network error. Please check your internet connection and try again.');
+        if (errorCode === "auth/email-already-in-use") {
+          setError(
+            "This email is already in use. Please use a different email or try logging in."
+          );
+        } else if (errorCode === "auth/invalid-email") {
+          setError(
+            "The email address is not valid. Please enter a valid email."
+          );
+        } else if (errorCode === "auth/weak-password") {
+          setError("Password is too weak. Please use a stronger password.");
+        } else if (errorCode === "auth/network-request-failed") {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
         } else {
           setError(`Authentication error: ${errorCode}`);
         }
       } else {
-        setError('Failed to create account. Please try again later.');
+        setError("Failed to create account. Please try again later.");
       }
     } finally {
       setIsLoading(false);
     }
   };
   const handleGoogleSignUp = async () => {
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await signInWithGoogle();
-      
-      const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
-      
+
+      const hasPendingAssessment =
+        localStorage.getItem("assessment_pending") === "true";
+
       if (hasPendingAssessment) {
-        router.push('/onboarding/results');
+        router.push("/onboarding/results");
       } else {
-        router.push('/onboarding');
+        router.push("/onboarding");
       }
     } catch (error: unknown) {
-      console.error('Google signup error:', error);
+      console.error("Google signup error:", error);
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        if (errorCode === 'auth/popup-closed-by-user') {
-          setError('Sign up was cancelled. Please try again.');
-        } else if (errorCode === 'auth/popup-blocked') {
-          setError('Sign up popup was blocked by your browser. Please allow popups for this site.');
-        } else if (errorCode === 'auth/cancelled-popup-request') {
-          setError('Sign up was cancelled. Please try again.');
-        } else if (errorCode === 'auth/network-request-failed') {
-          setError('Network error. Please check your internet connection and try again.');
+        if (errorCode === "auth/popup-closed-by-user") {
+          setError("Sign up was cancelled. Please try again.");
+        } else if (errorCode === "auth/popup-blocked") {
+          setError(
+            "Sign up popup was blocked by your browser. Please allow popups for this site."
+          );
+        } else if (errorCode === "auth/cancelled-popup-request") {
+          setError("Sign up was cancelled. Please try again.");
+        } else if (errorCode === "auth/network-request-failed") {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
         } else {
           setError(`Authentication error: ${errorCode}`);
         }
       } else {
-        setError('Failed to sign up with Google. Please try again later.');
+        setError("Failed to sign up with Google. Please try again later.");
       }
     } finally {
       setIsLoading(false);
@@ -98,21 +111,24 @@ export default function RegisterPage() {
       <main className="flex min-h-screen items-center justify-center px-6 py-24">
         <div className="w-full max-w-md rounded-lg border border-muted p-8 shadow-sm">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-foreground">Create an Account</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              Create an Account
+            </h1>
             <p className="mt-2 text-muted-foreground">
               Start your mental wellness journey today
             </p>
-          </div><form className="space-y-6" onSubmit={handleSubmit}>
+          </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
                 {error}
               </div>
             )}
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label 
-                  htmlFor="firstName" 
+                <label
+                  htmlFor="firstName"
                   className="block text-sm font-medium text-foreground mb-1"
                 >
                   First Name
@@ -128,8 +144,8 @@ export default function RegisterPage() {
                 />
               </div>
               <div>
-                <label 
-                  htmlFor="lastName" 
+                <label
+                  htmlFor="lastName"
                   className="block text-sm font-medium text-foreground mb-1"
                 >
                   Last Name
@@ -147,8 +163,8 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label 
-                htmlFor="email" 
+              <label
+                htmlFor="email"
                 className="block text-sm font-medium text-foreground mb-1"
               >
                 Email
@@ -166,12 +182,13 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
+              <label
+                htmlFor="password"
                 className="block text-sm font-medium text-foreground mb-1"
               >
                 Password
-              </label>              <div className="relative">
+              </label>{" "}
+              <div className="relative">
                 <input
                   id="password"
                   name="password"
@@ -188,20 +205,39 @@ export default function RegisterPage() {
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"
+                        clipRule="evenodd"
+                      />
                       <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
                     </svg>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Must be at least 8 characters with a number and special character
+                Must be at least 8 characters with a number and special
+                character
               </p>
             </div>
 
@@ -213,12 +249,15 @@ export default function RegisterPage() {
                 required
                 className="h-4 w-4 rounded border-muted text-primary focus:ring-primary"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-muted-foreground">
-                I agree to the{' '}
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-muted-foreground"
+              >
+                I agree to the{" "}
                 <Link href="/terms" className="text-primary hover:underline">
                   Terms of Service
-                </Link>{' '}
-                and{' '}
+                </Link>{" "}
+                and{" "}
                 <Link href="/privacy" className="text-primary hover:underline">
                   Privacy Policy
                 </Link>
@@ -226,13 +265,13 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 className="w-full"
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? 'Creating account...' : 'Sign up'}
+                {isLoading ? "Creating account..." : "Sign up"}
               </Button>
             </div>
           </form>
@@ -247,7 +286,8 @@ export default function RegisterPage() {
                   Or continue with
                 </span>
               </div>
-            </div>            <div className="mt-6 grid grid-cols-1 gap-3">
+            </div>{" "}
+            <div className="mt-6 grid grid-cols-1 gap-3">
               <button
                 type="button"
                 onClick={handleGoogleSignUp}
@@ -278,19 +318,17 @@ export default function RegisterPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                {isLoading ? 'Signing up...' : 'Sign up with Google'}
+                {isLoading ? "Signing up..." : "Sign up with Google"}
               </button>
             </div>
           </div>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link
-              href="/auth/login"
-              className="text-primary hover:underline"
-            >
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-primary hover:underline">
               Sign in
-            </Link>          </p>
+            </Link>{" "}
+          </p>
         </div>
       </main>
       <Footer />

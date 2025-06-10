@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Button from '@/components/ui/Button';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Button from "@/components/ui/Button";
 
 // Demographic options
 const ageOptions = [
@@ -13,13 +13,13 @@ const ageOptions = [
   { value: "18-22", label: "18-22" },
   { value: "23-26", label: "23-26" },
   { value: "27-30", label: "27-30" },
-  { value: "above30", label: "Above 30" }
+  { value: "above30", label: "Above 30" },
 ];
 
 const genderOptions = [
   { value: "male", label: "Male" },
   { value: "female", label: "Female" },
-  { value: "preferNotToSay", label: "Prefer not to say" }
+  { value: "preferNotToSay", label: "Prefer not to say" },
 ];
 
 const academicYearOptions = [
@@ -27,7 +27,7 @@ const academicYearOptions = [
   { value: "secondYear", label: "Second year or equivalent" },
   { value: "thirdYear", label: "Third year or equivalent" },
   { value: "fourthYear", label: "Fourth year or equivalent" },
-  { value: "other", label: "Other" }
+  { value: "other", label: "Other" },
 ];
 
 const gpaOptions = [
@@ -35,12 +35,12 @@ const gpaOptions = [
   { value: "3.00-3.39", label: "3.00-3.39" },
   { value: "3.40-3.79", label: "3.40-3.79" },
   { value: "3.80-4.00", label: "3.80-4.00" },
-  { value: "other", label: "Other" }
+  { value: "other", label: "Other" },
 ];
 
 const scholarshipOptions = [
   { value: true, label: "Yes" },
-  { value: false, label: "No" }
+  { value: false, label: "No" },
 ];
 
 interface DemographicsData {
@@ -66,21 +66,24 @@ export default function DemographicsPage() {
     gender: "",
     academicYear: "",
     gpa: "",
-    scholarship: null
+    scholarship: null,
   });
 
   const [errors, setErrors] = useState<ErrorState>({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (field: keyof DemographicsData, value: string | boolean) => {
-    setDemographics(prev => ({
+  const handleChange = (
+    field: keyof DemographicsData,
+    value: string | boolean
+  ) => {
+    setDemographics((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: undefined
+        [field]: undefined,
       }));
     }
   };
@@ -94,18 +97,18 @@ export default function DemographicsPage() {
         newErrors[typedKey] = "This field is required";
       }
     });
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setLoading(true);
-      localStorage.setItem('demographics', JSON.stringify(demographics));
-      router.push('/onboarding/phq9');
+      localStorage.setItem("demographics", JSON.stringify(demographics));
+      router.push("/onboarding/phq9");
     }
   };
 
@@ -119,10 +122,11 @@ export default function DemographicsPage() {
               Tell Us About Yourself
             </h1>
             <p className="text-lg text-muted-foreground">
-              This information helps us understand your context and provide more relevant insights.
+              This information helps us understand your context and provide more
+              relevant insights.
             </p>
           </div>
-          
+
           {/* Step Indicator */}
           <div className="mb-12">
             <div className="hidden md:flex items-center justify-between">
@@ -130,96 +134,131 @@ export default function DemographicsPage() {
                 <div className="w-10 h-10 rounded-full bg-primary/50 flex items-center justify-center text-white font-bold">
                   ✓
                 </div>
-                <span className="text-sm mt-2 text-primary/50 font-medium">Introduction</span>
+                <span className="text-sm mt-2 text-primary/50 font-medium">
+                  Introduction
+                </span>
               </div>
               <div className="flex-1 h-1 mx-2 bg-primary/50"></div>
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                   2
                 </div>
-                <span className="text-sm mt-2 text-primary font-medium">Demographics</span>
+                <span className="text-sm mt-2 text-primary font-medium">
+                  Demographics
+                </span>
               </div>
               <div className="flex-1 h-1 mx-2 bg-muted"></div>
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
                   3
                 </div>
-                <span className="text-sm mt-2 text-muted-foreground">Depression</span>
+                <span className="text-sm mt-2 text-muted-foreground">
+                  Depression
+                </span>
               </div>
               <div className="flex-1 h-1 mx-2 bg-muted"></div>
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
                   4
                 </div>
-                <span className="text-sm mt-2 text-muted-foreground">Anxiety</span>
+                <span className="text-sm mt-2 text-muted-foreground">
+                  Anxiety
+                </span>
               </div>
               <div className="flex-1 h-1 mx-2 bg-muted"></div>
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
                   5
                 </div>
-                <span className="text-sm mt-2 text-muted-foreground">Stress</span>
+                <span className="text-sm mt-2 text-muted-foreground">
+                  Stress
+                </span>
               </div>
               <div className="flex-1 h-1 mx-2 bg-muted"></div>
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
                   6
                 </div>
-                <span className="text-sm mt-2 text-muted-foreground">Results</span>
+                <span className="text-sm mt-2 text-muted-foreground">
+                  Results
+                </span>
               </div>
             </div>
-            
+
             <div className="md:hidden">
               <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-4">
-                <div className="h-full bg-gradient-to-r from-primary/70 to-primary" style={{ width: '33.3%' }}></div>
+                <div
+                  className="h-full bg-gradient-to-r from-primary/70 to-primary"
+                  style={{ width: "33.3%" }}
+                ></div>
               </div>
-              
+
               <div className="relative mb-2">
                 <div className="overflow-x-auto pb-3 scrollbar-hide">
                   <div className="flex gap-2 w-max px-2">
-                    {['Introduction', 'Demographics', 'Depression', 'Anxiety', 'Stress', 'Results'].map((step, index) => (
-                      <div 
-                        key={index} 
+                    {[
+                      "Introduction",
+                      "Demographics",
+                      "Depression",
+                      "Anxiety",
+                      "Stress",
+                      "Results",
+                    ].map((step, index) => (
+                      <div
+                        key={index}
                         className={`flex items-center px-4 py-2 rounded-lg border transition-all ${
-                          index === 1 
-                            ? 'bg-primary text-white border-primary min-w-[90px] scale-105 shadow-md' 
-                            : (index < 1 
-                              ? 'bg-primary/20 border-primary/30 text-primary/70 min-w-[85px]'
-                              : 'bg-primary/10 border-primary/20 text-muted-foreground min-w-[85px]')
+                          index === 1
+                            ? "bg-primary text-white border-primary min-w-[90px] scale-105 shadow-md"
+                            : index < 1
+                            ? "bg-primary/20 border-primary/30 text-primary/70 min-w-[85px]"
+                            : "bg-primary/10 border-primary/20 text-muted-foreground min-w-[85px]"
                         }`}
                       >
-                        <span className={`w-5 h-5 rounded-full ${
-                          index === 1 
-                            ? 'bg-white text-primary' 
-                            : (index < 1 
-                              ? 'bg-primary/50 text-white' 
-                              : 'bg-primary/30 text-white')
-                        } flex items-center justify-center text-xs font-bold mr-2`}>
-                          {index < 1 ? '✓' : index + 1}
+                        <span
+                          className={`w-5 h-5 rounded-full ${
+                            index === 1
+                              ? "bg-white text-primary"
+                              : index < 1
+                              ? "bg-primary/50 text-white"
+                              : "bg-primary/30 text-white"
+                          } flex items-center justify-center text-xs font-bold mr-2`}
+                        >
+                          {index < 1 ? "✓" : index + 1}
                         </span>
                         <span className="text-xs whitespace-nowrap">
-                          {index === 0 ? 'Intro' : step}
+                          {index === 0 ? "Intro" : step}
                         </span>
                       </div>
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="absolute top-0 left-0 h-full w-6 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
                 <div className="absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
               </div>
-              
+
               <p className="text-[10px] text-center text-muted-foreground">
                 <span className="inline-flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                   Swipe to see all steps
                 </span>
               </p>
             </div>
           </div>
-          
+
           <div className="bg-background border border-muted rounded-lg p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Age Group */}
@@ -236,7 +275,7 @@ export default function DemographicsPage() {
                         name="age"
                         value={option.value}
                         checked={demographics.age === option.value}
-                        onChange={() => handleChange('age', option.value)}
+                        onChange={() => handleChange("age", option.value)}
                         className="sr-only peer"
                       />
                       <label
@@ -248,9 +287,11 @@ export default function DemographicsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.age && <p className="text-accent text-sm mt-1">{errors.age}</p>}
+                {errors.age && (
+                  <p className="text-accent text-sm mt-1">{errors.age}</p>
+                )}
               </div>
-              
+
               {/* Gender */}
               <div className="space-y-4">
                 <label className="block text-lg font-medium text-foreground">
@@ -265,7 +306,7 @@ export default function DemographicsPage() {
                         name="gender"
                         value={option.value}
                         checked={demographics.gender === option.value}
-                        onChange={() => handleChange('gender', option.value)}
+                        onChange={() => handleChange("gender", option.value)}
                         className="sr-only peer"
                       />
                       <label
@@ -277,9 +318,11 @@ export default function DemographicsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.gender && <p className="text-accent text-sm mt-1">{errors.gender}</p>}
+                {errors.gender && (
+                  <p className="text-accent text-sm mt-1">{errors.gender}</p>
+                )}
               </div>
-              
+
               {/* Academic Year */}
               <div className="space-y-4">
                 <label className="block text-lg font-medium text-foreground">
@@ -294,7 +337,9 @@ export default function DemographicsPage() {
                         name="academicYear"
                         value={option.value}
                         checked={demographics.academicYear === option.value}
-                        onChange={() => handleChange('academicYear', option.value)}
+                        onChange={() =>
+                          handleChange("academicYear", option.value)
+                        }
                         className="sr-only peer"
                       />
                       <label
@@ -306,9 +351,13 @@ export default function DemographicsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.academicYear && <p className="text-accent text-sm mt-1">{errors.academicYear}</p>}
+                {errors.academicYear && (
+                  <p className="text-accent text-sm mt-1">
+                    {errors.academicYear}
+                  </p>
+                )}
               </div>
-              
+
               {/* GPA */}
               <div className="space-y-4">
                 <label className="block text-lg font-medium text-foreground">
@@ -323,7 +372,7 @@ export default function DemographicsPage() {
                         name="gpa"
                         value={option.value}
                         checked={demographics.gpa === option.value}
-                        onChange={() => handleChange('gpa', option.value)}
+                        onChange={() => handleChange("gpa", option.value)}
                         className="sr-only peer"
                       />
                       <label
@@ -335,9 +384,11 @@ export default function DemographicsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.gpa && <p className="text-accent text-sm mt-1">{errors.gpa}</p>}
+                {errors.gpa && (
+                  <p className="text-accent text-sm mt-1">{errors.gpa}</p>
+                )}
               </div>
-              
+
               {/* Scholarship */}
               <div className="space-y-4">
                 <label className="block text-lg font-medium text-foreground">
@@ -352,7 +403,9 @@ export default function DemographicsPage() {
                         name="scholarship"
                         value={String(option.value)}
                         checked={demographics.scholarship === option.value}
-                        onChange={() => handleChange('scholarship', option.value)}
+                        onChange={() =>
+                          handleChange("scholarship", option.value)
+                        }
                         className="sr-only peer"
                       />
                       <label
@@ -364,29 +417,46 @@ export default function DemographicsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.scholarship && <p className="text-accent text-sm mt-1">{errors.scholarship}</p>}
+                {errors.scholarship && (
+                  <p className="text-accent text-sm mt-1">
+                    {errors.scholarship}
+                  </p>
+                )}
               </div>
-              
+
               <div className="flex justify-between pt-6">
                 <Link href="/onboarding">
                   <Button variant="outline" type="button">
                     Previous
                   </Button>
                 </Link>
-                <Button variant="primary" type="submit" disabled={loading} isLoading={loading} className='md:inline-block hidden'>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={loading}
+                  isLoading={loading}
+                  className="md:inline-block hidden"
+                >
                   Continue to Depression Assessment
                 </Button>
-                <Button variant="primary" type="submit" disabled={loading} isLoading={loading} className='md:hidden '>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={loading}
+                  isLoading={loading}
+                  className="md:hidden "
+                >
                   Continue
                 </Button>
               </div>
             </form>
           </div>
-          
+
           <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>
-              Your information is private and will only be used to personalize your mental health insights.
-              We do not share this data with third parties.
+              Your information is private and will only be used to personalize
+              your mental health insights. We do not share this data with third
+              parties.
             </p>
           </div>
         </div>

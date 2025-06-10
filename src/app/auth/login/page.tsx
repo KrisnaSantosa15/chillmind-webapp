@@ -1,94 +1,111 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Button from '@/components/ui/Button';
-import { useAuth } from '@/lib/authContext';
-import { FirebaseError } from 'firebase/app';
-import LoggedInRedirect from '@/components/auth/LoggedInRedirect';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/authContext";
+import { FirebaseError } from "firebase/app";
+import LoggedInRedirect from "@/components/auth/LoggedInRedirect";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, signInWithGoogle } = useAuth();
-  const router = useRouter();  const handleSubmit = async (e: React.FormEvent) => {
+  const router = useRouter();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await signIn(email, password);
-      
-      const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
-      
+
+      const hasPendingAssessment =
+        localStorage.getItem("assessment_pending") === "true";
+
       if (hasPendingAssessment) {
-        router.push('/onboarding/results');
+        router.push("/onboarding/results");
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch (error: unknown) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-          setError('Invalid email or password. Please try again.');
-        } else if (errorCode === 'auth/user-disabled') {
-          setError('This account has been disabled. Please contact support.');
-        } else if (errorCode === 'auth/too-many-requests') {
-          setError('Too many failed login attempts. Please try again later or reset your password.');
-        } else if (errorCode === 'auth/network-request-failed') {
-          setError('Network error. Please check your internet connection and try again.');
+        if (
+          errorCode === "auth/invalid-credential" ||
+          errorCode === "auth/user-not-found" ||
+          errorCode === "auth/wrong-password"
+        ) {
+          setError("Invalid email or password. Please try again.");
+        } else if (errorCode === "auth/user-disabled") {
+          setError("This account has been disabled. Please contact support.");
+        } else if (errorCode === "auth/too-many-requests") {
+          setError(
+            "Too many failed login attempts. Please try again later or reset your password."
+          );
+        } else if (errorCode === "auth/network-request-failed") {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
         } else {
           setError(`Authentication error: ${errorCode}`);
         }
       } else {
-        setError('Failed to sign in. Please try again later.');
+        setError("Failed to sign in. Please try again later.");
       }
     } finally {
       setIsLoading(false);
     }
-  };  const handleGoogleSignIn = async () => {
-    setError('');
+  };
+  const handleGoogleSignIn = async () => {
+    setError("");
     setIsLoading(true);
 
     try {
       await signInWithGoogle();
-      
-      const hasPendingAssessment = localStorage.getItem('assessment_pending') === 'true';
-      
+
+      const hasPendingAssessment =
+        localStorage.getItem("assessment_pending") === "true";
+
       if (hasPendingAssessment) {
-        router.push('/onboarding/results');
+        router.push("/onboarding/results");
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch (error: unknown) {
-      console.error('Google login error:', error);
+      console.error("Google login error:", error);
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        if (errorCode === 'auth/popup-closed-by-user') {
-          setError('Sign in was cancelled. Please try again.');
-        } else if (errorCode === 'auth/popup-blocked') {
-          setError('Sign in popup was blocked by your browser. Please allow popups for this site.');
-        } else if (errorCode === 'auth/cancelled-popup-request') {
-          setError('Sign in was cancelled. Please try again.');
-        } else if (errorCode === 'auth/network-request-failed') {
-          setError('Network error. Please check your internet connection and try again.');
+        if (errorCode === "auth/popup-closed-by-user") {
+          setError("Sign in was cancelled. Please try again.");
+        } else if (errorCode === "auth/popup-blocked") {
+          setError(
+            "Sign in popup was blocked by your browser. Please allow popups for this site."
+          );
+        } else if (errorCode === "auth/cancelled-popup-request") {
+          setError("Sign in was cancelled. Please try again.");
+        } else if (errorCode === "auth/network-request-failed") {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
         } else {
           setError(`Authentication error: ${errorCode}`);
         }
       } else {
-        setError('Failed to sign in with Google. Please try again later.');
+        setError("Failed to sign in with Google. Please try again later.");
       }
     } finally {
       setIsLoading(false);
     }
-  };  return (
+  };
+  return (
     <LoggedInRedirect>
       <Header />
       <main className="flex min-h-screen items-center justify-center px-6 py-24">
@@ -98,16 +115,17 @@ export default function LoginPage() {
             <p className="mt-2 text-muted-foreground">
               Sign in to continue your mental wellness journey
             </p>
-          </div><form className="space-y-6" onSubmit={handleSubmit}>
+          </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
                 {error}
               </div>
             )}
-            
+
             <div>
-              <label 
-                htmlFor="email" 
+              <label
+                htmlFor="email"
                 className="block text-sm font-medium text-foreground mb-1"
               >
                 Email
@@ -126,8 +144,8 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label 
-                  htmlFor="password" 
+                <label
+                  htmlFor="password"
                   className="block text-sm font-medium text-foreground"
                 >
                   Password
@@ -138,7 +156,8 @@ export default function LoginPage() {
                 >
                   Forgot password?
                 </Link>
-              </div>              <div className="relative">
+              </div>{" "}
+              <div className="relative">
                 <input
                   id="password"
                   name="password"
@@ -155,14 +174,32 @@ export default function LoginPage() {
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"
+                        clipRule="evenodd"
+                      />
                       <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
                     </svg>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   )}
                 </button>
@@ -170,13 +207,13 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 className="w-full"
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
           </form>
@@ -191,7 +228,8 @@ export default function LoginPage() {
                   Or continue with
                 </span>
               </div>
-            </div>            <div className="mt-6 grid grid-cols-1 gap-3">
+            </div>{" "}
+            <div className="mt-6 grid grid-cols-1 gap-3">
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
@@ -222,19 +260,20 @@ export default function LoginPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                {isLoading ? 'Signing in...' : 'Sign in with Google'}
+                {isLoading ? "Signing in..." : "Sign in with Google"}
               </button>
             </div>
           </div>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/register"
               className="text-primary hover:underline"
             >
               Sign up
-            </Link>          </p>
+            </Link>{" "}
+          </p>
         </div>
       </main>
       <Footer />

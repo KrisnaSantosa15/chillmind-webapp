@@ -1,49 +1,54 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Button from '@/components/ui/Button';
-import { useAuth } from '@/lib/authContext';
-import { FirebaseError } from 'firebase/app';
-import LoggedInRedirect from '@/components/auth/LoggedInRedirect';
+import React, { useState } from "react";
+import Link from "next/link";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/authContext";
+import { FirebaseError } from "firebase/app";
+import LoggedInRedirect from "@/components/auth/LoggedInRedirect";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     setIsLoading(true);
 
     try {
       await resetPassword(email);
-      setSuccess('Password reset email sent. Please check your inbox.');
-      setEmail('');
+      setSuccess("Password reset email sent. Please check your inbox.");
+      setEmail("");
     } catch (error: unknown) {
-      console.error('Password reset error:', error);
+      console.error("Password reset error:", error);
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        if (errorCode === 'auth/invalid-email') {
-          setError('The email address is not valid. Please enter a valid email.');
-        } else if (errorCode === 'auth/user-not-found') {
-          setError('No account found with this email. Please sign up.');
-        } else if (errorCode === 'auth/too-many-requests') {
-          setError('Too many requests. Please try again later.');
-        } else if (errorCode === 'auth/network-request-failed') {
-          setError('Network error. Please check your internet connection and try again.');
+        if (errorCode === "auth/invalid-email") {
+          setError(
+            "The email address is not valid. Please enter a valid email."
+          );
+        } else if (errorCode === "auth/user-not-found") {
+          setError("No account found with this email. Please sign up.");
+        } else if (errorCode === "auth/too-many-requests") {
+          setError("Too many requests. Please try again later.");
+        } else if (errorCode === "auth/network-request-failed") {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
         } else {
           setError(`Authentication error: ${errorCode}`);
         }
       } else {
-        setError('Failed to send password reset email. Please try again later.');
+        setError(
+          "Failed to send password reset email. Please try again later."
+        );
       }
     } finally {
       setIsLoading(false);
@@ -56,7 +61,9 @@ export default function ForgotPasswordPage() {
       <main className="flex min-h-screen items-center justify-center px-6 py-24">
         <div className="w-full max-w-md rounded-lg border border-muted p-8 shadow-sm">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-foreground">Reset Password</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              Reset Password
+            </h1>
             <p className="mt-2 text-muted-foreground">
               Enter your email to receive a password reset link
             </p>
@@ -100,13 +107,13 @@ export default function ForgotPasswordPage() {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? 'Sending...' : 'Send Reset Link'}
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
             </div>
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Remember your password?{' '}
+            Remember your password?{" "}
             <Link href="/auth/login" className="text-primary hover:underline">
               Sign in
             </Link>

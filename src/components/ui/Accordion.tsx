@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext } from "react";
 
 type AccordionContextType = {
   openItemId: string | null;
   toggleItem: (id: string) => void;
 };
 
-const AccordionContext = createContext<AccordionContextType | undefined>(undefined);
+const AccordionContext = createContext<AccordionContextType | undefined>(
+  undefined
+);
 
 type AccordionItemProps = {
   title: string;
@@ -18,12 +20,12 @@ type AccordionItemProps = {
 export const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
   children,
-  id
+  id,
 }) => {
   const context = useContext(AccordionContext);
-  
+
   if (!context) {
-    throw new Error('AccordionItem must be used within an Accordion');
+    throw new Error("AccordionItem must be used within an Accordion");
   }
 
   const { openItemId, toggleItem } = context;
@@ -48,21 +50,26 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`transition-transform duration-300 ease-out ${isOpen ? 'rotate-180' : ''}`}
+            className={`transition-transform duration-300 ease-out ${
+              isOpen ? "rotate-180" : ""
+            }`}
           >
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
-      </button>      <div
+      </button>{" "}
+      <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
-          isOpen ? 'opacity-100' : 'opacity-0 max-h-0'
+          isOpen ? "opacity-100" : "opacity-0 max-h-0"
         }`}
-        style={{ 
-          transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          maxHeight: isOpen ? '80vh' : '0' 
+        style={{
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          maxHeight: isOpen ? "80vh" : "0",
         }}
       >
-        <div className="p-6 pt-0 text-muted-foreground max-h-[80vh] overflow-y-auto">{children}</div>
+        <div className="p-6 pt-0 text-muted-foreground max-h-[80vh] overflow-y-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -74,15 +81,15 @@ type AccordionProps = {
   defaultOpenId?: string | null;
 };
 
-export const Accordion: React.FC<AccordionProps> = ({ 
-  children, 
-  className = '',
-  defaultOpenId = null
+export const Accordion: React.FC<AccordionProps> = ({
+  children,
+  className = "",
+  defaultOpenId = null,
 }) => {
   const [openItemId, setOpenItemId] = useState<string | null>(defaultOpenId);
 
   const toggleItem = (id: string) => {
-    setOpenItemId(prevId => prevId === id ? null : id);
+    setOpenItemId((prevId) => (prevId === id ? null : id));
   };
 
   return (
@@ -90,4 +97,4 @@ export const Accordion: React.FC<AccordionProps> = ({
       <div className={className}>{children}</div>
     </AccordionContext.Provider>
   );
-}; 
+};
