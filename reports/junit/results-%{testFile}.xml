@@ -1,0 +1,1828 @@
+<testsuites id="" name="" tests="162" failures="13" skipped="0" errors="0" time="1491.2304820000002">
+<testsuite name="auth.setup.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="setup" tests="1" failures="0" skipped="0" time="12.222" errors="0">
+<testcase name="authenticate" classname="auth.setup.ts" time="12.222">
+<system-out>
+<![CDATA[🔐 Starting authentication setup...
+📝 Filling login credentials...
+🔘 Clicking login button...
+⏳ Waiting for redirect to dashboard...
+✅ Redirected to dashboard
+🔑 Firebase keys found: []
+All localStorage keys: [ [32m'theme'[39m ]
+✅ Authentication completed and saved to: D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\playwright\.auth\user.json
+🔍 Saved state contains Firebase data: [33mfalse[39m
+
+[[ATTACHMENT|..\..\test-results\auth.setup.ts-authenticate-setup\trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[⚠️ WARNING: No Firebase auth keys found in localStorage!
+]]>
+</system-err>
+</testcase>
+</testsuite>
+<testsuite name="api-integration.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="11" failures="0" skipped="0" time="102.525" errors="0">
+<testcase name="API Integration Tests › Emotion Prediction API › should predict emotion from journal text" classname="api-integration.spec.ts" time="23.789">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-2fe80-t-emotion-from-journal-text-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › HIMPSI Psychologist API › should fetch psychologists from API" classname="api-integration.spec.ts" time="10.579">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-a9c76-etch-psychologists-from-API-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › Gemini AI API › should send message to AI and receive response" classname="api-integration.spec.ts" time="9.408">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-65ef2--to-AI-and-receive-response-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › Gemini AI API › should handle AI streaming response" classname="api-integration.spec.ts" time="6.775">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-2b735-andle-AI-streaming-response-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › Firebase Firestore › should save journal entry to Firestore" classname="api-integration.spec.ts" time="6.951">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-a7bf7--journal-entry-to-Firestore-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › Firebase Firestore › should update user mood streak in Firestore" classname="api-integration.spec.ts" time="9.581">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-68b8f-er-mood-streak-in-Firestore-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › Geocoding API › should geocode psychologist locations" classname="api-integration.spec.ts" time="6.754">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-02b9d-code-psychologist-locations-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › TensorFlow.js Model API › should load TF.js model from public directory" classname="api-integration.spec.ts" time="9.203">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-8bd53-model-from-public-directory-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Integration Tests › API Error Handling › should show retry option on API failure" classname="api-integration.spec.ts" time="6.715">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Integr-9e2ad-retry-option-on-API-failure-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Performance Tests › should complete AI response within 15 seconds" classname="api-integration.spec.ts" time="6.842">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Perfor-8f12c--response-within-15-seconds-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="API Performance Tests › should load ML model within 10 seconds" classname="api-integration.spec.ts" time="5.928">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\api-integration-API-Perfor-9fda1--ML-model-within-10-seconds-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-ai-assistant.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="10" failures="0" skipped="0" time="89.537" errors="0">
+<testcase name="AI Assistant Page › should display AI assistant interface" classname="dashboard-ai-assistant.spec.ts" time="8.554">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--7eaf1-play-AI-assistant-interface-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should display suggested topics" classname="dashboard-ai-assistant.spec.ts" time="8.506">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--2c854-ld-display-suggested-topics-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should have anxiety category topics" classname="dashboard-ai-assistant.spec.ts" time="8.545">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--fa797-ave-anxiety-category-topics-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should have wellbeing category topics" classname="dashboard-ai-assistant.spec.ts" time="8.553">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--3f5cd-e-wellbeing-category-topics-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should have support category topics" classname="dashboard-ai-assistant.spec.ts" time="8.535">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--593c5-ave-support-category-topics-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should send a custom message" classname="dashboard-ai-assistant.spec.ts" time="10.758">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--f4dd7-hould-send-a-custom-message-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should have sidebar navigation" classname="dashboard-ai-assistant.spec.ts" time="10.33">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--8e3c9-uld-have-sidebar-navigation-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should clear chat history" classname="dashboard-ai-assistant.spec.ts" time="8.545">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--59627-e-should-clear-chat-history-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should be responsive on mobile" classname="dashboard-ai-assistant.spec.ts" time="8.683">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--15da7-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AI Assistant Page › should handle empty input validation" classname="dashboard-ai-assistant.spec.ts" time="8.528">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-ai-assistant-AI--5f357-ndle-empty-input-validation-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-assessments.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="11" failures="11" skipped="0" time="340.563" errors="0">
+<testcase name="Assessments History Page › should display assessments page" classname="dashboard-assessments.spec.ts" time="30.915">
+<failure message="dashboard-assessments.spec.ts:12:7 should display assessments page" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:12:7 › Assessments History Page › should display assessments page 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-6e2df-ld-display-assessments-page-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should toggle between timeline and insights views" classname="dashboard-assessments.spec.ts" time="30.957">
+<failure message="dashboard-assessments.spec.ts:18:7 should toggle between timeline and insights views" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:18:7 › Assessments History Page › should toggle between timeline and insights views 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-61392-timeline-and-insights-views-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should display trend visualization bars" classname="dashboard-assessments.spec.ts" time="31.019">
+<failure message="dashboard-assessments.spec.ts:41:7 should display trend visualization bars" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:41:7 › Assessments History Page › should display trend visualization bars 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-ef8e4-ay-trend-visualization-bars-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should display severity scoring (1-5 scale)" classname="dashboard-assessments.spec.ts" time="30.95">
+<failure message="dashboard-assessments.spec.ts:56:7 should display severity scoring (1-5 scale)" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:56:7 › Assessments History Page › should display severity scoring (1-5 scale) 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-415dd-severity-scoring-1-5-scale--chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should display relative time (e.g., &quot;2 days ago&quot;)" classname="dashboard-assessments.spec.ts" time="30.964">
+<failure message="dashboard-assessments.spec.ts:67:7 should display relative time (e.g., &quot;2 days ago&quot;)" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:67:7 › Assessments History Page › should display relative time (e.g., "2 days ago") 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-2b7a3-lative-time-e-g-2-days-ago--chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should show assessment types (PHQ-9, GAD-7, PSS)" classname="dashboard-assessments.spec.ts" time="30.966">
+<failure message="dashboard-assessments.spec.ts:80:7 should show assessment types (PHQ-9, GAD-7, PSS)" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:80:7 › Assessments History Page › should show assessment types (PHQ-9, GAD-7, PSS) 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-74688-ment-types-PHQ-9-GAD-7-PSS--chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should show severity levels (Minimal, Mild, Moderate, Severe)" classname="dashboard-assessments.spec.ts" time="30.938">
+<failure message="dashboard-assessments.spec.ts:94:7 should show severity levels (Minimal, Mild, Moderate, Severe)" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:94:7 › Assessments History Page › should show severity levels (Minimal, Mild, Moderate, Severe) 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-616d4-nimal-Mild-Moderate-Severe--chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should filter assessments by type" classname="dashboard-assessments.spec.ts" time="30.974">
+<failure message="dashboard-assessments.spec.ts:105:7 should filter assessments by type" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:105:7 › Assessments History Page › should filter assessments by type 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-92684--filter-assessments-by-type-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should provide link to take new assessment" classname="dashboard-assessments.spec.ts" time="30.955">
+<failure message="dashboard-assessments.spec.ts:127:7 should provide link to take new assessment" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:127:7 › Assessments History Page › should provide link to take new assessment 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-33832-link-to-take-new-assessment-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should be responsive on mobile" classname="dashboard-assessments.spec.ts" time="30.963">
+<failure message="dashboard-assessments.spec.ts:141:7 should be responsive on mobile" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:141:7 › Assessments History Page › should be responsive on mobile 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-cc27d-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Assessments History Page › should show assessment details when clicked" classname="dashboard-assessments.spec.ts" time="30.962">
+<failure message="dashboard-assessments.spec.ts:157:7 should show assessment details when clicked" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-assessments.spec.ts:157:7 › Assessments History Page › should show assessment details when clicked 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Assessments History Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/assessments");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/assessments");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-assessments.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-assessments-Asse-a8339-ssment-details-when-clicked-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-journal.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="13" failures="0" skipped="0" time="109.971" errors="0">
+<testcase name="Journal Page - Advanced Features › should search journal entries with debounce" classname="dashboard-journal.spec.ts" time="9.958">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--3c0f4-urnal-entries-with-debounce-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should filter by mood types" classname="dashboard-journal.spec.ts" time="8.052">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--95aec-should-filter-by-mood-types-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should filter by tags" classname="dashboard-journal.spec.ts" time="7.845">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--c6f00-tures-should-filter-by-tags-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should filter by date range" classname="dashboard-journal.spec.ts" time="8.435">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--c3f82-should-filter-by-date-range-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should sort entries by newest" classname="dashboard-journal.spec.ts" time="8.191">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--5871c-ould-sort-entries-by-newest-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should sort entries by oldest" classname="dashboard-journal.spec.ts" time="7.947">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--fcdba-ould-sort-entries-by-oldest-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should switch between view modes - card, list, compact" classname="dashboard-journal.spec.ts" time="9.104">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--1915a-w-modes---card-list-compact-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should perform lazy loading on scroll" classname="dashboard-journal.spec.ts" time="10.35">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--20bdb-form-lazy-loading-on-scroll-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should open delete confirmation modal" classname="dashboard-journal.spec.ts" time="7.908">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--ad690-n-delete-confirmation-modal-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should display mood icons correctly" classname="dashboard-journal.spec.ts" time="7.932">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--1f0d8-isplay-mood-icons-correctly-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should create new journal entry" classname="dashboard-journal.spec.ts" time="8.105">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--c40d3-ld-create-new-journal-entry-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should handle empty state when no entries" classname="dashboard-journal.spec.ts" time="8.277">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--622c3-empty-state-when-no-entries-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Journal Page - Advanced Features › should be responsive on mobile" classname="dashboard-journal.spec.ts" time="7.867">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-journal-Journal--00338-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-main.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="9" failures="1" skipped="0" time="92.049" errors="0">
+<testcase name="Dashboard Main Page › should display all dashboard components" classname="dashboard-main.spec.ts" time="14.084">
+<failure message="dashboard-main.spec.ts:11:7 should display all dashboard components" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-main.spec.ts:11:7 › Dashboard Main Page › should display all dashboard components 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('text=Mood Chart')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=Mood Chart')
+
+
+      14 |       page.getByRole("heading", { name: "Dashboard" })
+      15 |     ).toBeVisible();
+    > 16 |     await expect(page.locator("text=Mood Chart")).toBeVisible();
+         |                                                   ^
+      17 |     await expect(page.locator("text=Recent Journal Entries")).toBeVisible();
+      18 |     await expect(page.locator("text=Mental Health Status")).toBeVisible();
+      19 |     await expect(page.locator("text=Recommendations")).toBeVisible();
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-main.spec.ts:16:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-21a05-ay-all-dashboard-components-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should display streak tracking with flame icon" classname="dashboard-main.spec.ts" time="9.264">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-5b67b-ak-tracking-with-flame-icon-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should switch mood chart time ranges" classname="dashboard-main.spec.ts" time="10.077">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-748f1-itch-mood-chart-time-ranges-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should display AI assistant widget" classname="dashboard-main.spec.ts" time="8.943">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-23a1b-display-AI-assistant-widget-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should navigate to journal page" classname="dashboard-main.spec.ts" time="9.687">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-0fa0d-ld-navigate-to-journal-page-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should navigate to progress page" classname="dashboard-main.spec.ts" time="12.143">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-6fd0c-d-navigate-to-progress-page-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should navigate to AI assistant" classname="dashboard-main.spec.ts" time="9.822">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-be193-ld-navigate-to-AI-assistant-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should display recommendations based on user status" classname="dashboard-main.spec.ts" time="8.906">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-71304-ations-based-on-user-status-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Dashboard Main Page › should be responsive on mobile" classname="dashboard-main.spec.ts" time="9.123">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-main-Dashboard-M-a04db-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-progress.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="9" failures="1" skipped="0" time="97.089" errors="0">
+<testcase name="Progress Tracking Page › should display progress page" classname="dashboard-progress.spec.ts" time="30.968">
+<failure message="dashboard-progress.spec.ts:12:7 should display progress page" type="FAILURE">
+<![CDATA[  [chromium-auth] › dashboard-progress.spec.ts:12:7 › Progress Tracking Page › should display progress page 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      3 |
+      4 | test.describe("Progress Tracking Page", () => {
+    > 5 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      6 |     await loginUser(page, "test@gmail.com", "test123");
+      7 |     await page.goto("/dashboard/progress");
+      8 |     await page.waitForLoadState("networkidle");
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-progress.spec.ts:5:8
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       6 |     await loginUser(page, "test@gmail.com", "test123");
+       7 |     await page.goto("/dashboard/progress");
+    >  8 |     await page.waitForLoadState("networkidle");
+         |                ^
+       9 |     await page.waitForTimeout(1000);
+      10 |   });
+      11 |
+        at D:\Berkas Kuliah\Universitas Pendidikan Indonesia\MSIB\DBS Coding Camp\Capstone\chillmind-webapp\tests\dashboard-progress.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\video.webm]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-5aa9e-hould-display-progress-page-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should display mood chart component" classname="dashboard-progress.spec.ts" time="8.181">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-01074-isplay-mood-chart-component-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should have time range selector for mood chart" classname="dashboard-progress.spec.ts" time="9.082">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-af0e2-nge-selector-for-mood-chart-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should display mental health status" classname="dashboard-progress.spec.ts" time="7.984">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-627f9-isplay-mental-health-status-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should display recommendations component" classname="dashboard-progress.spec.ts" time="8.808">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-c7329-y-recommendations-component-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should have gradient background card" classname="dashboard-progress.spec.ts" time="7.981">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-caa13-ve-gradient-background-card-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should show improvement trends" classname="dashboard-progress.spec.ts" time="8.075">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-102d2-uld-show-improvement-trends-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should display streak information" classname="dashboard-progress.spec.ts" time="7.922">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-e71a4--display-streak-information-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Progress Tracking Page › should be responsive on mobile" classname="dashboard-progress.spec.ts" time="8.088">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-progress-Progres-72b23-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="dashboard-resources.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="20" failures="0" skipped="0" time="206.542" errors="0">
+<testcase name="Resources Page › should display resources page" classname="dashboard-resources.spec.ts" time="12.403">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-05db3-ould-display-resources-page-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display resource count" classname="dashboard-resources.spec.ts" time="9.777">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-6ad6c-ould-display-resource-count-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by condition - anxiety" classname="dashboard-resources.spec.ts" time="10.296">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-800eb-lter-by-condition---anxiety-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by condition - depression" classname="dashboard-resources.spec.ts" time="10.246">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-7ece8-r-by-condition---depression-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by condition - stress" classname="dashboard-resources.spec.ts" time="11.589">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-e4374-ilter-by-condition---stress-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should reset to all conditions" classname="dashboard-resources.spec.ts" time="10.338">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-af3f6-uld-reset-to-all-conditions-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by resource type - exercises" classname="dashboard-resources.spec.ts" time="11.455">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-32b08-y-resource-type---exercises-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by resource type - tools" classname="dashboard-resources.spec.ts" time="10.299">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-1725b-er-by-resource-type---tools-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should filter by resource type - resources/articles" classname="dashboard-resources.spec.ts" time="10.343">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-8cc07-e-type---resources-articles-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should search resources" classname="dashboard-resources.spec.ts" time="10.114">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resources-Page-should-search-resources-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display resource cards with all information" classname="dashboard-resources.spec.ts" time="9.965">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-32b28--cards-with-all-information-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display severity level badges" classname="dashboard-resources.spec.ts" time="9.875">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-8ba83-splay-severity-level-badges-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display resource icons" classname="dashboard-resources.spec.ts" time="9.807">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-c62ea-ould-display-resource-icons-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display duration for resources" classname="dashboard-resources.spec.ts" time="9.724">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-43e3b-play-duration-for-resources-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display tags for each resource" classname="dashboard-resources.spec.ts" time="10.034">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-ac818-play-tags-for-each-resource-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should limit tag display and show &quot;+N more&quot;" classname="dashboard-resources.spec.ts" time="9.767">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-1d530-ag-display-and-show-N-more--chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should show empty state when no resources match filters" classname="dashboard-resources.spec.ts" time="10.038">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-8a0a5--no-resources-match-filters-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should display condition-specific colors" classname="dashboard-resources.spec.ts" time="9.755">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-69d16-y-condition-specific-colors-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should be responsive on mobile" classname="dashboard-resources.spec.ts" time="10.038">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-a194d-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Resources Page › should combine multiple filters" classname="dashboard-resources.spec.ts" time="10.679">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\dashboard-resources-Resour-5402a-ld-combine-multiple-filters-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="find-psychologist.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium-auth" tests="10" failures="0" skipped="0" time="119.853" errors="0">
+<testcase name="Find Psychologist Page - Comprehensive › should display find psychologist page with all filters" classname="find-psychologist.spec.ts" time="14.217">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-6c632-ogist-page-with-all-filters-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should display search input" classname="find-psychologist.spec.ts" time="10.836">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-a470a-should-display-search-input-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should search by name, association, or location" classname="find-psychologist.spec.ts" time="11.361">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-1b407-ame-association-or-location-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should filter by association" classname="find-psychologist.spec.ts" time="13.183">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-f2559-hould-filter-by-association-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should filter by price range" classname="find-psychologist.spec.ts" time="12.893">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-cceef-hould-filter-by-price-range-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should filter available only" classname="find-psychologist.spec.ts" time="12.929">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-d1815-hould-filter-available-only-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should display psychologist cards with all information" classname="find-psychologist.spec.ts" time="11.217">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-ae789--cards-with-all-information-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should show pagination when multiple pages" classname="find-psychologist.spec.ts" time="10.911">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-69e11-ination-when-multiple-pages-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should display contact options" classname="find-psychologist.spec.ts" time="11.243">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-2fc29-uld-display-contact-options-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Find Psychologist Page - Comprehensive › should be responsive on mobile" classname="find-psychologist.spec.ts" time="11.063">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\find-psychologist-Find-Psy-e9bd2-uld-be-responsive-on-mobile-chromium-auth\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="accessibility.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="7" failures="0" skipped="0" time="10.709" errors="0">
+<testcase name="Accessibility › landing page should have proper heading hierarchy" classname="accessibility.spec.ts" time="1.453">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibilit-675a2-ve-proper-heading-hierarchy-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › images should have alt text" classname="accessibility.spec.ts" time="1.491">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibility-images-should-have-alt-text-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › buttons should have accessible names" classname="accessibility.spec.ts" time="1.571">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibilit-221f7-hould-have-accessible-names-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › form inputs should have labels" classname="accessibility.spec.ts" time="1.289">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibility-form-inputs-should-have-labels-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › page should have proper document title" classname="accessibility.spec.ts" time="1.38">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibilit-32503--have-proper-document-title-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › links should have descriptive text" classname="accessibility.spec.ts" time="1.962">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibilit-1e91a-hould-have-descriptive-text-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility › keyboard navigation should work on landing page" classname="accessibility.spec.ts" time="1.563">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\accessibility-Accessibilit-89528-should-work-on-landing-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="8" failures="0" skipped="0" time="18.636" errors="0">
+<testcase name="Authentication Pages › should display login page" classname="auth.spec.ts" time="1.276">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages-should-display-login-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should have link to register page" classname="auth.spec.ts" time="1.313">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages-should-have-link-to-register-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should navigate to register page" classname="auth.spec.ts" time="4.896">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages-should-navigate-to-register-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should display register page" classname="auth.spec.ts" time="1.446">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages-should-display-register-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should show validation error for invalid email" classname="auth.spec.ts" time="2.351">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages--e7fb8-ion-error-for-invalid-email-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should have forgot password link" classname="auth.spec.ts" time="1.298">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages-should-have-forgot-password-link-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Pages › should navigate to forgot password page" classname="auth.spec.ts" time="1.992">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Authentication-Pages--54775-ate-to-forgot-password-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Protected Routes › should redirect unauthenticated users from dashboard" classname="auth.spec.ts" time="4.064">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\auth-Protected-Routes-shou-6a1ec-icated-users-from-dashboard-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="crisis-resources.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="22" failures="0" skipped="0" time="45.906" errors="0">
+<testcase name="Crisis Resources Page › should display crisis resources page" classname="crisis-resources.spec.ts" time="4.857">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-a4196-splay-crisis-resources-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display emergency banner" classname="crisis-resources.spec.ts" time="3.312">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-189d1-ld-display-emergency-banner-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display region selector" classname="crisis-resources.spec.ts" time="1.586">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-6be93-uld-display-region-selector-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should switch between regions" classname="crisis-resources.spec.ts" time="2.069">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-232ce-ould-switch-between-regions-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display category filters" classname="crisis-resources.spec.ts" time="1.547">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-2d674-ld-display-category-filters-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should filter resources by category" classname="crisis-resources.spec.ts" time="3.991">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-8d52d-ilter-resources-by-category-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display resource cards with contact information" classname="crisis-resources.spec.ts" time="2.492">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-6c6be-ds-with-contact-information-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display availability hours" classname="crisis-resources.spec.ts" time="1.498">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-5571b--display-availability-hours-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should provide website links" classname="crisis-resources.spec.ts" time="1.956">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-bf7dd-hould-provide-website-links-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display resource types with icons" classname="crisis-resources.spec.ts" time="1.585">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-367a8-y-resource-types-with-icons-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should show &quot;Resources Coming Soon&quot; for empty regions" classname="crisis-resources.spec.ts" time="2.495">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-739af-ming-Soon-for-empty-regions-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display self-care section" classname="crisis-resources.spec.ts" time="1.562">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-8bc12-d-display-self-care-section-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should show breathing technique (4-7-8)" classname="crisis-resources.spec.ts" time="1.481">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-c43b3--breathing-technique-4-7-8--chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should show grounding technique" classname="crisis-resources.spec.ts" time="1.518">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-dd08d-ld-show-grounding-technique-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display important notice" classname="crisis-resources.spec.ts" time="1.596">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-6fdf0-ld-display-important-notice-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should have &quot;Suggest a Resource&quot; button" classname="crisis-resources.spec.ts" time="1.589">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-7d411-e-Suggest-a-Resource-button-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should work on mobile with dropdown selectors" classname="crisis-resources.spec.ts" time="1.872">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-08974-ile-with-dropdown-selectors-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display resource descriptions" classname="crisis-resources.spec.ts" time="1.504">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-f9a7e-splay-resource-descriptions-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should be sticky region selector" classname="crisis-resources.spec.ts" time="1.724">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-8d25e-d-be-sticky-region-selector-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should handle empty state gracefully" classname="crisis-resources.spec.ts" time="2.141">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-f75ca-ndle-empty-state-gracefully-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should display phone call icon" classname="crisis-resources.spec.ts" time="1.516">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-547e7-uld-display-phone-call-icon-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Crisis Resources Page › should animate on scroll" classname="crisis-resources.spec.ts" time="2.015">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\crisis-resources-Crisis-Re-ddf5d-ge-should-animate-on-scroll-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="landing-page.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="7" failures="0" skipped="0" time="14.294" errors="0">
+<testcase name="Landing Page › should display the main heading and CTA button" classname="landing-page.spec.ts" time="1.48">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page--e5f4b-main-heading-and-CTA-button-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should navigate to onboarding when clicking CTA" classname="landing-page.spec.ts" time="5.385">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page--ca25c-nboarding-when-clicking-CTA-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should display all feature sections" classname="landing-page.spec.ts" time="1.737">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page--62878-isplay-all-feature-sections-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should display statistics section" classname="landing-page.spec.ts" time="1.477">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page-should-display-statistics-section-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should display testimonials" classname="landing-page.spec.ts" time="1.432">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page-should-display-testimonials-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should display FAQ section with accordion" classname="landing-page.spec.ts" time="1.441">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page--4496e--FAQ-section-with-accordion-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Landing Page › should be responsive on mobile" classname="landing-page.spec.ts" time="1.342">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\landing-page-Landing-Page-should-be-responsive-on-mobile-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="onboarding-complete.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="17" failures="0" skipped="0" time="96.223" errors="0">
+<testcase name="Complete Onboarding Flow with ML Predictions › should complete entire onboarding process" classname="onboarding-complete.spec.ts" time="31.893">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-81439-e-entire-onboarding-process-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should validate PHQ-9 questions before proceeding" classname="onboarding-complete.spec.ts" time="2.007">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-e837f-questions-before-proceeding-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should validate GAD-7 questions before proceeding" classname="onboarding-complete.spec.ts" time="2.088">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-db7b7-questions-before-proceeding-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should validate PSS questions before proceeding" classname="onboarding-complete.spec.ts" time="1.729">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-66aaa-questions-before-proceeding-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should display step indicators correctly" classname="onboarding-complete.spec.ts" time="1.207">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-038b1-y-step-indicators-correctly-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should navigate back to previous steps" classname="onboarding-complete.spec.ts" time="1.877">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-b9b33-gate-back-to-previous-steps-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should persist answers in localStorage" classname="onboarding-complete.spec.ts" time="3.031">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-6d607-ist-answers-in-localStorage-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should handle PSS reverse-scored items" classname="onboarding-complete.spec.ts" time="1.276">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-6ec52-le-PSS-reverse-scored-items-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should display loading skeleton while loading results" classname="onboarding-complete.spec.ts" time="4.359">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-a98f3-leton-while-loading-results-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should show TensorFlow.js model loading" classname="onboarding-complete.spec.ts" time="5.319">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-63e72-TensorFlow-js-model-loading-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should fallback to traditional scoring if ML fails" classname="onboarding-complete.spec.ts" time="8.565">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-caee2-itional-scoring-if-ML-fails-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should display personalized insights based on results" classname="onboarding-complete.spec.ts" time="6.563">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-17111-d-insights-based-on-results-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should provide recommendations based on severity" classname="onboarding-complete.spec.ts" time="7.253">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-8338b-endations-based-on-severity-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should display demographics summary" classname="onboarding-complete.spec.ts" time="5.542">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-97a1e-isplay-demographics-summary-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should offer to register and save results" classname="onboarding-complete.spec.ts" time="5.43">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-a14fb-o-register-and-save-results-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should allow retaking assessment" classname="onboarding-complete.spec.ts" time="6.833">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-57081-d-allow-retaking-assessment-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Complete Onboarding Flow with ML Predictions › should be responsive on mobile" classname="onboarding-complete.spec.ts" time="1.251">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-complete-Comple-d826d-uld-be-responsive-on-mobile-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="onboarding.spec.ts" timestamp="2025-12-03T17:50:46.632Z" hostname="chromium" tests="7" failures="0" skipped="0" time="10.916" errors="0">
+<testcase name="Onboarding Flow › should display onboarding introduction page" classname="onboarding.spec.ts" time="1.245">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Onboarding-Flow-ecf1d-nboarding-introduction-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Onboarding Flow › should navigate to demographics page" classname="onboarding.spec.ts" time="1.73">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Onboarding-Flow-d3a77-vigate-to-demographics-page-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Onboarding Flow › should show step progress indicator" classname="onboarding.spec.ts" time="1.244">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Onboarding-Flow-dcd5d-how-step-progress-indicator-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Onboarding Flow › should allow going back to home" classname="onboarding.spec.ts" time="1.81">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Onboarding-Flow-should-allow-going-back-to-home-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Demographics Form › should display all form fields" classname="onboarding.spec.ts" time="1.331">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Demographics-Form-should-display-all-form-fields-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Demographics Form › should show validation errors when submitting empty form" classname="onboarding.spec.ts" time="1.861">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Demographics-Fo-4f0de--when-submitting-empty-form-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Demographics Form › should allow filling out the form" classname="onboarding.spec.ts" time="1.695">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\onboarding-Demographics-Fo-3dd38--allow-filling-out-the-form-chromium\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
