@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       async start(controller) {
         try {
           const geminiStream = await ai.models.generateContentStream({
-            model: "gemini-2.0-flash-lite",
+            model: "gemini-2.5-flash",
             contents: prompt,
             config: {
               systemInstruction: geminiSystemInstruction,
